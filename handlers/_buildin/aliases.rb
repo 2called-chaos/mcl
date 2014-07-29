@@ -27,7 +27,7 @@ module Mcl
       register_command "mclupdate" do |handler, player, command, target, optparse|
         handler.traw(player, "[MCL] Updating MCL...", color: "gold")
         system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
-        if c.split(" ")[1].present?
+        if command.split(" ")[1].present?
           handler.traw(player, "[MCL] Restarting...", color: "red")
           sleep 2
           $mcl.shutdown! "MCLupdate"
