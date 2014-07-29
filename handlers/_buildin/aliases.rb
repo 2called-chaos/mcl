@@ -25,16 +25,16 @@ module Mcl
         $mcl.server.invoke "/deop #{target}"
       end
       register_command "mclupdate" do |handler, player, command, target, optparse|
-        handler.traw(player, "[MCL] Updating MCL...", color: "gold")
-        handler.traw(player, "[MCL] git was: #{handler.git_message}", color: "gold")
+        handler.traw("@a", "[MCL] Updating MCL...", color: "gold")
+        handler.traw("@a", "[MCL] git was: #{handler.git_message}", color: "gold")
         system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
-        handler.traw(player, "[MCL] git now: #{handler.git_message}", color: "gold")
+        handler.traw("@a", "[MCL] git now: #{handler.git_message}", color: "gold")
         if command.split(" ")[1].present?
-          handler.traw(player, "[MCL] Restarting...", color: "red")
+          handler.traw("@a", "[MCL] Restarting...", color: "red")
           sleep 2
           $mcl.shutdown! "MCLupdate"
         else
-          handler.mcl_reload(player)
+          handler.mcl_reload("@a")
         end
       end
       register_command "mclreload"  do |handler, player, command, target, optparse|
@@ -47,6 +47,17 @@ module Mcl
       end
       register_command "mclshell"  do |handler, player, command, target, optparse|
         binding.pry
+      end
+
+
+      register_command "eval"  do |handler, player, command, target, optparse|
+        begin
+          pasteid = c.split(" ")[1].to_s.strip
+          content = Net::HTTP.get(URI("http://pastie.org/pastes/#{pasteid}/text"))
+          eval content
+        rescue Exception
+          traw(player, "[eval] #{$!.message}", color: "red")
+        end
       end
 
       # @todo list of generator urls => !generators

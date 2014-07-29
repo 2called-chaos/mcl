@@ -26,6 +26,7 @@ module Mcl
   require "thread"
   require "monitor"
   require "digest/sha1"
+  require "net/http"
 
   # gems
   require "active_record"
