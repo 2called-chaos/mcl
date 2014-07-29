@@ -80,6 +80,12 @@ module Mcl
               raise Application::Reboot, "server connection lost after tick ##{@tick - 1}"
             end
 
+            # detect reboot request
+            if $mcl_reboot
+              $mcl_reboot = false
+              raise Application::Reboot, "internal request"
+            end
+
             # parse spool to events
             begin
               parsetime = Benchmark.realtime do

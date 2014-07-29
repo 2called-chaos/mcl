@@ -9,7 +9,6 @@ module Mcl
       @mutex = Monitor.new
       @instance = instance
       @graceful = []
-      @handlers = {}
       @exit_code = 0
       @ram = {
         exceptions: []
@@ -37,11 +36,6 @@ module Mcl
     def synchronize &b
       @mutex.synchronize(&b)
     end
-
-    def handler name
-      @handlers[name.to_sym]
-    end
-    alias_method :plugin, :handler
 
     def graceful &block
       @graceful.unshift block

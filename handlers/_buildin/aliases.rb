@@ -1,6 +1,6 @@
 module Mcl
-  Mcl.reloadable(:Aliases)
-  class Aliases < Handler
+  Mcl.reloadable(:HAliases)
+  class HAliases < Handler
     def setup
       setup_parsers
     end
@@ -32,9 +32,24 @@ module Mcl
         $mcl.shutdown! "MCLupdate"
       end
       register_command "mclreload"  do |handler, player, command, target, optparse|
-        $mcl.eman.setup_parser
-        $mcl.setup_handlers
-        handler.traw(player, "[MCL] Handlers reloaded!", color: "green", underlined: true)
+        begin
+          Handler.descendants.clear
+          $mcl.eman.setup_parser
+          $mcl.setup_handlers
+          handler.traw(player, "[MCL] Handlers reloaded!", color: "green", underlined: true)
+        rescue Exception
+          handler.traw(player, "[MCL] Reload failed, rebooting!", color: "red", underlined: true)
+          $mcl.server.ipc_detach
+          $mcl_reboot = true
+        end
+      end
+      register_command "mclreboot"  do |handler, player, command, target, optparse|
+        handler.traw(player, "[MCL] Rebooting MCL...", color: "red", underlined: true)
+        $mcl.server.ipc_detach
+        $mcl_reboot = true
+      end
+      register_command "mclshell"  do |handler, player, command, target, optparse|
+        binding.pry
       end
 
       # @todo list of generator urls => !generators

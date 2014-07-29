@@ -16,6 +16,17 @@ module Mcl
 
     # -------
 
+
+    def self.descendants
+      @descendants ||= []
+    end
+
+    # Descendant tracking for inherited classes.
+    def self.inherited(descendant)
+      descendants << descendant
+    end
+
+
     def initialize app
       @app = app
       setup
