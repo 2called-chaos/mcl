@@ -201,7 +201,7 @@ module Mcl
     end
 
     def git_message
-      system(`cd "#{ROOT}" && git log -1 --pretty=%B origin/master`).strip
+      `cd "#{ROOT}" && git log -1 --pretty=%B origin/master`.strip
     end
   end
 end
