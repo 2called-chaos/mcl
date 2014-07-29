@@ -56,7 +56,7 @@ module Mcl
           content = Net::HTTP.get(URI("http://pastie.org/pastes/#{pasteid}/text"))
           eval content
         rescue Exception
-          traw(player, "[eval] #{$!.message}", color: "red")
+          handler.traw(player, "[eval] #{$!.message}", color: "red")
         end
       end
 
