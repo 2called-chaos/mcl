@@ -11,10 +11,10 @@ module Mcl
     end
 
     def internal_parser
-      a_uauth
-      a_clientstate
-      a_boot
-      a_chat
+      # a_uauth
+      # a_clientstate
+      # a_boot
+      # a_chat
     end
 
     def a_uauth
