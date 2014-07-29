@@ -62,7 +62,7 @@ module Mcl
       end
 
       if pram[:pos1] && pram[:pos2]
-        sel_size = {text: "#{h.selection_size(p)} blocks", color: "aqua", italic: true}.to_json
+        sel_size = {text: "#{selection_size(p)} blocks", color: "aqua", italic: true}.to_json
       else
         sel_size = {text: "???", color: "gray", italic: true}.to_json
       end
