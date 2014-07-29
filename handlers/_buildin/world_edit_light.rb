@@ -33,6 +33,36 @@ module Mcl
       $mcl.server.invoke %{/tellraw #{p} [#{wel},#{{text: "Selection cleared!"}.to_json}]}
     end
 
+    def require_pos1 p
+      pram = memory(p)
+      if pram[:pos1]
+        return false
+      else
+        $mcl.server.invoke %{/tellraw #{p} [#{wel},#{{text: "Pos1 required!"}.to_json}]}
+        return true
+      end
+    end
+
+    def require_pos2 p
+      pram = memory(p)
+      if pram[:pos2]
+        return false
+      else
+        $mcl.server.invoke %{/tellraw #{p} [#{wel},#{{text: "Pos2 required!"}.to_json}]}
+        return true
+      end
+    end
+
+    def require_selection p
+      pram = memory(p)
+      if pram[:pos1] && pram[:pos2]
+        return false
+      else
+        $mcl.server.invoke %{/tellraw #{p} [#{wel},#{{text: "Selection required!"}.to_json}]}
+        return true
+      end
+    end
+
     def selection_size p
       pram = memory(p)
       if pram[:pos1] && pram[:pos2]
@@ -75,6 +105,64 @@ module Mcl
       $mcl.server.invoke(cmd)
     end
 
+    def take_pos num, p, c
+      chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
+      pram = memory(p)
+
+      if chunks.count == 0
+        current_selection(p, num == 1 || num.nil?, num == 2 || num.nil?, false)
+      elsif chunks.count == 3
+        if num.nil?
+          pram[:pos1] = pram[:pos2] = chunks
+        else
+          pram[:"pos#{num}"] = chunks
+        end
+        current_selection(p)
+      elsif chunks.count == 6 && num.nil?
+        pram[:pos1] = chunks[0..2]
+        pram[:pos2] = chunks[3..5]
+        current_selection(p)
+      else
+        pos = {text: "!!pos#{num} [x] [y] [z]#{" [x2] [y2] [z2]" if num.nil?}", color: "blue"}.to_json
+        $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
+      end
+    end
+
+    def shift_coords one, two
+      [one[0] + two[0], one[1] + two[1], one[2] + two[2]]
+    end
+
+    def shift_pos num, p, c
+      chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
+      pram = memory(p)
+
+      if chunks.count == 0
+        current_selection(p, num == 1 || num.nil?, num == 2 || num.nil?, false)
+      elsif chunks.count == 3
+        if num.nil?
+          unless require_selection
+            pram[:pos2] = shift_coords(pram[:pos1], chunks)
+            pram[:pos2] = shift_coords(pram[:pos2], chunks)
+            current_selection(p)
+          end
+        else
+          unless send(:"require_pos#{num}")
+            pram[:"pos#{num}"] = shift_coords(pram[:"pos#{num}"], chunks)
+            current_selection(p)
+          end
+        end
+      elsif chunks.count == 6 && num.nil?
+        unless require_selection
+          pram[:pos2] = shift_coords(pram[:pos1], chunks[0..2])
+          pram[:pos2] = shift_coords(pram[:pos2], chunks[3..5])
+          current_selection(p)
+        end
+      else
+        pos = {text: "!!spos#{num} [x] [y] [z]#{" [x2] [y2] [z2]" if num.nil?}", color: "blue"}.to_json
+        $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
+      end
+    end
+
     def reg_sel
       register_command "!sel" do |h, p, c, t, o|
         if c.split(" ")[1] == "clear"
@@ -86,8 +174,24 @@ module Mcl
     end
 
     def reg_pos
-      [*1..2].each do |num|
+      register_command "!pos" do |h, p, c, t, o|
+        h.take_pos(nil, p, c)
+      end
+
+      register_command "!spos" do |h, p, c, t, o|
+        h.shift_pos(nil, p, c)
+      end
+
+      [1,2].each do |num|
         register_command "!pos#{num}" do |h, p, c, t, o|
+          h.take_pos(num, p, c)
+        end
+
+        register_command "!spos#{num}" do |h, p, c, t, o|
+          h.shift_pos(num, p, c)
+        end
+
+        register_command "!spos#{num}" do |h, p, c, t, o|
           chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
           pram = h.memory(p)
 
