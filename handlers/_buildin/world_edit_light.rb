@@ -247,6 +247,10 @@ module Mcl
       register_command "!stack" do |h, p, c, t, o|
         h.stack_selection(p, c)
       end
+
+      register_command "!insert" do |h, p, c, t, o|
+        h.insert_selection(p, c)
+      end
     end
 
     def reg_pos
