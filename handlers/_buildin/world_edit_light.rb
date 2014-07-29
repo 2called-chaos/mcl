@@ -115,14 +115,17 @@ module Mcl
       $mcl.server.invoke(cmd)
     end
 
+    def sel_insert p, pos
+      pram = memory(p)
+      $mcl.server.invoke %{/execute #{p} ~ ~ ~ clone #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{pos.join(" ")}}
+    end
+
     def insert_selection p, c
       chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
       pram = memory(p)
 
       if chunks.count == 3
-        unless require_selection(p)
-          $mcl.server.invoke %{/execute #{p} ~ ~ ~ clone #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{chunks.join(" ")}}
-        end
+        sel_insert(p, chunks) unless require_selection(p)
       else
         pos = {text: "!!pos#{num} [x] [y] [z]#{" [x2] [y2] [z2]" if num.nil?}", color: "blue"}.to_json
         $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
