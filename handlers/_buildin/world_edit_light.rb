@@ -142,19 +142,19 @@ module Mcl
         current_selection(p, num == 1 || num.nil?, num == 2 || num.nil?, false)
       elsif chunks.count == 3
         if num.nil?
-          unless require_selection
+          unless require_selection(p)
             pram[:pos2] = shift_coords(pram[:pos1], chunks)
             pram[:pos2] = shift_coords(pram[:pos2], chunks)
             current_selection(p)
           end
         else
-          unless send(:"require_pos#{num}")
+          unless send(:"require_pos#{num}", p)
             pram[:"pos#{num}"] = shift_coords(pram[:"pos#{num}"], chunks)
             current_selection(p)
           end
         end
       elsif chunks.count == 6 && num.nil?
-        unless require_selection
+        unless require_selection(p)
           pram[:pos2] = shift_coords(pram[:pos1], chunks[0..2])
           pram[:pos2] = shift_coords(pram[:pos2], chunks[3..5])
           current_selection(p)
