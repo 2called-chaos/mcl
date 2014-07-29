@@ -178,7 +178,7 @@ module Mcl
         pram = h.memory(p)
         unless require_selection(p)
           pram = memory(p)
-          $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{c.split(" ")[1..-1]}}
+          $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{c.split(" ")[1..-1].join(" ")}}
         end
       end
     end
