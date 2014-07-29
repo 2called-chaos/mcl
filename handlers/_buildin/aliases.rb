@@ -26,9 +26,9 @@ module Mcl
       end
       register_command "mclupdate" do |handler, player, command, target, optparse|
         handler.traw(player, "[MCL] Updating MCL...", color: "gold")
-        handler.traw(player, "[git] was: #{handler.git_message}", color: "gold")
+        handler.traw(player, "[MCL] git was: #{handler.git_message}", color: "gold")
         system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
-        handler.traw(player, "[git] now: #{handler.git_message}", color: "gold")
+        handler.traw(player, "[MCL] git now: #{handler.git_message}", color: "gold")
         if command.split(" ")[1].present?
           handler.traw(player, "[MCL] Restarting...", color: "red")
           sleep 2
