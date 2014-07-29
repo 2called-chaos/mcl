@@ -1,0 +1,81 @@
+# Define if MCL should start in debug mode or not.
+# You can change it with "!mcl debug" later.
+debug: true
+
+# Define usernames or uuid of ultra admins (you need at least one to setup MCL ingame)
+admins:
+  - a2called_chaos
+  - a93cc6d87-776e-459f-b40a-530a5670c07c
+
+# MCL tick rate. Should be between 0 and 1 (default is 0.25).
+# The lower the value the higher the resource load caused by MCL.
+tick_rate: 0.25
+
+# =============
+# = Minecraft =
+# =============
+# Define the location in which your minecraft server is installed in (where the server.properties file is).
+# If you leave this field blank or no server.properties file can be found in the location all local features
+# will be disabled (restart, backing up/restoring/moving/cloning world files, etc.)
+root: /Volumes/code/_project-production/mcl/_server
+
+
+# You have to choose one of these IPC methods to communicate with your minecraft server instance.
+# We recommend in this order: screen, tmux
+ipc:
+  # screen (screen_name)
+  adapter: wrap
+  command: "java -jar minecraft_server.jar" # command to start your server (note that MCL will start your server, you MUST NOT!)
+
+  # screen (screen_name)
+  # adapter: screen
+  # name: my_screen_name # start like "screen -dmS my_screen_name java…"
+  # command: "screen -dmS cd /some/where && java -jar …" # command to start the screen with your server (or we can't restart it)
+
+  # tmux (name.paneNo <=> example.0)
+  #adapter: tmux
+  #name: "" # start like ""
+
+
+# ============
+# = Database =
+# ============
+# see below if you want to use mysql
+database:
+  adapter: sqlite3
+  database: data/database.sqlite
+
+#database:
+#  adapter: mysql2
+#  encoding: utf8
+#  database: mcl
+#  username: root
+#  password:
+#  host: 127.0.0.1
+#  port: 3306
+
+
+
+# =======================================================
+# = YOU PROBABLY WONT NEED TO EDIT ANYTHING BELOW HERE! =
+# =======================================================
+
+
+# Replay latest.log on startup. This allows late MCL starts.
+# Don't deactivate replay in production! MCL may work without
+# a full replay but it is not guaranteed.
+log_replay: true
+
+
+# ===========
+# = Backlog =
+# ===========
+# For statistical and backlog query kind of features MCL saves a copy of the processed log in the internal format.
+# You may want to fiddle with these values but you should be fine with the defaults.
+backlog:
+  # Purge if older than X days. Default is 90 days. Setting it to 0 disables pruning based on age.
+  age: 90
+
+  # Only keep last X events (tape storage). Default is 50k but you may lower this to 5k without problems.
+  # Don't set it too low though or strange things might happen.
+  tape: 50000
