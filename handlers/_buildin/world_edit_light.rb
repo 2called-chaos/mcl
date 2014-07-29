@@ -64,14 +64,22 @@ module Mcl
       end
     end
 
-    def selection_size p
+    def selection_dimensions p
       pram = memory(p)
       if pram[:pos1] && pram[:pos2]
         zip = pram[:pos1].zip(pram[:pos2])
         xd = (zip[0].max - zip[0].min).round(0) + 1
         yd = (zip[1].max - zip[1].min).round(0) + 1
         zd = (zip[2].max - zip[2].min).round(0) + 1
-        xd * yd * zd
+        [xd, yd, zd]
+      else
+        false
+      end
+    end
+
+    def selection_size p
+      if dim = selection_dimensions(p)
+        dim.inject(&:*)
       else
         false
       end
@@ -171,12 +179,12 @@ module Mcl
 
     def stack_coord_shifting lp, strdir
       case strdir
-        when "n", "north" then sdir = :north
-        when "e", "east" then sdir = :east
-        when "s", "south" then sdir = :south
-        when "w", "west" then sdir = :west
-        when "u", "up" then sdir = :up
-        when "d", "down" then sdir = :down
+        when "n", "north" then [:north, :z, :-]
+        when "e", "east" then [:east, :x, :+]
+        when "s", "south" then [:south, :z, :+]
+        when "w", "west" then [:west, :x, :-]
+        when "u", "up" then [:up, :y, :+]
+        when "d", "down" then [:down, :y, :-]
         else raise "unknown direction (n/e/s/w/u/d)"
       end
 
@@ -201,7 +209,7 @@ module Mcl
           c1, c2 = p1, p2
           dirmap = stack_coord_shifting(p1, direction)
 
-          pos = {text: "#{p1.join(",")} - #{p2.join(",")} - #{dirmap.join(",")}", color: "blue"}.to_json
+          pos = {text: "#{p1.join(",")} / #{p2.join(",")} / #{dirmap[0]} (#{dirmap[2]}#{dirmap[1]})", color: "blue"}.to_json
           $mcl.server.invoke %{/tellraw #{p} [#{wel},#{pos}]}
         end
       end
