@@ -1,4 +1,5 @@
 module Mcl
+  Mcl.reloadable(:WorldEditLight)
   class WorldEditLight < Handler
     def setup
       setup_parsers

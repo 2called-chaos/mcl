@@ -1,4 +1,5 @@
 module Mcl
+  Mcl.reloadable(:Gamemode)
   class Gamemode < Handler
     def setup
       setup_parsers

@@ -71,7 +71,7 @@ module Mcl
 
       def setup_handlers
         files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/handlers/**/*.rb"]
-        files.reject{|f| File.basename(f).start_with?("__") }.each{|f| require f }
+        files.reject{|f| File.basename(f).start_with?("__") }.each{|f| load f }
         @handlers = []
 
         Mcl::Handler.descendants.each do |klass|

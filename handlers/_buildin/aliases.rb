@@ -1,4 +1,5 @@
 module Mcl
+  Mcl.reloadable(:Aliases)
   class Aliases < Handler
     def setup
       setup_parsers
@@ -24,12 +25,19 @@ module Mcl
         $mcl.server.invoke "/deop #{target}"
       end
       register_command "mclupdate" do |handler, player, command, target, optparse|
-        handler.traw(player, "Updating MCL...", color: "gold")
+        handler.traw(player, "[MCL] Updating MCL...", color: "gold")
         system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
-        handler.traw(player, "Restarting...", color: "red")
+        handler.traw(player, "[MCL] Restarting...", color: "red")
         sleep 2
         $mcl.shutdown! "MCLupdate"
       end
+      register_command "mclreload"  do |handler, player, command, target, optparse|
+        $mcl.eman.setup_parser
+        $mcl.setup_handlers
+        handler.traw(player, "[MCL] Handlers reloaded!", color: "green", underlined: true)
+      end
+
+      # @todo list of generator urls => !generators
 
 
       # ==========

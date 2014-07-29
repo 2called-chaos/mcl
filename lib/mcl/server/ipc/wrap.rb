@@ -44,6 +44,7 @@ module Mcl
         end
 
         def ipc_invoke command
+          app.log.debug command
           @_ipc_stdin.puts(command)
           @_ipc_stdin.flush
         end

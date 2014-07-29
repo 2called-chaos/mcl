@@ -1,6 +1,17 @@
 module Mcl
   ROOT = File.expand_path("../..", __FILE__)
 
+  # allow reloadable classes (dirty)
+  def self.reloadable konst, parent = nil
+    parent ||= Mcl
+    if parent.const_defined?(konst)
+      parent.send(:remove_const, konst)
+      # puts "#{konst} reloaded"
+    else
+      # puts "#{konst} first load"
+    end
+  end
+
   # sync output
   STDOUT.sync = true
 

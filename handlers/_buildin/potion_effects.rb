@@ -1,4 +1,5 @@
 module Mcl
+  Mcl.reloadable(:PotionEffects)
   class PotionEffects < Handler
     def setup
       setup_parsers
