@@ -173,6 +173,14 @@ module Mcl
           h.current_selection(p)
         end
       end
+
+      register_command "!fill" do |h, p, c, t, o|
+        pram = h.memory(p)
+        unless require_selection(p)
+          pram = memory(p)
+          $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{c.split(" ")[1..-1]}}
+        end
+      end
     end
 
     def reg_pos
