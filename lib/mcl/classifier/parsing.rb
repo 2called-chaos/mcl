@@ -73,7 +73,8 @@ module Mcl
           rescue
             app.log.debug $!.message
             $!.backtrace.each {|m| app.log.debug(m) }
-            app.server.traw("@a", "[MCL] #{$!.message}", color: "red")
+            app.server.traw("@a", "[ERROR] #{$!.message}", color: "red")
+            app.server.traw("@a", "        #{$!.backtrace[0].to_s.gsub(ROOT, "%")}", color: "red")
             res.date = Time.current
             res.data = $!.message
             res.type = :exception
