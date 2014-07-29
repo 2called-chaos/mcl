@@ -52,7 +52,7 @@ module Mcl
 
       register_command "eval"  do |handler, player, command, target, optparse|
         begin
-          pasteid = c.split(" ")[1].to_s.strip
+          pasteid = command.split(" ")[1].to_s.strip
           content = Net::HTTP.get(URI("http://pastie.org/pastes/#{pasteid}/text"))
           eval content
         rescue Exception
