@@ -165,6 +165,24 @@ module Mcl
       end
     end
 
+    def lg_coord p1, p2
+      [p1, p2]
+    end
+
+    def stack_coord_shifting lp, strdir
+      case strdir
+        when "n", "north" then sdir = :north
+        when "e", "east" then sdir = :east
+        when "s", "south" then sdir = :south
+        when "w", "west" then sdir = :west
+        when "u", "up" then sdir = :up
+        when "d", "down" then sdir = :down
+        else raise "unknown direction (n/e/s/w/u/d)"
+      end
+
+      [sdir]
+    end
+
     def stack_selection p, c
       chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
       pram = memory(p)
@@ -172,8 +190,21 @@ module Mcl
       if chunks.count == 0
         pos = {text: "!!stack <direction> [amount] [move_selection]", color: "blue"}.to_json
         $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
+      else
+        unless require_selection(p)
+          direction = chunks.shift
+          amount = chunks.any? ? [chunks.shift.to_i, 1].max : 1
+          shift = chunks.any? ? strbool(chunks.shift) : false
+
+          # sorted position
+          p1, p2 = lg_coord(pram[:pos1], pram[:pos2])
+          c1, c2 = p1, p2
+          dirmap = stack_coord_shifting(p1, direction)
+
+          pos = {text: "#{p1.join(",")} - #{p2.join(",")} - #{dirmap.join(",")}", color: "blue"}.to_json
+          $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
+        end
       end
-      h.shift_pos(nil, p, c)
     end
 
     def reg_sel
