@@ -88,7 +88,7 @@ module Mcl
     def reg_pos
       [*1..2].each do |num|
         register_command "!pos#{num}" do |h, p, c, t, o|
-          chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^[0-9]+$/ ? i.to_i : i}
+          chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
           pram = h.memory(p)
 
           if chunks.count == 0
