@@ -53,7 +53,7 @@ module Mcl
       register_command "eval"  do |handler, player, command, target, optparse|
         begin
           pasteid = command.split(" ")[1].to_s.strip
-          content = Net::HTTP.get(URI("http://pastie.org/pastes/#{pasteid}/text"))
+          content = Net::HTTP.get(URI("http://pastie.org/pastes/#{pasteid}/download"))
           eval content
         rescue Exception
           handler.traw(player, "[eval] #{$!.message}", color: "red")
