@@ -125,7 +125,10 @@ module Mcl
       pram = memory(p)
 
       if chunks.count == 3
-        sel_insert(p, chunks) unless require_selection(p)
+        unless require_selection(p)
+          sel_insert(p, chunks)
+          $mcl.server.invoke %{/tellraw #{p} [#{wel},#{{text: "#{selection_size(p)} blocks involved"}.to_json)}]}
+        end
       else
         pos = {text: "!!pos#{num} [x] [y] [z]#{" [x2] [y2] [z2]" if num.nil?}", color: "blue"}.to_json
         $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
