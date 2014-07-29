@@ -23,6 +23,13 @@ module Mcl
       register_command "deop" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/deop #{target}"
       end
+      register_command "mclupdate" do |handler, player, command, target, optparse|
+        handler.traw(player, "Updating MCL...", color: "orange")
+        system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
+        handler.traw(player, "Restarting...", color: "red")
+        sleep 2
+        $mcl.shutdown! "MCLupdate"
+      end
 
 
       # ==========

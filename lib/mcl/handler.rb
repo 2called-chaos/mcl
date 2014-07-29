@@ -45,5 +45,13 @@ module Mcl
     def register_pre_parser *a, &b
       eman.parser.register_pre(*a, &b)
     end
+
+    def gm *a
+      $mcl.server.gm(*a)
+    end
+
+    def traw *a
+      $mcl.server.traw(*a)
+    end
   end
 end

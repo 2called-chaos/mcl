@@ -46,6 +46,17 @@ module Mcl
     def invoke cmd
       ipc_invoke(cmd)
     end
+
+
+
+    def gm mode, target
+      invoke %{/gamemode #{mode} #{target}}
+    end
+
+    def traw player, msg = "", opts = {}
+      opts[:text] ||= msg
+      invoke %{/tellraw #{player} #{opts.to_json}}
+    end
   end
 end
 
