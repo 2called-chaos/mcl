@@ -165,6 +165,17 @@ module Mcl
       end
     end
 
+    def stack_selection p, c
+      chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
+      pram = memory(p)
+
+      if chunks.count == 0
+        pos = {text: "!!stack <direction> [amount] [move_selection]", color: "blue"}.to_json
+        $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
+      end
+      h.shift_pos(nil, p, c)
+    end
+
     def reg_sel
       register_command "!sel" do |h, p, c, t, o|
         if c.split(" ")[1] == "clear"
@@ -174,12 +185,16 @@ module Mcl
         end
       end
 
-      register_command "!fill" do |h, p, c, t, o|
+      register_command "!set" do |h, p, c, t, o|
         pram = h.memory(p)
         unless require_selection(p)
           pram = memory(p)
           $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{c.split(" ")[1..-1].join(" ")}}
         end
+      end
+
+      register_command "!stack" do |h, p, c, t, o|
+        h.stack_selection(p, c)
       end
     end
 
@@ -200,21 +215,6 @@ module Mcl
         register_command "!spos#{num}" do |h, p, c, t, o|
           h.shift_pos(num, p, c)
         end
-
-        register_command "!spos#{num}" do |h, p, c, t, o|
-          chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
-          pram = h.memory(p)
-
-          if chunks.count == 0
-            h.current_selection(p, num == 1, num == 2, false)
-          elsif chunks.count == 3
-            pram[:"pos#{num}"] = chunks
-            h.current_selection(p)
-          else
-            pos = {text: "!!pos#{num} [x] [y] [z]", color: "blue"}.to_json
-            $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
-          end
-        end
       end
     end
   end
@@ -225,4 +225,3 @@ __END__
 !!pos1   # selection start
 !!pos2   # selection end
 !!insert # insert selection here
-!!set    # set blocks to (fill)
