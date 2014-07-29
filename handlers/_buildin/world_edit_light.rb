@@ -189,7 +189,7 @@ module Mcl
 
       if chunks.count == 0
         pos = {text: "!!stack <direction> [amount] [move_selection]", color: "blue"}.to_json
-        $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
+        $mcl.server.invoke %{/tellraw #{p} [#{wel},#{pos}]}
       else
         unless require_selection(p)
           direction = chunks.shift
@@ -202,7 +202,7 @@ module Mcl
           dirmap = stack_coord_shifting(p1, direction)
 
           pos = {text: "#{p1.join(",")} - #{p2.join(",")} - #{dirmap.join(",")}", color: "blue"}.to_json
-          $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
+          $mcl.server.invoke %{/tellraw #{p} [#{wel},#{pos}]}
         end
       end
     end
