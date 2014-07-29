@@ -143,7 +143,7 @@ module Mcl
       elsif chunks.count == 3
         if num.nil?
           unless require_selection(p)
-            pram[:pos2] = shift_coords(pram[:pos1], chunks)
+            pram[:pos1] = shift_coords(pram[:pos1], chunks)
             pram[:pos2] = shift_coords(pram[:pos2], chunks)
             current_selection(p)
           end
