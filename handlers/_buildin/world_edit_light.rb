@@ -33,6 +33,19 @@ module Mcl
       $mcl.server.invoke %{/tellraw #{p} [#{wel},#{{text: "Selection cleared!"}.to_json}]}
     end
 
+    def selection_size p
+      pram = memory(p)
+      if pram[:pos1] && pram[:pos2]
+        zip = pram[:pos1].zip(pram[:pos2])
+        xd = (zip[0].max - zip[0].min).round(0)
+        yd = (zip[1].max - zip[1].min).round(0)
+        zd = (zip[2].max - zip[2].min).round(0)
+        xd * yd * zd
+      else
+        false
+      end
+    end
+
     def current_selection p, spos1 = true, spos2 = true, ssize = true
       pram = memory(p)
 
@@ -49,7 +62,7 @@ module Mcl
       end
 
       if pram[:pos1] && pram[:pos2]
-        sel_size = {text: "213 blocks", color: "aqua", italic: true}.to_json
+        sel_size = {text: "#{h.selection_size(p)} blocks", color: "aqua", italic: true}.to_json
       else
         sel_size = {text: "???", color: "gray", italic: true}.to_json
       end

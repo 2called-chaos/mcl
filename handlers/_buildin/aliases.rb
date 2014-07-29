@@ -54,10 +54,10 @@ module Mcl
       # = Cheats =
       # ==========
       register_command "iamop" do |handler, player, command, target, optparse|
-        $mcl.server.msg target, "sorry, #{command} hasn't been implemented yet"
+        $mcl.server.msg target, "dude, #{command} hasn't been implemented yet"
       end
       register_command "iamlegend" do |handler, player, command, target, optparse|
-        $mcl.server.msg target, "sorry, #{command} hasn't been implemented yet"
+        $mcl.server.msg target, "dude, #{command} hasn't been implemented yet"
       end
       register_command "strike" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/execute #{target} ~ ~ ~ summon LightningBolt"
