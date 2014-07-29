@@ -97,11 +97,12 @@ module Mcl
         sel_size = {text: "???", color: "gray", italic: true}.to_json
       end
 
-      cmd =  %{/tellraw #{p} [#{wel}}
-      cmd << %{,#{pos1}} if spos1
-      cmd << %{,#{spacer},#{pos2}} if spos2
-      cmd << %{,#{spacer},#{sel_size}} if ssize
-      cmd << %{]}
+      a = []
+      a << pos1 if spos1
+      a << pos2 if spos2
+      a << sel_size if ssize
+
+      cmd =  %{/tellraw #{p} [#{wel},#{a.join(",#{spacer},")}]}
       $mcl.server.invoke(cmd)
     end
 
