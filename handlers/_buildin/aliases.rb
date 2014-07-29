@@ -27,21 +27,16 @@ module Mcl
       register_command "mclupdate" do |handler, player, command, target, optparse|
         handler.traw(player, "[MCL] Updating MCL...", color: "gold")
         system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
-        handler.traw(player, "[MCL] Restarting...", color: "red")
-        sleep 2
-        $mcl.shutdown! "MCLupdate"
+        if c.split(" ")[1].present?
+          handler.traw(player, "[MCL] Restarting...", color: "red")
+          sleep 2
+          $mcl.shutdown! "MCLupdate"
+        else
+          handler.mcl_reload(player)
+        end
       end
       register_command "mclreload"  do |handler, player, command, target, optparse|
-        begin
-          Handler.descendants.clear
-          $mcl.eman.setup_parser
-          $mcl.setup_handlers
-          handler.traw(player, "[MCL] Handlers reloaded!", color: "green", underlined: true)
-        rescue Exception
-          handler.traw(player, "[MCL] Reload failed, rebooting!", color: "red", underlined: true)
-          $mcl.server.ipc_detach
-          $mcl_reboot = true
-        end
+        handler.mcl_reload(player)
       end
       register_command "mclreboot"  do |handler, player, command, target, optparse|
         handler.traw(player, "[MCL] Rebooting MCL...", color: "red", underlined: true)
@@ -188,6 +183,19 @@ module Mcl
 
     def cow target, pos = "~ ~ ~"
       $mcl.server.invoke "/execute #{target} ~ ~ ~ summon Cow #{pos} {DropChances:[0F,0F,0F,0F,0F]}"
+    end
+
+    def mcl_reload player
+      begin
+        Handler.descendants.clear
+        $mcl.eman.setup_parser
+        $mcl.setup_handlers
+        traw(player, "[MCL] Handlers reloaded!", color: "green", underlined: true)
+      rescue Exception
+        traw(player, "[MCL] Reload failed, rebooting!", color: "red", underlined: true)
+        $mcl.server.ipc_detach
+        $mcl_reboot = true
+      end
     end
   end
 end
