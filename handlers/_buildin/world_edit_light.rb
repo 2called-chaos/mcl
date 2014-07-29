@@ -29,7 +29,8 @@ module Mcl
     end
 
     def clear_selection p
-      memory(p).delete(:pos1, :pos2)
+      memory(p).delete(:pos1)
+      memory(p).delete(:pos2)
       $mcl.server.invoke %{/tellraw #{p} [#{wel},#{{text: "Selection cleared!"}.to_json}]}
     end
 
