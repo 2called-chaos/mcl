@@ -115,6 +115,20 @@ module Mcl
       $mcl.server.invoke(cmd)
     end
 
+    def insert_selection p, c
+      chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
+      pram = memory(p)
+
+      if chunks.count == 3
+        unless require_selection(p)
+          $mcl.server.invoke %{/execute #{p} ~ ~ ~ clone #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{chunks.join(" ")}}
+        end
+      else
+        pos = {text: "!!pos#{num} [x] [y] [z]#{" [x2] [y2] [z2]" if num.nil?}", color: "blue"}.to_json
+        $mcl.server.invoke %{/tellraw #{p} [#{h.wel},#{pos}]}
+      end
+    end
+
     def take_pos num, p, c
       chunks = c.split(" ")[1..-1].map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
       pram = memory(p)
@@ -187,8 +201,6 @@ module Mcl
         when "d", "down" then [:down, :y, :-]
         else raise "unknown direction (n/e/s/w/u/d)"
       end
-
-      [sdir]
     end
 
     def stack_selection p, c
