@@ -37,9 +37,9 @@ module Mcl
       pram = memory(p)
       if pram[:pos1] && pram[:pos2]
         zip = pram[:pos1].zip(pram[:pos2])
-        xd = (zip[0].max - zip[0].min).round(0)
-        yd = (zip[1].max - zip[1].min).round(0)
-        zd = (zip[2].max - zip[2].min).round(0)
+        xd = (zip[0].max - zip[0].min).round(0) + 1
+        yd = (zip[1].max - zip[1].min).round(0) + 1
+        zd = (zip[2].max - zip[2].min).round(0) + 1
         xd * yd * zd
       else
         false
