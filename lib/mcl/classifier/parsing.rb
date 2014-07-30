@@ -60,14 +60,14 @@ module Mcl
                   res.classified = false
                 end
               else
-                raise "no exception expected"
-                r = parser_match(res)
-                unless r # unknown
-                  res.data = line
-                  res.classified = true
-                  res.type = :exception
-                  res.append = true
-                end
+                # raise "no exception expected"
+                # r = parser_match(res)
+                # unless r # unknown
+                #   res.data = line
+                #   res.classified = true
+                #   res.type = :exception
+                #   res.append = true
+                # end
               end
             end
           rescue
