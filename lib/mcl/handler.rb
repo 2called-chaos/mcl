@@ -73,5 +73,27 @@ module Mcl
       v = false if ["false", "f", "0", "n", "no"].include?(v)
       v
     end
+
+    def prec p
+      Player.where(nickname: p).first_or_initialize
+    end
+
+    def acl_reload
+      app.acl.clear
+      Player.find_each do |p|
+        app.acl[p.nickname] = p.permission
+      end
+    end
+
+    def acl_granted p, level = 13337
+      allowed = app.acl[p]
+      allowed = allowed >= level if allowed
+      if allowed
+        return false
+      else
+        $mcl.server.invoke %{/tellraw #{p} [#{{text: "[ACL] ", color: "light_purple"}.to_json},#{{text: "I hate you, bugger off!", color: "red"}.to_json}]}
+        return true
+      end
+    end
   end
 end

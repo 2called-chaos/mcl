@@ -19,6 +19,7 @@ module Mcl
         $mcl.server.invoke "/stop"
       end
       register_command :op do |handler, player, command, target, optparse|
+        break unless acl_granted(player)
         $mcl.server.invoke "/op #{target}"
       end
       register_command :deop do |handler, player, command, target, optparse|
@@ -37,26 +38,49 @@ module Mcl
           handler.mcl_reload("@a")
         end
       end
-      register_command :mclreload  do |handler, player, command, target, optparse|
+      register_command :mclreload do |handler, player, command, target, optparse|
         handler.mcl_reload(player)
       end
-      register_command :mclreboot  do |handler, player, command, target, optparse|
+      register_command :mclreboot do |handler, player, command, target, optparse|
         handler.traw(player, "[MCL] Rebooting MCL...", color: "red", underlined: true)
         $mcl.server.ipc_detach
         $mcl_reboot = true
       end
-      register_command :mclshell  do |handler, player, command, target, optparse|
+      register_command :mclshell do |handler, player, command, target, optparse|
         binding.pry
       end
 
 
-      register_command :eval  do |handler, player, command, target, optparse|
+      register_command :eval do |handler, player, command, target, optparse|
         begin
           pasteid = command.split(" ")[1].to_s.strip
           content = Net::HTTP.get(URI("http://pastebin.com/raw.php?i=#{pasteid}"))
           eval content
         rescue Exception
           handler.traw(player, "[eval] #{$!.message}", color: "red")
+        end
+      end
+
+      # =======
+      # = ACL =
+      # =======
+      register_command :love do |handler, player, command, target, optparse|
+        p = handler.prec(target)
+        if p.permission > 1337
+          handler.traw(player, "[ACL] I already love #{target}!", color: "red")
+        else
+          p.update! permission: 13337
+          handler.traw("@a", "[ACL] I love #{target} now!", color: "green")
+        end
+      end
+
+      register_command :hate do |handler, player, command, target, optparse|
+        p = handler.prec(target)
+        if p.permission > 1337
+          p.update! permission: 1337
+          handler.traw("@a", "[ACL] I hate #{target} now!", color: "green")
+        else
+          handler.traw(player, "[ACL] I already hate #{target}!", color: "red")
         end
       end
     end

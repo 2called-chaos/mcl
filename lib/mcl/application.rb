@@ -1,6 +1,6 @@
 module Mcl
   class Application
-    attr_reader :log, :instance, :config, :ram, :handlers, :eman, :server, :scheduler
+    attr_reader :log, :instance, :config, :ram, :handlers, :eman, :server, :scheduler, :acl
 
     include Setup
     include Loop
@@ -10,6 +10,7 @@ module Mcl
       @instance = instance
       @graceful = []
       @exit_code = 0
+      @acl = {}
       @ram = {
         exceptions: []
       }
