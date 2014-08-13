@@ -11,6 +11,7 @@ module Mcl
 
       # speed
       register_command("quick") {|h, p, c, t, o| h.effect(t, "speed", 6000, 5) }
+      register_command("speed") {|h, p, c, t, o| h.effect(t, "speed", 6000, 5) }
       register_command("fast") {|h, p, c, t, o| h.effect(t, "speed", 6000, 10) }
       register_command("faster") {|h, p, c, t, o| h.effect(t, "speed", 6000, 20) }
       register_command("gonzales") {|h, p, c, t, o| h.effect(t, "speed", 6000, 50) }
