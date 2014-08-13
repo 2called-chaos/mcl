@@ -40,11 +40,14 @@ module Mcl
       app.eman
     end
 
-    def register_command cmd, &b
+    def register_command *cmds, &b
       handler = self
-      register_parser(/<([^>]+)> \!(.+)/i) do |res, r|
-        if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
-          b[handler, r[1], r[2], "#{r[2]}".split(" ")[1].presence || r[1], OptionParser.new]
+      [*cmds].flatten.each do |cmd|
+        cmd = cmd.to_s
+        register_parser(/<([^>]+)> \!(.+)/i) do |res, r|
+          if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
+            b[handler, r[1], r[2], "#{r[2]}".split(" ")[1].presence || r[1], OptionParser.new]
+          end
         end
       end
     end
