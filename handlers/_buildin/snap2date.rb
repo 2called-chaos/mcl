@@ -211,7 +211,7 @@ module Mcl
 
               # backup?
               tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(creating backup)", color: "reset"})
-              backup.join
+              backup
 
               # restart
               $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(restarting)", color: "reset"}) }
