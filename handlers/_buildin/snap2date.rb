@@ -38,6 +38,7 @@ module Mcl
                     clickEvent: { action: "open_url", value: hit[:link] },
                     hoverEvent: { action: "show_text", value: "click to download" }
                   })
+                  update(hit) if update?(hit)
                 end
               end
             end
@@ -48,6 +49,12 @@ module Mcl
     end
 
     def setup_parsers
+      register_command :backup do |handler, player, command, target, optparse|
+        $mcl.synchronize { handler.tellm(player, {text: "Starting backup!", color: "gold"}) }
+        handler.backup do
+          $mcl.synchronize { handler.tellm(player, {text: "Backup done!", color: "gold"}) }
+        end
+      end
       register_command :snap2date do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         args = command.split(" ")[1..-1]
@@ -91,8 +98,8 @@ module Mcl
             handler.tellm(player, {text: "Define a version to watch!", color: "red"})
           end
         when "update"
-          handler.tellm(player, {text: "Watcher disabled", color: "reset"})
-          # @todo UPDATE
+          handler.tellm(player, {text: "Attempting update...", color: "reset"})
+          handler.update(args[1].try(:downcase))
         when "cron"
           Setting.set("snap2date.cron", "true")
           @cron = true
@@ -123,16 +130,20 @@ module Mcl
       Setting.set("snap2date.watched_versions", @watched_versions.join(" "))
     end
 
+    def numeric_version ver
+      ver.each_byte.with_index.inject(0) {|c, (i, n)| n + ((ver.length - i) * c) }
+    end
+
     def title
-      {text: "[S2D] ", color: "light_purple"}.to_json
+      {text: "[S2D] ", color: "light_purple"}
     end
 
     def spacer
-      {text: " / ", color: "reset"}.to_json
+      {text: " / ", color: "reset"}
     end
 
     def tellm p, *msg
-      $mcl.server.invoke %{/tellraw #{p} [#{title},#{msg.map(&:to_json).join(",")}]}
+      trawm(p, *([title] + msg))
     end
 
 
@@ -161,6 +172,95 @@ module Mcl
           }
         else
           false
+        end
+      end
+    end
+
+    def update? hit
+      $mcl.server.version && numeric_version(hit[:version]) > numeric_version($mcl.server.version)
+    end
+
+    def backup &callback
+      $mcl.synchronize do
+        $mcl.server.invoke %{/save-all}
+      end
+      sleep 3 # wait for server to save data
+      `cd "#{$mcl.server.root}" && tar -cf backup-$(date +"%Y-%m-%d_%H-%M").tar world`
+      callback.try(:call)
+    end
+
+    def update ver
+      async do
+        begin
+          if $mcl_snap2date_updating
+            $mcl.synchronize { tellm("@a", {text: "Updating failed (already updating)... ", color: "red"}) }
+            Thread.current.kill
+          end
+          $mcl_snap2date_updating = true
+
+          hit = ver.is_a?(Hash) ? ver : released?(ver)
+          if hit
+            if update?(hit)
+              # download
+              download(hit[:link]).join
+
+              # symlink
+              $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(linking)", color: "reset"}) }
+              FileUtils.ln_s "#{$mcl.server.root}/#{File.basename(hit[:link])}", "#{$mcl.server.root}/minecraft_server.jar", force: true
+
+              # backup?
+              tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(creating backup)", color: "reset"})
+              backup.join
+
+              # restart
+              $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(restarting)", color: "reset"}) }
+              sleep 1
+              $mcl.synchronize { tellm("@a", {text: "SERVER IS ABOUT TO RESTART!", color: "red"}) }
+              sleep 5
+              $mcl.synchronize { $mcl.shutdown!("snap2date.update") }
+            else
+              $mcl.synchronize { tellm("@a", {text: "Updating failed (version outdated)... ", color: "red"}) }
+            end
+          else
+            $mcl.synchronize { tellm("@a", {text: "Updating failed (no valid version)... ", color: "red"}) }
+          end
+        ensure
+          $mcl_snap2date_updating = false
+        end
+      end
+    end
+
+    def download url, &callback
+      announcer = async do
+        loop do
+          Thread.current.kill if Thread.current[:mcl_halting]
+          if @bytes_total
+            $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download #{((@bytes_transferred / @bytes_total.to_f) * 100).round(0)}%)", color: "reset"}) }
+          else
+            $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download init)", color: "reset"}) }
+          end
+          sleep 3
+        end
+      end
+
+      async do
+        begin
+          @bytes_total = nil
+          open(
+            url, "rb",
+            content_length_proc: ->(content_length) { @bytes_total = content_length },
+            progress_proc: ->(bytes_transferred) { @bytes_transferred = bytes_transferred },
+          ) do |page|
+            File.open("#{$mcl.server.root}/#{File.basename(url)}", "wb") do |file|
+              while chunk = page.read(1024)
+                file.write(chunk)
+                Thread.pass
+              end
+            end
+          end
+          $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download 100%)", color: "reset"}) }
+        ensure
+          announcer.try(:kill)
         end
       end
     end

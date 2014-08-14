@@ -67,6 +67,7 @@ module Mcl
           # wait 15 seconds for threads to exit
           begin
             Timeout::timeout(15) { async.each(&:join) }
+          rescue
           end
         end
 

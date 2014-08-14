@@ -21,12 +21,14 @@ module Mcl
   # core dependencies
   require "open3"
   require "yaml"
+  require "open-uri"
   require "optparse"
   require "benchmark"
   require "thread"
   require "monitor"
   require "digest/sha1"
   require "net/http"
+  require "fileutils"
 
   # gems
   require "active_record"
