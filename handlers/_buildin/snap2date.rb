@@ -50,7 +50,7 @@ module Mcl
 
     def setup_parsers
       register_command :backup do |handler, player, command, target, optparse|
-        $mcl.synchronize { handler.tellm(player, {text: "Starting backup!", color: "gold"}) }
+        handler.tellm(player, {text: "Starting backup!", color: "gold"})
         handler.backup do
           $mcl.synchronize { handler.tellm(player, {text: "Backup done!", color: "gold"}) }
         end
@@ -182,12 +182,14 @@ module Mcl
     end
 
     def backup &callback
-      $mcl.synchronize do
-        $mcl.server.invoke %{/save-all}
+      async do
+        $mcl.synchronize do
+          $mcl.server.invoke %{/save-all}
+        end
+        sleep 3 # wait for server to save data
+        `cd "#{$mcl.server.root}" && tar -cf backup-$(date +"%Y-%m-%d_%H-%M").tar world`
+        callback.try(:call)
       end
-      sleep 3 # wait for server to save data
-      `cd "#{$mcl.server.root}" && tar -cf backup-$(date +"%Y-%m-%d_%H-%M").tar world`
-      callback.try(:call)
     end
 
     def update ver
@@ -211,7 +213,7 @@ module Mcl
 
               # backup?
               tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(creating backup)", color: "reset"})
-              backup
+              backup.join
 
               # restart
               $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(restarting)", color: "reset"}) }
