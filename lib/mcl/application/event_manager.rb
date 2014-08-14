@@ -68,7 +68,7 @@ module Mcl
           # raise Application::Halt, "ticklimit of 500 reached"
         # end
 
-        synchronize do
+        app.synchronize do
           begin
             @tick += 1
             events, jobs = 0, 0
@@ -85,6 +85,11 @@ module Mcl
               if $mcl_reboot
                 $mcl_reboot = false
                 raise Application::Reboot, "internal request"
+              end
+
+              # scrub async threads
+              if @tick % 100 == 0
+                app.async.select!(&:alive?)
               end
 
               # parse spool to events
