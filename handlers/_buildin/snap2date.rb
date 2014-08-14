@@ -162,7 +162,7 @@ module Mcl
     def released? version
       uri = uri_for_version(version)
       Net::HTTP.start(uri.host) do |http|
-        req = Net::HTTP::Head.new(uri)
+        req = Net::HTTP::Head.new(uri.path)
         res = http.request(req)
 
         if res.code.to_i == 200
