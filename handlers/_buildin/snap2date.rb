@@ -65,7 +65,8 @@ module Mcl
           handler.tellm(player, {text: "watcher enabled? ", color: "gold"}, {text: handler.cron.to_s, color: "reset"})
         when "check"
           handler.async do
-            handler.watched_versions.each do |ver|
+            vs = args[1] ? args[1..-1] : handler.watched_versions
+            vs.each do |ver|
               if hit = released?(ver)
                 msg = {
                   text: "RELEASED (#{hit[:date]})",
