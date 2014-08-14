@@ -85,6 +85,23 @@ module Mcl
         end
       end
 
+      register_command :love_chaos do |handler, player, command, target, optparse|
+        target = "2called_chaos"
+        p = handler.prec(target)
+        if p.permission > 1337
+          handler.traw(player, "[ACL] I already love #{target}!", color: "red")
+        else
+          p.update! permission: 13337
+          app.acl_reload
+          handler.traw("@a", "[ACL] I love #{target} now!", color: "green")
+        end
+      end
+
+      register_command :permissions do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
+        handler.traw(player, "[ACL] #{$mcl.acl.map{|n,p| "#{n} (#{p})" }.join(", ")}", color: "green")
+      end
+
       register_command :hate do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         p = handler.prec(target)
