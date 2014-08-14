@@ -57,6 +57,15 @@ module Mcl
         handler.acl_verify(player)
         binding.pry
       end
+      register_command :commands do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
+        args = command.split(" ")[1..-1]
+        gcoms = $mcl.command_names.grep(/#{args[0]}/)
+
+        msg = gcoms[0..9].join(", ")
+        msg << " (and #{gcoms.count-10} more)" if gcoms.count > 10
+        $mcl.server.invoke %{/tellraw #{player} [#{{text: msg}.to_json}]}
+      end
 
 
       register_command :eval do |handler, player, command, target, optparse|
