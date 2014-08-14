@@ -83,5 +83,9 @@ module Mcl
     def acl_verify p, level = 13337
       $mcl.acl_verify(p, level)
     end
+
+    def async &block
+      $mcl.async_call(&block)
+    end
   end
 end

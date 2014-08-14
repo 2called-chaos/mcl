@@ -68,101 +68,103 @@ module Mcl
           # raise Application::Halt, "ticklimit of 500 reached"
         # end
 
-        begin
-          @tick += 1
-          events, jobs = 0, 0
-          parsetime, dispatchtime, shortticktime, schedulertime = nil
+        synchronize do
+          begin
+            @tick += 1
+            events, jobs = 0, 0
+            parsetime, dispatchtime, shortticktime, schedulertime = nil
 
-          ticktime = Benchmark.realtime do
-            # detect died minecraft server
-            if app.server.died?
-              app.log.fatal "[IPC] connection to minecraft server lost after tick ##{@tick - 1}, rebooting..."
-              raise Application::Reboot, "server connection lost after tick ##{@tick - 1}"
-            end
+            ticktime = Benchmark.realtime do
+              # detect died minecraft server
+              if app.server.died?
+                app.log.fatal "[IPC] connection to minecraft server lost after tick ##{@tick - 1}, rebooting..."
+                raise Application::Reboot, "server connection lost after tick ##{@tick - 1}"
+              end
 
-            # detect reboot request
-            if $mcl_reboot
-              $mcl_reboot = false
-              raise Application::Reboot, "internal request"
-            end
+              # detect reboot request
+              if $mcl_reboot
+                $mcl_reboot = false
+                raise Application::Reboot, "internal request"
+              end
 
-            # parse spool to events
-            begin
-              parsetime = Benchmark.realtime do
-                while !@spool.empty?
-                  val = @spool.pop(true) rescue nil
-                  break if val.nil?
-                  events += 1
+              # parse spool to events
+              begin
+                parsetime = Benchmark.realtime do
+                  while !@spool.empty?
+                    val = @spool.pop(true) rescue nil
+                    break if val.nil?
+                    events += 1
 
-                  # handle stuff
-                  begin
-                    # parse event
-                    evd = parser.classify(val.chomp)
+                    # handle stuff
+                    begin
+                      # parse event
+                      evd = parser.classify(val.chomp)
 
-                    if evd.append?
-                      # append event data to last event
-                      if @last_event
-                        @last_event.append!(evd)
+                      if evd.append?
+                        # append event data to last event
+                        if @last_event
+                          @last_event.append!(evd)
+                        else
+                          app.log.error "EventAppendError on tick #{@tick}: encountered append call with no @last_event present"
+                        end
                       else
-                        app.log.error "EventAppendError on tick #{@tick}: encountered append call with no @last_event present"
-                      end
-                    else
-                      new_event = Event.build_from_classification(evd)
-                      begin
-                        # new_event.save!
-                        @last_event = new_event
-                        # if !evd.classified?
-                        #   app.log.debug "Ignored unclassifiable event ##{new_event.id}"
-                        # end
-                      rescue Exception
-                        app.handle_exception($!) do |ex|
-                          app.log.error "EventParseError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                        new_event = Event.build_from_classification(evd)
+                        begin
+                          # new_event.save!
+                          @last_event = new_event
+                          # if !evd.classified?
+                          #   app.log.debug "Ignored unclassifiable event ##{new_event.id}"
+                          # end
+                        rescue Exception
+                          app.handle_exception($!) do |ex|
+                            app.log.error "EventParseError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                          end
                         end
                       end
-                    end
-                  rescue Exception
-                    app.handle_exception($!) do |ex|
-                      app.log.error "EventParseError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                    rescue Exception
+                      app.handle_exception($!) do |ex|
+                        app.log.error "EventParseError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                      end
                     end
                   end
                 end
               end
-            end
 
-            # dispatch events to handlers
-            begin
-              dispatchtime = Benchmark.realtime do
-                #
+              # dispatch events to handlers
+              begin
+                dispatchtime = Benchmark.realtime do
+                  #
+                end
+              ensure
               end
-            ensure
-            end
 
-            # short tick handlers
-            begin
-              shortticktime = Benchmark.realtime do
-                #
+              # short tick handlers
+              begin
+                shortticktime = Benchmark.realtime do
+                  #
+                end
+              ensure
               end
-            ensure
-            end
 
-            # tick scheduler
-            begin
-              schedulertime = Benchmark.realtime do
-                #
+              # tick scheduler
+              begin
+                schedulertime = Benchmark.realtime do
+                  #
+                end
+              ensure
               end
-            ensure
             end
-          end
-        ensure
-          if ticktime
-            diff = app.config["tick_rate"] - ticktime
-            # app.log.debug "[T#{@tick}] #{events} events, #{jobs} jobs (RT: #{atime(ticktime)} P: #{atime(parsetime)} D: #{atime(dispatchtime)} ST: #{atime(shortticktime)} S: #{atime(schedulertime)} W: #{atime(diff)})"
+          ensure
+            if ticktime
+              diff = app.config["tick_rate"] - ticktime
+              # app.log.debug "[T#{@tick}] #{events} events, #{jobs} jobs (RT: #{atime(ticktime)} P: #{atime(parsetime)} D: #{atime(dispatchtime)} ST: #{atime(shortticktime)} S: #{atime(schedulertime)} W: #{atime(diff)})"
 
-            # sleep and give the collector a explicit chance to do something
-            Thread.pass
+              # sleep and give the collector a explicit chance to do something
+              Thread.pass
 
-            # sleep rest of time if there is any left
-            sleep diff if diff > 0
+              # sleep rest of time if there is any left
+              sleep diff if diff > 0
+            end
           end
         end
       end

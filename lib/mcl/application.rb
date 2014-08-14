@@ -1,6 +1,6 @@
 module Mcl
   class Application
-    attr_reader :log, :instance, :config, :ram, :handlers, :eman, :server, :scheduler, :acl
+    attr_reader :log, :instance, :config, :ram, :handlers, :eman, :server, :scheduler, :acl, :async
 
     include Setup
     include Loop
@@ -11,6 +11,7 @@ module Mcl
       @graceful = []
       @exit_code = 0
       @acl = {}
+      @async = []
       @ram = {
         exceptions: []
       }
@@ -20,6 +21,7 @@ module Mcl
         load_config
         trap_signals
         setup_database
+        setup_async
         log.info "[SETUP] Core ready!"
       rescue Exception
         Thread.main[:mcl_original_exception] = $!
@@ -98,6 +100,14 @@ module Mcl
         @exit_code = 2
         @shutdown = "#{sig}"
         puts "Shutting down, please wait... (#{@shutdown})"
+      end
+    end
+
+    def async_call &block
+      Thread.new(&block).tap do |t|
+        t[:mcl_managed] = true
+        t.abort_on_exception = true
+        async << t
       end
     end
 

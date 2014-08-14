@@ -25,26 +25,30 @@ module Mcl
         $mcl.server.invoke "/execute #{target} ~ ~ ~ tp @p ~ 1337 ~"
       end
       register_command "muuhhh" do |handler, player, command, target, optparse|
-        handler.acl_verify(player)
-        handler.cow(target, "~ ~50 ~")
-        sleep 3
+        handler.async do
+          handler.acl_verify(player)
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 3
 
-        handler.cow(target, "~ ~50 ~")
-        sleep 0.2
-        handler.cow(target, "~ ~50 ~")
-        sleep 3
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 0.2
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 3
 
 
-        handler.cow(target, "~ ~50 ~")
-        sleep 0.2
-        handler.cow(target, "~ ~50 ~")
-        sleep 0.2
-        handler.cow(target, "~ ~50 ~")
-        sleep 3
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 0.2
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 0.2
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 3
 
-        100.times do
-          handler.cow(target, "~ ~50 ~")
-          sleep 0.05
+          $mcl.synchronize do
+            100.times do
+              handler.cow(target, "~ ~50 ~")
+              sleep 0.05
+            end
+          end
         end
       end
 

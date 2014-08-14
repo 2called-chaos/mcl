@@ -57,6 +57,20 @@ module Mcl
         log.info "[SETUP] Database ready!"
       end
 
+      def setup_async
+        graceful do
+          log.debug "[SHUTDOWN] Waiting for aSync threads to end..."
+
+          # marking threads so they can mayexit
+          async.each{|t| t[:mcl_halting] = true }
+
+          # wait 15 seconds for threads to exit
+          Timeout::timeout(15) { async.each(&:join) }
+        end
+
+        log.debug "[SETUP] Threaded aSync ready..."
+      end
+
       def setup_event_manager
         @eman = EventManager.new(self)
       end
