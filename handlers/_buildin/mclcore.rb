@@ -10,22 +10,27 @@ module Mcl
       # = Core =
       # ========
       register_command :raw do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         $mcl.server.invoke "#{command.split(" ")[1..-1].join(" ")}"
       end
       register_command :stop do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         $mcl.shutdown! "ingame"
       end
       register_command :stopmc do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         $mcl.server.invoke "/stop"
       end
       register_command :op do |handler, player, command, target, optparse|
-        acl_verify(player)
+        handler.acl_verify(player)
         $mcl.server.invoke "/op #{target}"
       end
       register_command :deop do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         $mcl.server.invoke "/deop #{target}"
       end
       register_command :mclupdate do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         handler.traw("@a", "[MCL] Updating MCL...", color: "gold")
         handler.traw("@a", "[MCL] git was: #{handler.git_message}", color: "gold")
         system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
@@ -39,19 +44,23 @@ module Mcl
         end
       end
       register_command :mclreload do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         handler.mcl_reload(player)
       end
       register_command :mclreboot do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         handler.traw(player, "[MCL] Rebooting MCL...", color: "red", underlined: true)
         $mcl.server.ipc_detach
         $mcl_reboot = true
       end
       register_command :mclshell do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         binding.pry
       end
 
 
       register_command :eval do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         begin
           pasteid = command.split(" ")[1].to_s.strip
           content = Net::HTTP.get(URI("http://pastebin.com/raw.php?i=#{pasteid}"))
@@ -65,6 +74,7 @@ module Mcl
       # = ACL =
       # =======
       register_command :love do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         p = handler.prec(target)
         if p.permission > 1337
           handler.traw(player, "[ACL] I already love #{target}!", color: "red")
@@ -76,6 +86,7 @@ module Mcl
       end
 
       register_command :hate do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         p = handler.prec(target)
         if p.permission > 1337
           p.update! permission: 1337

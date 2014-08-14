@@ -25,6 +25,7 @@ module Mcl
         $mcl.server.invoke "/execute #{target} ~ ~ ~ tp @p ~ 1337 ~"
       end
       register_command "muuhhh" do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         handler.cow(target, "~ ~50 ~")
         sleep 3
 
@@ -72,10 +73,12 @@ module Mcl
         $mcl.server.invoke "/weather clear"
       end
       register_command "rain" do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         duration = command.split(" ")[1].presence
         $mcl.server.invoke "/weather rain #{duration}"
       end
       register_command "thunder" do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         duration = command.split(" ")[1].presence
         $mcl.server.invoke "/weather thunder #{duration}"
       end
@@ -104,9 +107,11 @@ module Mcl
         $mcl.server.invoke "/time set 18000"
       end
       register_command "freeze" do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         $mcl.server.invoke "/gamerule doDaylightCycle false"
       end
       register_command "unfreeze" do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         $mcl.server.invoke "/gamerule doDaylightCycle true"
       end
 

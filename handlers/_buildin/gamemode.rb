@@ -7,6 +7,7 @@ module Mcl
 
     def setup_parsers
       register_command :c, :creative do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
         handler.gm(1, target)
       end
       register_command :s, :survival do |handler, player, command, target, optparse|

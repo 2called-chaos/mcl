@@ -243,6 +243,7 @@ module Mcl
       end
 
       register_command "!set" do |h, p, c, t, o|
+        h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
           pram = memory(p)
@@ -251,10 +252,12 @@ module Mcl
       end
 
       register_command "!stack" do |h, p, c, t, o|
+        h.acl_verify(p)
         h.stack_selection(p, c)
       end
 
       register_command "!insert" do |h, p, c, t, o|
+        h.acl_verify(p)
         h.insert_selection(p, c)
       end
     end
