@@ -106,7 +106,7 @@ module Mcl
     def async_call &block
       Thread.new(&block).tap do |t|
         t[:mcl_managed] = true
-        t.abort_on_exception = true
+        # t.abort_on_exception = true
         async << t
       end
     end

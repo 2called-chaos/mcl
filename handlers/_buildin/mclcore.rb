@@ -2,7 +2,20 @@ module Mcl
   Mcl.reloadable(:HMclcore)
   class HMclcore < Handler
     def setup
+      setup_boot
       setup_parsers
+    end
+
+    def setup_boot
+      # server version
+      register_parser(/Starting minecraft server version (.+)/i) do |res, r|
+        $mcl.server.version = r[1]
+      end
+
+      # boot time
+      register_parser(/Done \(([\d\.]+)s\)! For help, type "help" or "\?"/i) do |res, r|
+        $mcl.server.boottime = r[1].to_f
+      end
     end
 
     def setup_parsers
@@ -12,6 +25,10 @@ module Mcl
       register_command :raw do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         $mcl.server.invoke "#{command.split(" ")[1..-1].join(" ")}"
+      end
+      register_command :version do |handler, player, command, target, optparse|
+        handler.trawm(player, {text: "[MC] ", color: "gold"}, {text: "#{$mcl.server.version || "unknown"}", color: "light_purple"}, {text: " (booted in #{($mcl.server.boottime||-1).round(2)}s)", color: "reset"})
+        handler.trawm(player, {text: "[MCL] ", color: "gold"}, {text: "git: ", color: "light_purple"}, {text: "#{handler.git_message}", color: "reset"})
       end
       register_command :stop do |handler, player, command, target, optparse|
         handler.acl_verify(player)

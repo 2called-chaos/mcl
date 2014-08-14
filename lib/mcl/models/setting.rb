@@ -22,5 +22,9 @@ module Mcl
       end
       Setting.origin(origin).find_by(name: name)
     end
+
+    def self.set name, value
+      find_by(name: name).try(:update!, value: value)
+    end
   end
 end

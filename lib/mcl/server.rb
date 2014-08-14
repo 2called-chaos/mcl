@@ -1,13 +1,14 @@
 module Mcl
   class Server
     attr_reader :app, :status, :players
-    attr_accessor :version
+    attr_accessor :version, :boottime
     include Getters
     include IO
 
     def initialize app
       @app = app
       @version = nil
+      @boottime = nil
       @status = :stopped # booting, running, stalled, stopping
       @players = PlayerManager.new(app, self)
       setup_local
@@ -56,6 +57,13 @@ module Mcl
     def traw player, msg = "", opts = {}
       opts[:text] ||= msg
       invoke %{/tellraw #{player} #{opts.to_json}}
+    end
+
+    def trawm player, *msgs
+      r = msgs.map do |msg|
+        msg.is_a?(Hash) ? msg : {text: msg}
+      end
+      invoke %{/tellraw #{player} [#{r.map(&:to_json).join(",")}]}
     end
   end
 end

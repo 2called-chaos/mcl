@@ -76,6 +76,10 @@ module Mcl
       $mcl.server.traw(*a)
     end
 
+    def trawm *a
+      $mcl.server.trawm(*a)
+    end
+
     def strbool v
       v = true if ["true", "t", "1", "y", "yes"].include?(v)
       v = false if ["false", "f", "0", "n", "no"].include?(v)
