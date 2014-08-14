@@ -9,12 +9,12 @@ module Mcl
     def setup_boot
       # server version
       register_parser(/Starting minecraft server version (.+)/i) do |res, r|
-        $mcl.server.version = r[1]
+        $mcl_server_version = $mcl.server.version = r[1]
       end
 
       # boot time
       register_parser(/Done \(([\d\.]+)s\)! For help, type "help" or "\?"/i) do |res, r|
-        $mcl.server.boottime = r[1].to_f
+        $mcl_server_boottime = $mcl.server.boottime = r[1].to_f
       end
     end
 

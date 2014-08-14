@@ -59,7 +59,7 @@ module Mcl
 
       def setup_async
         graceful do
-          log.debug "[SHUTDOWN] Waiting for aSync threads to end..."
+          log.debug "[SHUTDOWN] Waiting for aSync threads to end (#{async.count})..."
 
           # marking threads so they can mayexit
           async.each{|t| t[:mcl_halting] = true }

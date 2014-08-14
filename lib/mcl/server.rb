@@ -7,8 +7,8 @@ module Mcl
 
     def initialize app
       @app = app
-      @version = nil
-      @boottime = nil
+      @version = $mcl_server_version
+      @boottime = $mcl_server_boottime
       @status = :stopped # booting, running, stalled, stopping
       @players = PlayerManager.new(app, self)
       setup_local
