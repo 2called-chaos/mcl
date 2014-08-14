@@ -132,7 +132,7 @@ module Mcl
     end
 
     def numeric_version ver
-      ver.each_byte.with_index.inject(0) {|c, (i, n)| n + ((ver.length - i) * c) }
+      ver.each_byte.with_index.inject(0) {|n, (c, i)| n + (255**(ver.length - i) * c) }
     end
 
     def title
