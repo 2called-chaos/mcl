@@ -6,70 +6,70 @@ module Mcl
     end
 
     def setup_parsers
-      register_command(:ce, :milk) {|h, p, c, t, o| h.effect(t, "clear") }
+      register_command(:ce, :milk, desc: "clears all your or target's effects") {|h, p, c, t, o| h.effect(t, "clear") }
 
       # speed
-      register_command(:quick, :speed) {|h, p, c, t, o| h.effect(t, "speed", 6000, 5) }
-      register_command(:fast) {|h, p, c, t, o| h.effect(t, "speed", 6000, 10) }
-      register_command(:faster) {|h, p, c, t, o| h.effect(t, "speed", 6000, 20) }
-      register_command(:gonzales) {|h, p, c, t, o| h.effect(t, "speed", 6000, 50) }
+      register_command(:quick, :speed, desc: "gives you or target 5x speed") {|h, p, c, t, o| h.effect(t, "speed", 6000, 5) }
+      register_command(:fast, desc: "gives you or target 10x speed") {|h, p, c, t, o| h.effect(t, "speed", 6000, 10) }
+      register_command(:faster, desc: "gives you or target 20x speed") {|h, p, c, t, o| h.effect(t, "speed", 6000, 20) }
+      register_command(:gonzales, desc: "gives you or target 50x speed") {|h, p, c, t, o| h.effect(t, "speed", 6000, 50) }
 
       # jump
-      register_command(:jump) {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 5) }
-      register_command(:bunny) {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 10) }
-      register_command(:higher) {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 20) }
-      register_command(:rocket) {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 50) }
-      register_command(:"2damoon") {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 125) }
+      register_command(:jump, desc: "gives you or target 5x jump boost") {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 5) }
+      register_command(:bunny, desc: "gives you or target 10x jump boost") {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 10) }
+      register_command(:higher, desc: "gives you or target 20x jump boost") {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 20) }
+      register_command(:rocket, desc: "gives you or target 50x jump boost") {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 50) }
+      register_command(:"2damoon", desc: "gives you or target 125x jump boost") {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 125) }
 
       # haste
-      register_command(:haste) {|h, p, c, t, o| h.effect(t, "haste", 6000, 10) }
-      register_command(:haste2) {|h, p, c, t, o| h.effect(t, "haste", 6000, 255) }
+      register_command(:haste, desc: "gives you or target 10x haste") {|h, p, c, t, o| h.effect(t, "haste", 6000, 10) }
+      register_command(:haste2, desc: "gives you or target 255x haste") {|h, p, c, t, o| h.effect(t, "haste", 6000, 255) }
 
       # minin fatuege
-      register_command(:miningf) {|h, p, c, t, o| h.effect(t, "mining_fatigue", 6000, 10) }
+      register_command(:miningf, desc: "gives you or target 10x mining fatigue") {|h, p, c, t, o| h.effect(t, "mining_fatigue", 6000, 10) }
 
       # night vision
-      register_command(:nvision, :nightvision, :night_vision, :letitbelight) {|h, p, c, t, o| h.effect(t, "night_vision", 6000, 255) }
+      register_command(:nvision, :nightvision, :night_vision, :letitbelight, desc: "gives you or target 255x nightvision") {|h, p, c, t, o| h.effect(t, "night_vision", 6000, 255) }
 
       # strength
-      register_command(:strength) {|h, p, c, t, o| h.effect(t, "strength", 6000, 5) }
-      register_command(:onehit) {|h, p, c, t, o| h.effect(t, "strength", 6000, 255) }
+      register_command(:strength, desc: "gives you or target 5x strength") {|h, p, c, t, o| h.effect(t, "strength", 6000, 5) }
+      register_command(:onehit, desc: "gives you or target 255x strength") {|h, p, c, t, o| h.effect(t, "strength", 6000, 255) }
 
       # regeneration
-      register_command(:heal) {|h, p, c, t, o| h.effect(t, "regeneration", 60, 255) }
+      register_command(:heal, desc: "gives you or target 255x regen for 60s") {|h, p, c, t, o| h.effect(t, "regeneration", 60, 255) }
 
       # resistance
-      register_command(:resist) {|h, p, c, t, o| h.effect(t, "resistance", 6000, 255) }
+      register_command(:resist, desc: "gives you or target 255x resistance") {|h, p, c, t, o| h.effect(t, "resistance", 6000, 255) }
 
       # water breathing
-      register_command(:breath) {|h, p, c, t, o| h.effect(t, "water_breathing", 6000, 255) }
+      register_command(:breath, desc: "gives you or target 255x water breathing") {|h, p, c, t, o| h.effect(t, "water_breathing", 6000, 255) }
 
       # nausea
-      register_command(:drugs) {|h, p, c, t, o| h.effect(t, "nausea", 30, 255) }
-      register_command(:junkie) {|h, p, c, t, o| h.effect(t, "nausea", 6000, 255) }
+      register_command(:drugs, desc: "gives you or target 255x neusea for 30s") {|h, p, c, t, o| h.effect(t, "nausea", 30, 255) }
+      register_command(:junkie, desc: "gives you or target 255x nausea") {|h, p, c, t, o| h.effect(t, "nausea", 6000, 255) }
 
       # feed
-      register_command(:hungry) {|h, p, c, t, o| h.effect(t, "saturation", 60, 255) }
-      register_command(:feed) {|h, p, c, t, o| h.effect(t, "saturation", 6000, 255) }
+      register_command(:hungry, desc: "gives you or target 255x saturation for 60s") {|h, p, c, t, o| h.effect(t, "saturation", 60, 255) }
+      register_command(:feed, desc: "gives you or target 255x saturation") {|h, p, c, t, o| h.effect(t, "saturation", 6000, 255) }
 
       # starve
-      register_command(:starve) {|h, p, c, t, o| h.effect(t, "hunger", 120, 30) }
+      register_command(:starve, desc: "gives you or target 120x hunger for 30s") {|h, p, c, t, o| h.effect(t, "hunger", 120, 30) }
 
 
       # misc
-      register_command(:hearts) {|h, p, c, t, o| h.effect(t, "absorption", 6000, 255) }
-      register_command(:"<3") {|h, p, c, t, o| h.effect(t, "absorption", 60, 255) }
-      register_command(:idontwannadie) do |h, p, c, t, o|
+      register_command(:hearts, desc: "gives you or target 255x absorption") {|h, p, c, t, o| h.effect(t, "absorption", 6000, 255) }
+      register_command(:"<3", desc: "gives you or target 255x absorption for 60s") {|h, p, c, t, o| h.effect(t, "absorption", 60, 255) }
+      register_command(:idontwannadie, desc: "gives you or target several OP buffs") do |h, p, c, t, o|
         h.effect(t, "regeneration", 6000, 255)
         h.effect(t, "resistance", 6000, 255)
         h.effect(t, "strength", 6000, 255)
         h.effect(t, "absorption", 6000, 4)
       end
-      register_command(:slowmo, :matrix) do |h, p, c, t, o|
+      register_command(:slowmo, :matrix, desc: "gives you or target slowmotion for 60s") do |h, p, c, t, o|
         h.effect(t, "slowness", 60, 4)
         h.effect(t, "mining_fatigue", 60, 60)
       end
-      register_command(:immortal) do |h, p, c, t, o|
+      register_command(:immortal, desc: "gives you or target total OP buffs") do |h, p, c, t, o|
         h.effect(t, "speed", 6000, 5)
         h.effect(t, "jump_boost", 6000, 3)
         h.effect(t, "regeneration", 6000, 255)
@@ -80,7 +80,7 @@ module Mcl
         h.effect(t, "haste", 6000, 5)
         h.effect(t, "night_vision", 6000, 255)
       end
-      register_command(:uwater) do |h, p, c, t, o|
+      register_command(:uwater, desc: "gives you or target OP underwater buffs") do |h, p, c, t, o|
         h.effect(t, "water_breathing", 6000, 255)
         h.effect(t, "night_vision", 6000, 255)
         h.effect(t, "speed", 6000, 10)

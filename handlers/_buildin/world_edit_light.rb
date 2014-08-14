@@ -234,7 +234,7 @@ module Mcl
     end
 
     def reg_sel
-      register_command "!sel" do |h, p, c, t, o|
+      register_command "!sel", desc: "shows or clears (!sel clear) current selection" do |h, p, c, t, o|
         if c.split(" ")[1] == "clear"
           h.clear_selection(p)
         else
@@ -242,7 +242,7 @@ module Mcl
         end
       end
 
-      register_command "!set" do |h, p, c, t, o|
+      register_command "!set", desc: "fills selection with given block" do |h, p, c, t, o|
         h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
@@ -251,32 +251,32 @@ module Mcl
         end
       end
 
-      register_command "!stack" do |h, p, c, t, o|
+      register_command "!stack", desc: "NotImplemented: stacks selection" do |h, p, c, t, o|
         h.acl_verify(p)
         h.stack_selection(p, c)
       end
 
-      register_command "!insert" do |h, p, c, t, o|
+      register_command "!insert", desc: "inserts selection at given coords" do |h, p, c, t, o|
         h.acl_verify(p)
         h.insert_selection(p, c)
       end
     end
 
     def reg_pos
-      register_command "!pos" do |h, p, c, t, o|
+      register_command "!pos", desc: "sets pos1 and pos2 to given coords" do |h, p, c, t, o|
         h.take_pos(nil, p, c)
       end
 
-      register_command "!spos" do |h, p, c, t, o|
+      register_command "!spos", desc: "shifts pos1 and pos2 by given values" do |h, p, c, t, o|
         h.shift_pos(nil, p, c)
       end
 
       [1,2].each do |num|
-        register_command "!pos#{num}" do |h, p, c, t, o|
+        register_command "!pos#{num}", desc: "sets pos#{num} to given coords" do |h, p, c, t, o|
           h.take_pos(num, p, c)
         end
 
-        register_command "!spos#{num}" do |h, p, c, t, o|
+        register_command "!spos#{num}", desc: "shifts pos#{num} by given values" do |h, p, c, t, o|
           h.shift_pos(num, p, c)
         end
       end

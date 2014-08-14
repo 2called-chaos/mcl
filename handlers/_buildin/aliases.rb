@@ -15,16 +15,16 @@ module Mcl
       register_command "iamlegend" do |handler, player, command, target, optparse|
         $mcl.server.msg target, "dude, #{command} hasn't been implemented yet"
       end
-      register_command "strike" do |handler, player, command, target, optparse|
+      register_command :strike, desc: "strikes you or a target with lightning" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/execute #{target} ~ ~ ~ summon LightningBolt"
       end
-      register_command "boat" do |handler, player, command, target, optparse|
+      register_command :boat, desc: "summons a boat above your or target's head" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/execute #{target} ~ ~ ~ summon Boat ~ ~2 ~"
       end
-      register_command "longwaydown" do |handler, player, command, target, optparse|
+      register_command :longwaydown, desc: "sends you or target to leet height!" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/execute #{target} ~ ~ ~ tp @p ~ 1337 ~"
       end
-      register_command "muuhhh" do |handler, player, command, target, optparse|
+      register_command :muuhhh, desc: "muuuuhhhhhh....." do |handler, player, command, target, optparse|
         handler.async do
           handler.acl_verify(player)
           $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
@@ -57,13 +57,13 @@ module Mcl
       # ======
       # = XP =
       # ======
-      register_command "l0" do |handler, player, command, target, optparse|
+      register_command :l0, desc: "removes all levels from you or a target" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/xp -10000L #{target}"
       end
-      register_command "l30" do |handler, player, command, target, optparse|
+      register_command :l30, desc: "adds 30 levels to you or a target" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/xp 30L #{target}"
       end
-      register_command "l1337" do |handler, player, command, target, optparse|
+      register_command :l1337, desc: "sets your or target's level to 1337" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/xp -10000L #{target}"
         $mcl.server.invoke "/xp 1337L #{target}"
       end
@@ -73,15 +73,15 @@ module Mcl
       # ===========
       # = Weather =
       # ===========
-      register_command "sun" do |handler, player, command, target, optparse|
-        $mcl.server.invoke "/weather clear"
+      register_command :sun, desc: "Clears the weather for 11 days" do |handler, player, command, target, optparse|
+        $mcl.server.invoke "/weather clear 999999"
       end
-      register_command "rain" do |handler, player, command, target, optparse|
+      register_command :rain, desc: "Lets it rain, you may pass a duration in seconds" do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         duration = command.split(" ")[1].presence
         $mcl.server.invoke "/weather rain #{duration}"
       end
-      register_command "thunder" do |handler, player, command, target, optparse|
+      register_command :thunder, desc: "Lets it thunder, you may pass a duration in seconds" do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         duration = command.split(" ")[1].presence
         $mcl.server.invoke "/weather thunder #{duration}"
@@ -92,29 +92,26 @@ module Mcl
       # ========
       # = Time =
       # ========
-      register_command "morning" do |handler, player, command, target, optparse|
+      register_command :morning, desc: "sets the time to 0" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/time set 0"
       end
-      register_command "day" do |handler, player, command, target, optparse|
+      register_command :day, :noon, desc: "sets the time to 6k" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/time set 6000"
       end
-      register_command "noon" do |handler, player, command, target, optparse|
-        $mcl.server.invoke "/time set 6000"
-      end
-      register_command "evening" do |handler, player, command, target, optparse|
+      register_command :evening, desc: "sets the time to 12k" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/time set 12000"
       end
-      register_command "night" do |handler, player, command, target, optparse|
+      register_command :night, desc: "sets the time to 14k" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/time set 14000"
       end
-      register_command "midnight" do |handler, player, command, target, optparse|
+      register_command :midnight, desc: "sets the time to 18k" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/time set 18000"
       end
-      register_command "freeze" do |handler, player, command, target, optparse|
+      register_command :freeze, desc: "freezes the time (doDaylightCycle)" do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         $mcl.server.invoke "/gamerule doDaylightCycle false"
       end
-      register_command "unfreeze" do |handler, player, command, target, optparse|
+      register_command :unfreeze, desc: "unfreezes the time (doDaylightCycle)" do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         $mcl.server.invoke "/gamerule doDaylightCycle true"
       end
@@ -124,7 +121,7 @@ module Mcl
       # ==========
       # = Macros =
       # ==========
-      register_command "peace" do |handler, player, command, target, optparse|
+      register_command :peace, desc: "sets up a friendly world" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/difficulty 0"
         $mcl.server.invoke "/gamerule doMobSpawning false"
         $mcl.server.invoke "/gamerule keepInventory true"
@@ -132,13 +129,13 @@ module Mcl
         sleep 1
         $mcl.server.invoke "/difficulty 1"
       end
-      register_command "diehard" do |handler, player, command, target, optparse|
+      register_command :diehard, desc: "sets up a unfriendly world" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/difficulty 3"
         $mcl.server.invoke "/gamerule doMobSpawning true"
         $mcl.server.invoke "/gamerule naturalRegeneration true"
         $mcl.server.invoke "/gamerule keepInventory false"
       end
-      register_command "hardcore" do |handler, player, command, target, optparse|
+      register_command :hardcore, desc: "sets up a hardcore world" do |handler, player, command, target, optparse|
         $mcl.server.invoke "/difficulty 3"
         $mcl.server.invoke "/gamerule doMobSpawning true"
         $mcl.server.invoke "/gamerule naturalRegeneration false"

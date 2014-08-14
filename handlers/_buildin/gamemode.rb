@@ -6,14 +6,14 @@ module Mcl
     end
 
     def setup_parsers
-      register_command :c, :creative do |handler, player, command, target, optparse|
+      register_command :c, :creative, desc: "be creative" do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         handler.gm(1, target)
       end
-      register_command :s, :survival do |handler, player, command, target, optparse|
+      register_command :s, :survival, desc: "be mortal and die!" do |handler, player, command, target, optparse|
         handler.gm(0, target)
       end
-      register_command :spec, :spectator do |handler, player, command, target, optparse|
+      register_command :spec, :spectator, desc: "become spectator" do |handler, player, command, target, optparse|
         handler.gm(3, target)
       end
     end

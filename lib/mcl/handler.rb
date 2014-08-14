@@ -41,11 +41,12 @@ module Mcl
     end
 
     def register_command *cmds, &b
+      opts = cmds.extract_options!
       handler = self
       cmds = [*cmds].flatten
 
       # register name
-      app.command_names << ("!" << cmds.join(" !"))
+      app.command_names["!" << cmds.join(" !")] = opts[:desc]
 
       # register handler
       cmds.each do |cmd|

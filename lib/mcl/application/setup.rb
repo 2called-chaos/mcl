@@ -88,7 +88,7 @@ module Mcl
 
       def setup_handlers
         @handlers = []
-        @command_names = []
+        @command_names = {}
         files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/handlers/**/*.rb"]
         files.reject{|f| File.basename(f).start_with?("__") }.each{|f| load f }
 
