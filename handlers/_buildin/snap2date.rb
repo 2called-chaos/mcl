@@ -51,8 +51,10 @@ module Mcl
     def setup_parsers
       register_command :backup do |handler, player, command, target, optparse|
         handler.tellm(player, {text: "Starting backup!", color: "gold"})
-        handler.backup do
-          $mcl.synchronize { handler.tellm(player, {text: "Backup done!", color: "gold"}) }
+        async do
+          handler.backup do
+            $mcl.synchronize { handler.tellm(player, {text: "Backup done!", color: "gold"}) }
+          end
         end
       end
       register_command :snap2date do |handler, player, command, target, optparse|
@@ -105,7 +107,7 @@ module Mcl
           Setting.set("snap2date.cron", "true")
           @cron = true
           handler.tellm(player, {text: "Watcher enabled", color: "reset"})
-        when "uncron"
+        when "uncron", "decron", "nocron"
           Setting.set("snap2date.cron", "false")
           @cron = false
           handler.tellm(player, {text: "Watcher disabled", color: "reset"})
@@ -182,14 +184,12 @@ module Mcl
     end
 
     def backup &callback
-      async do
-        $mcl.synchronize do
-          $mcl.server.invoke %{/save-all}
-        end
-        sleep 3 # wait for server to save data
-        `cd "#{$mcl.server.root}" && tar -cf backup-$(date +"%Y-%m-%d_%H-%M").tar world`
-        callback.try(:call)
+      $mcl.synchronize do
+        $mcl.server.invoke %{/save-all}
       end
+      sleep 3 # wait for server to save data
+      `cd "#{$mcl.server.root}" && tar -cf backup-$(date +"%Y-%m-%d_%H-%M").tar world`
+      callback.try(:call)
     end
 
     def update ver
@@ -205,7 +205,7 @@ module Mcl
           if hit
             if update?(hit)
               # download
-              download(hit[:link]).join
+              download(hit[:link])
 
               # symlink
               $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(linking)", color: "reset"}) }
@@ -213,7 +213,7 @@ module Mcl
 
               # backup?
               tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(creating backup)", color: "reset"})
-              backup.join
+              backup
 
               # restart
               $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(restarting)", color: "reset"}) }
@@ -246,25 +246,23 @@ module Mcl
         end
       end
 
-      async do
-        begin
-          @bytes_total = nil
-          open(
-            url, "rb",
-            content_length_proc: ->(content_length) { @bytes_total = content_length },
-            progress_proc: ->(bytes_transferred) { @bytes_transferred = bytes_transferred },
-          ) do |page|
-            File.open("#{$mcl.server.root}/#{File.basename(url)}", "wb") do |file|
-              while chunk = page.read(1024)
-                file.write(chunk)
-                Thread.pass
-              end
+      begin
+        @bytes_total = nil
+        open(
+          url, "rb",
+          content_length_proc: ->(content_length) { @bytes_total = content_length },
+          progress_proc: ->(bytes_transferred) { @bytes_transferred = bytes_transferred },
+        ) do |page|
+          File.open("#{$mcl.server.root}/#{File.basename(url)}", "wb") do |file|
+            while chunk = page.read(1024)
+              file.write(chunk)
+              Thread.pass
             end
           end
-          $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download 100%)", color: "reset"}) }
-        ensure
-          announcer.try(:kill)
         end
+        $mcl.synchronize { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download 100%)", color: "reset"}) }
+      ensure
+        announcer.try(:kill)
       end
     end
   end
