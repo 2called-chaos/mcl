@@ -17,6 +17,7 @@ module Mcl
         setup_scheduler     # scheduled tasks
         setup_server        # setup server communication
         setup_handlers      # setup all handlers
+        acl_reload
 
         eman.ready!
       end

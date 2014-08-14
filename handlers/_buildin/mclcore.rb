@@ -19,7 +19,7 @@ module Mcl
         $mcl.server.invoke "/stop"
       end
       register_command :op do |handler, player, command, target, optparse|
-        break unless acl_granted(player)
+        acl_verify(player)
         $mcl.server.invoke "/op #{target}"
       end
       register_command :deop do |handler, player, command, target, optparse|
@@ -70,6 +70,7 @@ module Mcl
           handler.traw(player, "[ACL] I already love #{target}!", color: "red")
         else
           p.update! permission: 13337
+          app.acl_reload
           handler.traw("@a", "[ACL] I love #{target} now!", color: "green")
         end
       end
@@ -78,7 +79,8 @@ module Mcl
         p = handler.prec(target)
         if p.permission > 1337
           p.update! permission: 1337
-          handler.traw("@a", "[ACL] I hate #{target} now!", color: "green")
+          app.acl_reload
+          handler.traw("@a", "[ACL] I hate #{target} now!", color: "gold")
         else
           handler.traw(player, "[ACL] I already hate #{target}!", color: "red")
         end

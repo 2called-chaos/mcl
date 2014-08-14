@@ -54,6 +54,7 @@ module Mcl
     require "#{lib}/models/event/exception"
     require "#{lib}/models/event/log"
     require "#{lib}/models/event/uauth"
+    require "#{lib}/models/player"
     require "#{lib}/classifier/parsing"
     require "#{lib}/classifier/result"
     require "#{lib}/classifier"

@@ -6,19 +6,6 @@ module Mcl
     end
 
     def setup_parsers
-      register_command :raw do |h, p, c, t, o|
-        $mcl.server.invoke "#{command.split(" ")[1..-1].join(" ")}"
-      end
-      register_command :stopmc do |handler, player, command, target, optparse|
-        $mcl.server.invoke "/stop"
-      end
-      register_command :op do |handler, player, command, target, optparse|
-        $mcl.server.invoke "/op #{target}"
-      end
-      register_command :deop do |handler, player, command, target, optparse|
-        $mcl.server.invoke "/deop #{target}"
-      end
-
       # commandBlockOutput
       register_command(:cbspam) {|h, p, c, t, o| h.gamerule("commandBlockOutput", true) }
       register_command(:nocbspam, :cbnospam) {|h, p, c, t, o| h.gamerule("commandBlockOutput", false) }

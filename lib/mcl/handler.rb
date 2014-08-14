@@ -46,7 +46,9 @@ module Mcl
         cmd = cmd.to_s
         register_parser(/<([^>]+)> \!(.+)/i) do |res, r|
           if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
-            b[handler, r[1], r[2], "#{r[2]}".split(" ")[1].presence || r[1], OptionParser.new]
+            catch(:handler_exit) do
+              b[handler, r[1], r[2], "#{r[2]}".split(" ")[1].presence || r[1], OptionParser.new]
+            end
           end
         end
       end
@@ -78,22 +80,8 @@ module Mcl
       Player.where(nickname: p).first_or_initialize
     end
 
-    def acl_reload
-      app.acl.clear
-      Player.find_each do |p|
-        app.acl[p.nickname] = p.permission
-      end
-    end
-
-    def acl_granted p, level = 13337
-      allowed = app.acl[p]
-      allowed = allowed >= level if allowed
-      if allowed
-        return false
-      else
-        $mcl.server.invoke %{/tellraw #{p} [#{{text: "[ACL] ", color: "light_purple"}.to_json},#{{text: "I hate you, bugger off!", color: "red"}.to_json}]}
-        return true
-      end
+    def acl_verify p, level = 13337
+      $mcl.acl_verify(p, level)
     end
   end
 end
