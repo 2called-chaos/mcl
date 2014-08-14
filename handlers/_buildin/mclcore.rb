@@ -120,7 +120,7 @@ module Mcl
         Handler.descendants.clear
         $mcl.eman.setup_parser
         $mcl.setup_handlers
-        traw(player, "[MCL] Handlers reloaded!", color: "green", underlined: true)
+        traw(player, "[MCL] Handlers reloaded (#{$mcl.command_names.count} commands registered)!", color: "green", underlined: true)
       rescue Exception
         traw(player, "[MCL] Reload failed, rebooting!", color: "red", underlined: true)
         $mcl.server.ipc_detach

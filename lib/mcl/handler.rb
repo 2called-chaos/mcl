@@ -42,7 +42,13 @@ module Mcl
 
     def register_command *cmds, &b
       handler = self
-      [*cmds].flatten.each do |cmd|
+      cmds = [*cmds].flatten
+
+      # register name
+      app.command_names << ("!" << cmds.join(" !"))
+
+      # register handler
+      cmds.each do |cmd|
         cmd = cmd.to_s
         register_parser(/<([^>]+)> \!(.+)/i) do |res, r|
           if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")

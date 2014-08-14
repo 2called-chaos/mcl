@@ -65,7 +65,9 @@ module Mcl
           async.each{|t| t[:mcl_halting] = true }
 
           # wait 15 seconds for threads to exit
-          Timeout::timeout(15) { async.each(&:join) }
+          begin
+            Timeout::timeout(15) { async.each(&:join) }
+          end
         end
 
         log.debug "[SETUP] Threaded aSync ready..."
@@ -85,6 +87,7 @@ module Mcl
 
       def setup_handlers
         @handlers = []
+        @command_names = []
         files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/handlers/**/*.rb"]
         files.reject{|f| File.basename(f).start_with?("__") }.each{|f| load f }
 

@@ -1,6 +1,6 @@
 module Mcl
   class Application
-    attr_reader :log, :instance, :config, :ram, :handlers, :eman, :server, :scheduler, :acl, :async
+    attr_reader :log, :instance, :config, :ram, :handlers, :eman, :server, :scheduler, :acl, :async, :command_names
 
     include Setup
     include Loop
