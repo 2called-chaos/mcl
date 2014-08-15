@@ -15,7 +15,7 @@ module Mcl
       Setting.seed("snap2date", "snap2date.watched_versions", "")
       Setting.seed("snap2date", "snap2date.cron", "false")
       @cron = Setting.get("snap2date.cron") == "true"
-      @watched_versions = Setting.fetch("snap2date.watched_versions").split(" ")
+      @watched_versions = Setting.fetch("snap2date.watched_versions").split(" ").sort
     end
 
     def setup_checker
@@ -139,12 +139,12 @@ module Mcl
     end
 
     def watch_version ver
-      @watched_versions = @watched_versions + [ver.downcase]
+      @watched_versions = (@watched_versions + [ver.downcase]).sort
       Setting.set("snap2date.watched_versions", @watched_versions.join(" "))
     end
 
     def unwatch_version ver
-      @watched_versions = @watched_versions - [ver.downcase]
+      @watched_versions = (@watched_versions - [ver.downcase]).sort
       Setting.set("snap2date.watched_versions", @watched_versions.join(" "))
     end
 
