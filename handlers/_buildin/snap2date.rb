@@ -188,7 +188,7 @@ module Mcl
         $mcl.server.invoke %{/save-all}
       end
       sleep 3 # wait for server to save data
-      `cd "#{$mcl.server.root}" && tar -cf backup-$(date +"%Y-%m-%d_%H-%M").tar world`
+      `cd "#{$mcl.server.root}" && tar -cf backup-#{$mcl.server.world}-$(date +"%Y-%m-%d_%H-%M").tar #{$mcl.server.world}`
       callback.try(:call)
     end
 

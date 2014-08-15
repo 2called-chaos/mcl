@@ -12,6 +12,11 @@ module Mcl
         $mcl_server_version = $mcl.server.version = r[1]
       end
 
+      # world
+      register_parser(/Preparing level "([a-z0-9_\-]+)"/i) do |res, r|
+        $mcl_server_world = $mcl.server.world = r[1]
+      end
+
       # boot time
       register_parser(/Done \(([\d\.]+)s\)! For help, type "help" or "\?"/i) do |res, r|
         $mcl_server_boottime = $mcl.server.boottime = r[1].to_f
@@ -45,6 +50,41 @@ module Mcl
       register_command :deop, desc: "deops you or a target (no selectors)" do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         $mcl.server.invoke "/deop #{target}"
+      end
+      register_command :world, desc: "swaps a world and restarts the server" do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
+        args = command.split(" ")[1..-1]
+
+        if args[0]
+          if args[0] =~ /\A[0-9a-z_\-]+\z/i
+            if args[0] == $mcl.server.world
+              handler.trawm(player, {text: "[MCLiverse] ", color: "gold"}, {text: "Already on that world!", color: "red"})
+            else
+              handler.trawm(player, {text: "[MCLiverse] ", color: "gold"}, {text: "Swapping to different world...", color: "aqua"})
+
+              # update property file after server is stopped
+              async do
+                sleep 3 while $mcl.server.alive?
+                $mcl.synchronize do
+                  $mcl.log.info "[MCLiverse] Swapping world..."
+                  sleep 1
+                  $mcl.server.update_property "level-name", args[0]
+                end
+              end
+
+              handler.trawm("@a", {text: "[MCLiverse] ", color: "gold"}, {text: "SERVER IS ABOUT TO RESTART!", color: "red"})
+              async do
+                sleep 5
+                $mcl.synchronize { $mcl_reboot = true }
+              end
+            end
+          else
+            handler.trawm(player, {text: "[MCLiverse] ", color: "gold"}, {text: "only a-z 0-9 - and _ are allowed", color: "red"})
+          end
+        else
+          handler.trawm(player, {text: "[MCLiverse] ", color: "gold"}, {text: "current world is: ", color: "aqua"}, {text: "#{$mcl.server.world}", color: "light_purple"})
+          handler.trawm(player, {text: "[MCLiverse] ", color: "gold"}, {text: "known worlds: ", color: "aqua"}, {text: $mcl.server.known_worlds.join(", "), color: "light_purple"})
+        end
       end
       register_command :mclupdate, desc: "updates and reloads MCL via git" do |handler, player, command, target, optparse|
         handler.acl_verify(player)

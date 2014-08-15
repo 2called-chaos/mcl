@@ -1,7 +1,7 @@
 module Mcl
   class Server
     attr_reader :app, :status, :players
-    attr_accessor :version, :boottime
+    attr_accessor :version, :boottime, :world
     include Getters
     include IO
 
@@ -9,6 +9,7 @@ module Mcl
       @app = app
       @version = $mcl_server_version
       @boottime = $mcl_server_boottime
+      @world = $mcl_server_world
       @status = :stopped # booting, running, stalled, stopping
       @players = PlayerManager.new(app, self)
       setup_local
