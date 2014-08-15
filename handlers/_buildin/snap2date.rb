@@ -27,7 +27,7 @@ module Mcl
           Thread.current.kill if Thread.current != Thread.main[:snap2date_checker]
           if @cron && (eman.tick - @tick_checked) >= 250
             @tick_checked = eman.tick
-            (watched_versions - @announced).each do |ver|
+            (watched_versions - @announced).sort.reverse.each do |ver|
               hit = released?(ver)
               $mcl.synchronize do
                 if hit && !@announced.include?(ver)
