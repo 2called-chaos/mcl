@@ -36,6 +36,7 @@ module Mcl
   # application
   "#{ROOT}/lib/mcl".tap do |lib|
     # require "#{lib}/version"
+    require "#{lib}/string_expand_range"
     require "#{lib}/multi_io"
     require "#{lib}/command"
     require "#{lib}/handler"

@@ -85,8 +85,15 @@ module Mcl
         when "watch"
           if args[1]
             args[1..-1].each do |v|
-              handler.watch_version v.downcase
-              handler.tellm(player, {text: "Watching version #{v.downcase}...", color: "reset"})
+              ve = StringExpandRange.expand(v)
+              if ve.count > 20
+                handler.tellm(player, {text: "Expression result in too many items (#{ve.count}>20)...", color: "reset"})
+              else
+                ve.each do |v|
+                  handler.watch_version v.downcase
+                  handler.tellm(player, {text: "Watching version #{v.downcase}...", color: "reset"})
+                end
+              end
             end
           else
             handler.tellm(player, {text: "Define a version to watch!", color: "red"})
@@ -95,8 +102,15 @@ module Mcl
           if args[1]
             args = watched_versions if args[1] == "all"
             args[1..-1].each do |v|
-              handler.unwatch_version v.downcase
-              handler.tellm(player, {text: "Stop watching version #{v.downcase}...", color: "reset"})
+              ve = StringExpandRange.expand(v)
+              if ve.count > 20
+                handler.tellm(player, {text: "Expression result in too many items (#{ve.count}>20)...", color: "reset"})
+              else
+                ve.each do |v|
+                  handler.unwatch_version v.downcase
+                  handler.tellm(player, {text: "Stop watching version #{v.downcase}...", color: "reset"})
+                end
+              end
             end
           else
             handler.tellm(player, {text: "Define a version to watch!", color: "red"})
