@@ -93,6 +93,7 @@ module Mcl
           end
         when "unwatch"
           if args[1]
+            args = watched_versions if args[1] == "all"
             args[1..-1].each do |v|
               handler.unwatch_version v.downcase
               handler.tellm(player, {text: "Stop watching version #{v.downcase}...", color: "reset"})
