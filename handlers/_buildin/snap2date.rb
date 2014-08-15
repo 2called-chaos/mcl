@@ -100,8 +100,8 @@ module Mcl
           end
         when "unwatch"
           if args[1]
-            args = watched_versions if args[1] == "all"
-            args[1..-1].each do |v|
+            vel = args[1] == "all" ? watched_versions : args[1..-1]
+            vel.each do |v|
               ve = StringExpandRange.expand(v)
               if ve.count > 20
                 handler.tellm(player, {text: "Expression result in too many items (#{ve.count}>20)...", color: "reset"})
@@ -113,7 +113,7 @@ module Mcl
               end
             end
           else
-            handler.tellm(player, {text: "Define a version to watch!", color: "red"})
+            handler.tellm(player, {text: "Define a version to unwatch!", color: "red"})
           end
         when "update"
           handler.tellm(player, {text: "Attempting update...", color: "reset"})
@@ -235,7 +235,7 @@ module Mcl
               sleep 1
               $mcl.synchronize { tellm("@a", {text: "SERVER IS ABOUT TO RESTART!", color: "red"}) }
               sleep 5
-              $mcl.synchronize { $mcl.shutdown!("snap2date.update") }
+              $mcl.synchronize { $mcl_reboot = true }
             else
               $mcl.synchronize { tellm("@a", {text: "Updating failed (version outdated)... ", color: "red"}) }
             end
