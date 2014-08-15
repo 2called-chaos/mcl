@@ -27,7 +27,7 @@ module Mcl
           Thread.current.kill if Thread.current != Thread.main[:snap2date_checker]
           if @cron && (eman.tick - @tick_checked) >= 250
             @tick_checked = eman.tick
-            (watched_versions - @announced).sort.reverse.each do |ver|
+            (watched_versions - @announced).uniq.sort.reverse.each do |ver|
               hit = released?(ver)
               $mcl.synchronize do
                 if hit && !@announced.include?(ver)
@@ -139,12 +139,12 @@ module Mcl
     end
 
     def watch_version ver
-      @watched_versions = (@watched_versions + [ver.downcase]).sort
+      @watched_versions = (@watched_versions + [ver.downcase]).uniq.sort
       Setting.set("snap2date.watched_versions", @watched_versions.join(" "))
     end
 
     def unwatch_version ver
-      @watched_versions = (@watched_versions - [ver.downcase]).sort
+      @watched_versions = (@watched_versions - [ver.downcase]).uniq.sort
       Setting.set("snap2date.watched_versions", @watched_versions.join(" "))
     end
 
