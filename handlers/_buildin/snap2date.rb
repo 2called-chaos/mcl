@@ -49,7 +49,7 @@ module Mcl
     end
 
     def setup_parsers
-      register_command :backup, desc: "creates a backup of the world directory" do |handler, player, command, target, optparse|
+      register_command :backup, desc: "creates a backup of the world directory" do |handler, player, command, target, args, optparse|
         handler.tellm(player, {text: "Starting backup!", color: "gold"})
         async do
           handler.backup do
@@ -57,9 +57,8 @@ module Mcl
           end
         end
       end
-      register_command :snap2date, desc: "Automatic snapshot updating (more info with !snap2date)" do |handler, player, command, target, optparse|
+      register_command :snap2date, desc: "Automatic snapshot updating (more info with !snap2date)" do |handler, player, command, target, args, optparse|
         handler.acl_verify(player)
-        args = command.split(" ")[1..-1]
 
         case args[0]
         when "status"

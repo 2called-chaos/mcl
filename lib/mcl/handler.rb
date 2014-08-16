@@ -54,7 +54,7 @@ module Mcl
         register_parser(/<([^>]+)> \!(.+)/i) do |res, r|
           if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
             catch(:handler_exit) do
-              b[handler, r[1], r[2], "#{r[2]}".split(" ")[1].presence || r[1], OptionParser.new]
+              b[handler, r[1], r[2], "#{r[2]}".split(" ")[1].presence || r[1], r[2].split(" ")[1..-1], OptionParser.new]
             end
           end
         end

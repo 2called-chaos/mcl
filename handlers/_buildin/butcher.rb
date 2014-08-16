@@ -8,9 +8,8 @@ module Mcl
     end
 
     def setup_parsers
-      register_command :butcher, desc: "Kill certain groups of entities (more info with !butcher help)" do |handler, player, command, target, optparse|
+      register_command :butcher, desc: "Kill certain groups of entities (more info with !butcher help)" do |handler, player, command, target, args, optparse|
         handler.acl_verify(player)
-        args = command.split(" ")[1..-1]
         comm = args.shift.presence || "hostile"
         radius = args.shift.presence || "50"
         radius = nil if radius == "-"
