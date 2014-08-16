@@ -11,8 +11,8 @@ module Mcl
       register_command :butcher, desc: "Kill certain groups of entities (more info with !butcher help)" do |handler, player, command, target, optparse|
         handler.acl_verify(player)
         args = command.split(" ")[1..-1]
-        comm = args.shift.presence || "mobs"
-        radius = args.shift.presence || "128"
+        comm = args.shift.presence || "hostile"
+        radius = args.shift.presence || "50"
         radius = nil if radius == "-"
         msg = nil
 
