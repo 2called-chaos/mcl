@@ -37,11 +37,11 @@ module Mcl
     # = Commands =
     # ============
     def reg_sel
-      register_command "!sel [clear]", desc: "shows or clears current selection" do |h, p, c, t, a, o|
+      register_command "!sel", desc: "shows or clears (!!sel clear) current selection" do |h, p, c, t, a, o|
         a[0] == "clear" ? h.clear_selection(p) : h.current_selection(p)
       end
 
-      register_command "!set <block>", desc: "fills selection with given block" do |h, p, c, t, a, o|
+      register_command "!set", desc: "fills selection with given block" do |h, p, c, t, a, o|
         h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
