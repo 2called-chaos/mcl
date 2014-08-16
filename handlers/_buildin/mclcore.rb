@@ -32,7 +32,7 @@ module Mcl
         $mcl.server.invoke "#{args.join(" ")}"
       end
       register_command :colors, desc: "shows all available colors" do |handler, player, command, target, args, optparse|
-        chunks = %w[black dark_blue dark_green dark_aqua dark_red dark_purple gold gray dark_gray blue green aqua red light_purple yellow white].in_groups_of(6, false)
+        chunks = %w[black dark_blue dark_green dark_aqua dark_red dark_purple gold gray dark_gray blue green aqua red light_purple yellow white].in_groups_of(4, false)
 
         chunks.each do |cl|
           handler.trawm(player, *cl.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (cl.count-1)).flatten.compact)
