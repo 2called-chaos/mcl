@@ -99,7 +99,8 @@ module Mcl
         unless require_selection(p)
           is, should = a.join(" ").split(">").map(&:strip).reject(&:blank?)
           if is && should && is.is_a?(String) && should.is_a?(String)
-            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{is} replace #{should}}
+            is = is.split(" ")
+            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{is[0]} #{is[1] || "1"} replace #{should}}
           else
             tellm(p, {text: "!!replace <IS:TileName> [IS:dataValue] > <SHOULD:TileName> [SHOULD:dataValue]", color: "yellow"})
           end
