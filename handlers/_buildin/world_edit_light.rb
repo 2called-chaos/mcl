@@ -41,6 +41,10 @@ module Mcl
         a[0] == "clear" ? h.clear_selection(p) : h.current_selection(p)
       end
 
+      register_command "!isel", desc: "indicate current selection with particles" do |h, p, c, t, a, o|
+        h.indicate_selection(p, a)
+      end
+
       register_command "!set", desc: "fills selection with given block" do |h, p, c, t, a, o|
         h.acl_verify(p)
         pram = h.memory(p)
@@ -69,6 +73,10 @@ module Mcl
         h.shift_pos(nil, p, a)
       end
 
+      register_command "!ipos", desc: "indicate pos1 and pos2 with particles" do |h, p, c, t, a, o|
+        h.indicate_pos(nil, p, a)
+      end
+
       [1,2].each do |num|
         register_command "!pos#{num}", desc: "sets pos#{num} to given coords" do |h, p, c, t, a, o|
           h.take_pos(num, p, a)
@@ -76,6 +84,10 @@ module Mcl
 
         register_command "!spos#{num}", desc: "shifts pos#{num} by given values" do |h, p, c, t, a, o|
           h.shift_pos(num, p, a)
+        end
+
+        register_command "!ipos#{num}", desc: "indicate pos#{num} with particles" do |h, p, c, t, a, o|
+          h.indicate_pos(num, p, a)
         end
       end
     end
@@ -268,6 +280,24 @@ module Mcl
       end
     end
 
+    def indicate_pos num, p, a
+      indicate, pram = [], memory(p)
+      [].tap do |indicate|
+        indicate << pram[:pos1] if pram[:pos1] && (num.nil? || num == 1)
+        indicate << pram[:pos2] if pram[:pos2] && (num.nil? || num == 2)
+      end.each{|coord| indicate_coord(p, coord) }
+    end
+
+    def indicate_selection p, a
+      pram = memory(p)
+      # indicate 1/4=8 corners
+    end
+
+    def indicate_coord p, coord
+      coord = coord.join(" ") if coord.respond_to?(:each)
+      $mcl.server.invoke "/particle largeexplode #{coord} 0 0 0 1 10 force"
+    end
+
     def stack_selection p, a
       chunks = a.map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
       pram = memory(p)
@@ -291,3 +321,6 @@ module Mcl
     end
   end
 end
+
+
+# outline selection with particle: /particle barrier ~ ~ ~ 0 0 0 1 1 force
