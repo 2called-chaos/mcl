@@ -218,6 +218,7 @@ module Mcl
           retried = true
           Handler.descendants.replace(oh)
           traw(player, "[MCL] Reload failed, restoring!", color: "red", underlined: true)
+          retry
         end
       end
     end
