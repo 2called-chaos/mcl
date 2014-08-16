@@ -404,7 +404,7 @@ module Mcl
           cube                = sel_explode_selection(p)            # corners
           s1, s2              = cube[:xyz], cube[:XYZ]              # source selection
           p1, p2              = cube[:xyz], cube[:XYZ]              # frame selection
-          seldim              = selection_dimensions                # selection dimensions
+          seldim              = selection_dimensions(p)             # selection dimensions
           dir, axis, operator = stack_coord_shifting(p1, direction) # coord shifting instructions
 
           # stack
