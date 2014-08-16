@@ -212,8 +212,8 @@ module Mcl
     end
 
     def mcl_reload player
+      retried = false
       begin
-        retried = false
         oh = Handler.descendants.dup
         Handler.descendants.clear
         $mcl.eman.setup_parser
