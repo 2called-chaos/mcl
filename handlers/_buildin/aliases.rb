@@ -142,7 +142,7 @@ module Mcl
       # = Miscellaneous =
       # =================
       register_command :idea, desc: "you had an idea!" do |handler, player, command, target, args, optparse|
-        $mcl.server.invoke "/execute #{target} particle lava ~ ~2 ~ 0 0 0 1 1000 force"
+        $mcl.server.invoke "/execute #{target} ~ ~ ~ particle lava ~ ~2 ~ 0 0 0 1 1000 force"
       end
 
       register_command :strike, desc: "strikes you or a target with lightning" do |handler, player, command, target, args, optparse|
