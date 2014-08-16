@@ -201,31 +201,42 @@ module Mcl
       end
     end
 
-    def current_selection p, spos1 = true, spos2 = true, ssize = true
+    def current_selection p, spos1 = true, spos2 = true, ssize = true, scorners = true
       pram = memory(p)
 
+      # pos1
       if coords = pram[:pos1]
         pos1 = {text: coords.join(" "), color: "aqua"}
       else
         pos1 = {text: "unset", color: "gray", italic: true}
       end
 
+      # pos2
       if coords = pram[:pos2]
-        pos2 = {text: coords.join(" "), color: "aqua"}
+        pos2 = {text: coords.join(" "), color: "dark_aqua"}
       else
         pos2 = {text: "unset", color: "gray", italic: true}
       end
 
+      # selection size
       if pram[:pos1] && pram[:pos2]
-        sel_size = {text: "#{selection_size(p)} blocks", color: "aqua", italic: true}
+        sel_size = {text: "#{selection_size(p)} blocks", color: "yellow", italic: true}
       else
         sel_size = {text: "???", color: "gray", italic: true}
+      end
+
+      # corners
+      if pram[:pos1] && pram[:pos2]
+        sel_corners = {text: "#{sel_explode_selection(p).values.uniq.count} corners", color: "gold", italic: true}
+      else
+        sel_corners = {text: "0 corners", color: "gray", italic: true}
       end
 
       a = []
       a << pos1 if spos1
       a << pos2 if spos2
       a << sel_size if ssize
+      a << sel_corners if scorners
 
       tellm(p, *a.zip([spacer] * (a.length-1)).flatten.compact)
     end
@@ -254,7 +265,7 @@ module Mcl
       pram = memory(p)
 
       if chunks.count == 0
-        current_selection(p, num == 1 || num.nil?, num == 2 || num.nil?, false)
+        current_selection(p, num == 1 || num.nil?, num == 2 || num.nil?, false, false)
       elsif chunks.count == 3
         if num.nil?
           pram[:pos1] = pram[:pos2] = chunks
@@ -276,7 +287,7 @@ module Mcl
       pram = memory(p)
 
       if chunks.count == 0
-        current_selection(p, num == 1 || num.nil?, num == 2 || num.nil?, false)
+        current_selection(p, num == 1 || num.nil?, num == 2 || num.nil?, false, false)
       elsif chunks.count == 3
         if num.nil?
           unless require_selection(p)
