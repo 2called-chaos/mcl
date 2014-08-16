@@ -97,10 +97,11 @@ module Mcl
         h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
-          if a.count > 2
-            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift} replace #{a.join(" ")}}
+          is, should = a.join(" ").split(">").map(&:strip).reject(&:blank?)
+          if is && should && is.is_a?(String) && should.is_a?(String)
+            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{is} replace #{should}}
           else
-            tellm(p, {text: "!!replace <TileName> <dataValue> <replaceTileName> [replaceDataValue]", color: "yellow"})
+            tellm(p, {text: "!!replace <IS:TileName> [IS:dataValue] > <SHOULD:TileName> [SHOULD:dataValue]", color: "yellow"})
           end
         end
       end
