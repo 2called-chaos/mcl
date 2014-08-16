@@ -21,41 +21,14 @@ module Mcl
       register_command :cb, desc: "gives you or target a command block" do |handler, player, command, target, args, optparse|
         $mcl.server.invoke "/give #{target} command_block"
       end
-      register_command :strike, desc: "strikes you or a target with lightning" do |handler, player, command, target, args, optparse|
-        $mcl.server.invoke "/execute #{target} ~ ~ ~ summon LightningBolt"
+      register_command :skull, desc: "gives you a player's head" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/give #{player} skull 1 3 {SkullOwner:#{target}}"
+      end
+      register_command :head, desc: "replaces your helm with a player's head" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/replaceitem entity #{player} slot.armor.head skull 1 3 {SkullOwner:#{target}}"
       end
       register_command :boat, desc: "summons a boat above your or target's head" do |handler, player, command, target, args, optparse|
         $mcl.server.invoke "/execute #{target} ~ ~ ~ summon Boat ~ ~2 ~"
-      end
-      register_command :longwaydown, desc: "sends you or target to leet height!" do |handler, player, command, target, args, optparse|
-        $mcl.server.invoke "/execute #{target} ~ ~ ~ tp @p ~ 1337 ~"
-      end
-      register_command :muuhhh, desc: "muuuuhhhhhh....." do |handler, player, command, target, args, optparse|
-        handler.async do
-          handler.acl_verify(player)
-          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
-          sleep 3
-
-          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
-          sleep 0.2
-          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
-          sleep 3
-
-
-          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
-          sleep 0.2
-          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
-          sleep 0.2
-          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
-          sleep 3
-
-          $mcl.synchronize do
-            100.times do
-              handler.cow(target, "~ ~50 ~")
-              sleep 0.05
-            end
-          end
-        end
       end
 
 
@@ -141,6 +114,7 @@ module Mcl
       # = Macros =
       # ==========
       register_command :peace, desc: "sets up a friendly world" do |handler, player, command, target, args, optparse|
+        handler.acl_verify(player)
         $mcl.server.invoke "/difficulty 0"
         $mcl.server.invoke "/gamerule doMobSpawning false"
         $mcl.server.invoke "/gamerule keepInventory true"
@@ -149,16 +123,62 @@ module Mcl
         $mcl.server.invoke "/difficulty 1"
       end
       register_command :diehard, desc: "sets up a unfriendly world" do |handler, player, command, target, args, optparse|
+        handler.acl_verify(player)
         $mcl.server.invoke "/difficulty 3"
         $mcl.server.invoke "/gamerule doMobSpawning true"
         $mcl.server.invoke "/gamerule naturalRegeneration true"
         $mcl.server.invoke "/gamerule keepInventory false"
       end
       register_command :hardcore, desc: "sets up a hardcore world" do |handler, player, command, target, args, optparse|
+        handler.acl_verify(player)
         $mcl.server.invoke "/difficulty 3"
         $mcl.server.invoke "/gamerule doMobSpawning true"
         $mcl.server.invoke "/gamerule naturalRegeneration false"
         $mcl.server.invoke "/gamerule keepInventory false"
+      end
+
+
+      # =================
+      # = Miscellaneous =
+      # =================
+      register_command :idea, desc: "you had an idea!" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/execute #{target} particle lava ~ ~2 ~ 0 0 0 1 1000 force"
+      end
+
+      register_command :strike, desc: "strikes you or a target with lightning" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/execute #{target} ~ ~ ~ summon LightningBolt"
+      end
+
+      register_command :longwaydown, desc: "sends you or target to leet height!" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/execute #{target} ~ ~ ~ tp @p ~ 1337 ~"
+      end
+
+      register_command :muuhhh, desc: "muuuuhhhhhh....." do |handler, player, command, target, args, optparse|
+        handler.async do
+          handler.acl_verify(player)
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 3
+
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 0.2
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 3
+
+
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 0.2
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 0.2
+          $mcl.synchronize{ handler.cow(target, "~ ~50 ~") }
+          sleep 3
+
+          $mcl.synchronize do
+            100.times do
+              handler.cow(target, "~ ~50 ~")
+              sleep 0.05
+            end
+          end
+        end
       end
     end
 
