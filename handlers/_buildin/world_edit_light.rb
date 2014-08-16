@@ -53,6 +53,14 @@ module Mcl
         end
       end
 
+      register_command "!outline", desc: "outlines selection with given block" do |h, p, c, t, a, o|
+        h.acl_verify(p)
+        pram = h.memory(p)
+        unless require_selection(p)
+          $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} outline #{a.join(" ")}}
+        end
+      end
+
       register_command "!insert", desc: "inserts selection at given coords" do |h, p, c, t, a, o|
         h.acl_verify(p)
         h.insert_selection(p, a)
