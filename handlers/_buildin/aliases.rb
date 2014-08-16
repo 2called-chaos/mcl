@@ -116,6 +116,20 @@ module Mcl
         $mcl.server.invoke "/gamerule doDaylightCycle true"
       end
 
+      # =========
+      # = Music =
+      # =========
+      register_command :rec, desc: "plays music discs" do |handler, player, command, target, optparse|
+        handler.acl_verify(player)
+        args = command.split(" ")[1..-1]
+
+        if args[0].present?
+          $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound records.#{args[0]} #{player} ~ ~ ~ 10000 #{args[1] || 1} 1}
+        else
+          handler.trawm(player, {text: "Usage: !rec <track> [pitch]", color: "yellow"})
+          handler.trawm(player, {text: "Tracks: 11 13 blocks cat chirp far mall mellohi stal strad wait ward", color: "yellow"})
+        end
+      end
 
 
       # ==========

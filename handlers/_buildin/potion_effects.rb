@@ -15,6 +15,7 @@ module Mcl
       register_command(:gonzales, desc: "gives you or target 50x speed") {|h, p, c, t, o| h.effect(t, "speed", 6000, 50) }
 
       # jump
+      register_command(:qj, desc: "gives you or target 5x jump boost for 3 seconds") {|h, p, c, t, o| h.effect(t, "jump_boost", 3, 5, true) }
       register_command(:jump, desc: "gives you or target 5x jump boost") {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 5) }
       register_command(:bunny, desc: "gives you or target 10x jump boost") {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 10) }
       register_command(:higher, desc: "gives you or target 20x jump boost") {|h, p, c, t, o| h.effect(t, "jump_boost", 6000, 20) }
