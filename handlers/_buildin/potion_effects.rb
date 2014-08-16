@@ -37,7 +37,7 @@ module Mcl
       register_command(:onehit, desc: "gives you or target 255x strength") {|h, p, c, t, o| h.effect(t, "strength", 6000, 255) }
 
       # regeneration
-      register_command(:qh, desc: "gives you or target 255x regen and saturation for 3 seconds") {|h, p, c, t, o| h.effect(t, "regeneration", 3, 255) ; h.effect(t, "saturation", 3, 255) }
+      register_command(:qh, desc: "gives you or target 255x regen and saturation for 3 seconds") {|h, p, c, t, o| h.effect(t, "regeneration", 3, 255, true) ; h.effect(t, "saturation", 3, 255, true) }
       register_command(:heal, desc: "gives you or target 255x regen for 60s") {|h, p, c, t, o| h.effect(t, "regeneration", 60, 255) }
 
       # resistance
