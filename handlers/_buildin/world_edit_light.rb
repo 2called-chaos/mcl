@@ -444,4 +444,4 @@ end
 # outline selection with particle: /particle barrier ~ ~ ~ 0 0 0 1 1 force
 # move selection: !!move 5n        /clone p p p
 
-!!stack <direction> [amount] [move_selection]
+# !!stack <direction> [amount] [move_selection]
