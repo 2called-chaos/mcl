@@ -205,14 +205,20 @@ module Mcl
 
     def mcl_reload player
       begin
+        retried = false
+        oh = Handler.descendants.dup
         Handler.descendants.clear
         $mcl.eman.setup_parser
         $mcl.setup_handlers
         traw(player, "[MCL] Handlers reloaded (#{$mcl.command_names.count} commands registered)!", color: "green", underlined: true)
       rescue Exception
-        traw(player, "[MCL] Reload failed, rebooting!", color: "red", underlined: true)
-        $mcl.server.ipc_detach
-        $mcl_reboot = true
+        if retried
+          traw(player, "[MCL] Reload failed, FATAL!", color: "red", underlined: true)
+        else
+          retried = true
+          Handler.descendants.replace(oh)
+          traw(player, "[MCL] Reload failed, restoring!", color: "red", underlined: true)
+        end
       end
     end
 
