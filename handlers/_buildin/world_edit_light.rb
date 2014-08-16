@@ -313,7 +313,7 @@ module Mcl
       pram = memory(p)
       unless require_selection(p)
         cod = sel_explode_selection(p)
-        tellm(p, {text: "#{cod.count} corners / #{cod.inspect}", color: "aqua"})
+        tellm(p, {text: "#{cod.values.uniq.count} corners / #{cod.inspect}", color: "aqua"})
       end
     end
 
