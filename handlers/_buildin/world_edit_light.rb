@@ -178,7 +178,7 @@ module Mcl
       end
 
       if coords = pram[:pos2]
-        pos2 = {text: coords.join(" "), color: "blue"}
+        pos2 = {text: coords.join(" "), color: "aqua"}
       else
         pos2 = {text: "unset", color: "gray", italic: true}
       end
@@ -212,7 +212,7 @@ module Mcl
           tellm(p, {text: "#{selection_size(p)} blocks involved", color: "gold"})
         end
       else
-        tellm(p, {text: "!!insert <x> <y> <z>", color: "blue"})
+        tellm(p, {text: "!!insert <x> <y> <z>", color: "aqua"})
       end
     end
 
@@ -234,7 +234,7 @@ module Mcl
         pram[:pos2] = chunks[3..5]
         current_selection(p)
       else
-        tellm(p, {text: "!!pos#{num} [x] [y] [z]#{" [x2] [y2] [z2]" if num.nil?}", color: "blue"})
+        tellm(p, {text: "!!pos#{num} [x] [y] [z]#{" [x2] [y2] [z2]" if num.nil?}", color: "aqua"})
       end
     end
 
@@ -264,7 +264,7 @@ module Mcl
           current_selection(p)
         end
       else
-        tellm(p, {text: "!!spos#{num} [x] [y] [z]#{" [x2] [y2] [z2]" if num.nil?}", color: "blue"})
+        tellm(p, {text: "!!spos#{num} [x] [y] [z]#{" [x2] [y2] [z2]" if num.nil?}", color: "aqua"})
       end
     end
 
@@ -273,7 +273,7 @@ module Mcl
       pram = memory(p)
 
       if chunks.count == 0
-        tellm(p, {text: "!!stack <direction> [amount] [move_selection]", color: "blue"})
+        tellm(p, {text: "!!stack <direction> [amount] [move_selection]", color: "aqua"})
       else
         unless require_selection(p)
           direction = chunks.shift
@@ -285,7 +285,7 @@ module Mcl
           c1, c2 = p1, p2
           dirmap = stack_coord_shifting(p1, direction)
 
-          tellm(p, {text: "#{p1.join(",")} / #{p2.join(",")} / #{dirmap[0]} (#{dirmap[2]}#{dirmap[1]})", color: "blue"})
+          tellm(p, {text: "#{p1.join(",")} / #{p2.join(",")} / #{dirmap[0]} (#{dirmap[2]}#{dirmap[1]})", color: "aqua"})
         end
       end
     end
