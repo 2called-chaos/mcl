@@ -49,7 +49,11 @@ module Mcl
         h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
-          $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.join(" ")}}
+          if a.count > 0
+            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} replace #{a.join(" ")}}
+          else
+            tellm(p, {text: "!!set <TileName> [dataValue] [dataTag]", color: "yellow"})
+          end
         end
       end
 
@@ -57,7 +61,11 @@ module Mcl
         h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
-          $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} outline #{a.join(" ")}}
+          if a.count > 2
+            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} outline #{a.join(" ")}}
+          else
+            tellm(p, {text: "!!outline <TileName> [dataValue] [dataTag]", color: "yellow"})
+          end
         end
       end
 
@@ -65,7 +73,11 @@ module Mcl
         h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
-          $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} hollow #{a.join(" ")}}
+          if a.count > 2
+            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} hollow #{a.join(" ")}}
+          else
+            tellm(p, {text: "!!hollow <TileName> [dataValue] [dataTag]", color: "yellow"})
+          end
         end
       end
 
@@ -73,7 +85,23 @@ module Mcl
         h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
-          $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} keep #{a.join(" ")}}
+          if a.count > 0
+            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} keep #{a.join(" ")}}
+          else
+            tellm(p, {text: "!!fill <TileName> [dataValue] [dataTag]", color: "yellow"})
+          end
+        end
+      end
+
+      register_command "!replace", desc: "replace b1 in selection with given b2" do |h, p, c, t, a, o|
+        h.acl_verify(p)
+        pram = h.memory(p)
+        unless require_selection(p)
+          if a.count > 2
+            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift} replace #{a.join(" ")}}
+          else
+            tellm(p, {text: "!!replace <TileName> <dataValue> <replaceTileName> [replaceDataValue]", color: "yellow"})
+          end
         end
       end
 
