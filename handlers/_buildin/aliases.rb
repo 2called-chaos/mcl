@@ -119,7 +119,7 @@ module Mcl
       # =========
       # = Music =
       # =========
-      register_command :rec, desc: "plays music discs" do |handler, player, command, target, args, args, optparse|
+      register_command :rec, desc: "plays music discs" do |handler, player, command, target, args, optparse|
         handler.acl_verify(player)
 
         if args[0].present?
