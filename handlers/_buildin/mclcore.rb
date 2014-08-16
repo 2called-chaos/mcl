@@ -34,6 +34,7 @@ module Mcl
       register_command :version, desc: "shows you the MC and MCL version" do |handler, player, command, target, args, optparse|
         handler.trawm(player, {text: "[MC] ", color: "gold"}, {text: "#{$mcl.server.version || "unknown"}", color: "light_purple"}, {text: " (booted in #{($mcl.server.boottime||-1).round(2)}s)", color: "reset"})
         handler.trawm(player, {text: "[MCL] ", color: "gold"}, {text: "git: ", color: "light_purple"}, {text: "#{handler.git_message}", color: "reset"})
+        handler.trawm(player, {text: "[RB] ", color: "gold"}, {text: RUBY_DESCRIPTION, color: "reset"})
       end
       register_command :stop, desc: "stops MCL and with it the server (will restart when daemonized)" do |handler, player, command, target, args, optparse|
         handler.acl_verify(player)
