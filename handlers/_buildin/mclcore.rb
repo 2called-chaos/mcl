@@ -32,14 +32,12 @@ module Mcl
         $mcl.server.invoke "#{args.join(" ")}"
       end
       register_command :colors, desc: "shows all available colors" do |handler, player, command, target, args, optparse|
-        c1 = %w[black dark_blue dark_green dark_aqua dark_red dark_purple gold]
-        c2 = %w[gray dark_gray blue green aqua red light_purple yellow white]
+        chunks = %w[black dark_blue dark_green dark_aqua dark_red dark_purple gold gray dark_gray blue green aqua red light_purple yellow white].in_groups_of(6, false)
 
-        cr1 = c1.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (c1.count-1)).compact
-        cr2 = c2.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (c2.count-1)).compact
-
-        handler.trawm(player, *cr1)
-        handler.trawm(player, *cr2)
+        chunks.each do |cl|
+          cr = cl.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (cl.count-1)).compact
+          handler.trawm(player, *cr)
+        end
       end
       register_command :version, desc: "shows you the MC and MCL version" do |handler, player, command, target, args, optparse|
         handler.trawm(player, {text: "[MC] ", color: "gold"}, {text: "#{$mcl.server.version || "unknown"}", color: "light_purple"}, {text: " (booted in #{($mcl.server.boottime||-1).round(2)}s)", color: "reset"})
