@@ -432,9 +432,9 @@ module Mcl
 
     def shift_frame_selection p, seldim, axis, operator
       case axis
-        when :x then [p[0].send(operator, seldim[0] + 1), p[1], p[2]]
-        when :y then [p[0], p[1].send(operator, seldim[1] + 1), p[2]]
-        when :z then [p[0], p[1], p[2].send(operator, seldim[2] + 1)]
+        when :x then [p[0].send(operator, seldim[0]), p[1], p[2]]
+        when :y then [p[0], p[1].send(operator, seldim[1]), p[2]]
+        when :z then [p[0], p[1], p[2].send(operator, seldim[2])]
       end
     end
   end
