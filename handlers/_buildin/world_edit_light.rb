@@ -323,8 +323,7 @@ module Mcl
     def indicate_selection p, a
       pram = memory(p)
       unless require_selection(p)
-        cod = sel_explode_selection(p)
-        tellm(p, {text: "#{cod.values.uniq.count} corners / #{cod.inspect}", color: "aqua"})
+        sel_explode_selection(p).values.uniq.each{|coord| indicate_coord(p, coord) }
       end
     end
 
