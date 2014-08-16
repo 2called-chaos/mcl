@@ -391,20 +391,50 @@ module Mcl
       pram = memory(p)
 
       if chunks.count == 0
-        tellm(p, {text: "!!stack <direction> [amount] [move_selection]", color: "aqua"})
+        tellm(p, {text: "!!stack <direction> [amount] [shift_selection] [masked|filtered <TileName>]", color: "aqua"})
       else
         unless require_selection(p)
           direction = chunks.shift
-          amount = chunks.any? ? [chunks.shift.to_i, 1].max : 1
-          shift = chunks.any? ? strbool(chunks.shift) : false
+          amount    = chunks.any? ? [chunks.shift.to_i, 1].max : 1
+          shift_sel = chunks.any? ? strbool(chunks.shift) : false
+          mode      = chunks.any? ? chunks.shift : "replace"
+          tile_name = chunks.shift
 
-          # sorted position
-          p1, p2 = lg_coord(pram[:pos1], pram[:pos2])
-          c1, c2 = p1, p2
-          dirmap = stack_coord_shifting(p1, direction)
+          # prepare
+          cube                = sel_explode_selection(p)            # corners
+          s1, s2              = cube[:xyz], cube[:XYZ]              # source selection
+          p1, p2              = cube[:xyz], cube[:XYZ]              # frame selection
+          seldim              = selection_dimensions                # selection dimensions
+          dir, axis, operator = stack_coord_shifting(p1, direction) # coord shifting instructions
 
-          tellm(p, {text: "#{p1.join(",")} / #{p2.join(",")} / #{dirmap[0]} (#{dirmap[2]}#{dirmap[1]})", color: "aqua"})
+          # stack
+          amount.times do
+            # shift frame position
+            p1 = shift_frame_selection(p1, seldim, axis, operator)
+            p1 = shift_frame_selection(p2, seldim, axis, operator)
+
+            # clone source => working
+            $mcl.server.invoke %{/execute #{p} ~ ~ ~ /clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}
+
+            # shift source position
+            s1, s2 = p1, p2
+          end
+
+          # move selection
+          if shift_sel
+            pram[:pos1] = p1
+            pram[:pos2] = p2
+            current_selection(p, true, true, false, false)
+          end
         end
+      end
+    end
+
+    def shift_frame_selection p, seldim, axis, operator
+      case axis
+        when :x then [p[0].send(operator, seldim[0] + 1), p[1], p[2]]
+        when :y then [p[0], p[1].send(operator, seldim[1] + 1), p[2]]
+        when :z then [p[0], p[1], p[2].send(operator, seldim[2] + 1)]
       end
     end
   end
@@ -412,3 +442,6 @@ end
 
 
 # outline selection with particle: /particle barrier ~ ~ ~ 0 0 0 1 1 force
+# move selection: !!move 5n        /clone p p p
+
+!!stack <direction> [amount] [move_selection]
