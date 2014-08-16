@@ -15,6 +15,12 @@ module Mcl
       register_command "iamlegend" do |handler, player, command, target, args, optparse|
         $mcl.server.msg target, "dude, #{command} hasn't been implemented yet"
       end
+      register_command :balls, desc: "gives you or target 16 ender perls" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/give #{target} ender_pearl 16"
+      end
+      register_command :cb, desc: "gives you or target a command block" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/give #{target} command_block"
+      end
       register_command :strike, desc: "strikes you or a target with lightning" do |handler, player, command, target, args, optparse|
         $mcl.server.invoke "/execute #{target} ~ ~ ~ summon LightningBolt"
       end
