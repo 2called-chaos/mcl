@@ -35,8 +35,8 @@ module Mcl
         c1 = %w[black dark_blue dark_green dark_aqua dark_red dark_purple gold]
         c2 = %w[gray dark_gray blue green aqua red light_purple yellow white]
 
-        cr1 = c1.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (c1.count-1))
-        cr2 = c2.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (c2.count-1))
+        cr1 = c1.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (c1.count-1)).compact
+        cr2 = c2.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (c2.count-1)).compact
 
         handler.trawm(player, *cr1)
         handler.trawm(player, *cr2)
