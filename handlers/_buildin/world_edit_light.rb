@@ -411,7 +411,7 @@ module Mcl
           amount.times do
             # shift frame position
             p1 = shift_frame_selection(p1, seldim, axis, operator)
-            p1 = shift_frame_selection(p2, seldim, axis, operator)
+            p2 = shift_frame_selection(p2, seldim, axis, operator)
 
             # clone source => working
             $mcl.server.invoke %{/execute #{p} ~ ~ ~ /clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}
