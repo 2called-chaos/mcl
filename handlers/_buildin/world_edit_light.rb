@@ -194,7 +194,7 @@ module Mcl
       a << pos2 if spos2
       a << sel_size if ssize
 
-      tellm(p, *a.zip([spacer] * a.length))
+      tellm(p, *a.zip([spacer] * (a.length-1)).flatten.compact))
     end
 
     def sel_insert p, pos
