@@ -35,8 +35,7 @@ module Mcl
         chunks = %w[black dark_blue dark_green dark_aqua dark_red dark_purple gold gray dark_gray blue green aqua red light_purple yellow white].in_groups_of(6, false)
 
         chunks.each do |cl|
-          cr = cl.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (cl.count-1)).compact
-          handler.trawm(player, *cr)
+          handler.trawm(player, *cl.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (cl.count-1)).flatten.compact)
         end
       end
       register_command :version, desc: "shows you the MC and MCL version" do |handler, player, command, target, args, optparse|
