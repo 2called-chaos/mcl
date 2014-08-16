@@ -61,7 +61,7 @@ module Mcl
         h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
-          if a.count > 2
+          if a.count > 0
             $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} outline #{a.join(" ")}}
           else
             tellm(p, {text: "!!outline <TileName> [dataValue] [dataTag]", color: "yellow"})
@@ -73,7 +73,7 @@ module Mcl
         h.acl_verify(p)
         pram = h.memory(p)
         unless require_selection(p)
-          if a.count > 2
+          if a.count > 0
             $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} hollow #{a.join(" ")}}
           else
             tellm(p, {text: "!!hollow <TileName> [dataValue] [dataTag]", color: "yellow"})
