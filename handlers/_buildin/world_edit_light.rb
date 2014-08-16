@@ -139,6 +139,27 @@ module Mcl
       end
     end
 
+    def sel_explode_selection p
+      pram = memory(p)
+      corners = %w[xyz Xyz xYz XYz xyZ XyZ xYZ XYZ]
+      x = [pram[:pos1][0], pram[:pos2][0]].sort
+      y = [pram[:pos1][1], pram[:pos2][1]].sort
+      z = [pram[:pos1][2], pram[:pos2][2]].sort
+
+      corners.each_with_object({}) do |corner, res|
+        res[corner.to_sym] = corner.each_char.map do |c|
+          case c
+            when "x" then x[0]
+            when "X" then x[1]
+            when "y" then y[0]
+            when "Y" then y[1]
+            when "z" then z[0]
+            when "Z" then z[1]
+          end
+        end
+      end
+    end
+
 
     # ============
     # = Handlers =
@@ -290,7 +311,10 @@ module Mcl
 
     def indicate_selection p, a
       pram = memory(p)
-      # indicate 1/4=8 corners
+      unless require_selection(p)
+        cod = sel_explode_selection(p)
+        tellm(p, {text: "#{cod.count} corners / #{cod.inspect}", color: "aqua"})
+      end
     end
 
     def indicate_coord p, coord
