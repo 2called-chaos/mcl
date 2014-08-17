@@ -146,12 +146,16 @@ module Mcl
         page_contents = gcoms.in_groups_of(7, false)
         pages = (gcoms.count/7.0).ceil
 
-        handler.trawm(player, {text: "[help] ", color: "gold"}, {text: "--- Showing page #{page}/#{pages} (#{gcoms.count} commands) ---", color: "aqua"})
-        page_contents[page-1].each do |com|
-          desc = com[1] ? {text: " #{com[1]}", color: "reset"} : {text: " no description", color: "gray", italic: true}
-          handler.trawm(player, {text: "[help] ", color: "gold"}, {text: com[0], color: "light_purple"}, desc)
+        if gcoms.any?
+          handler.trawm(player, {text: "[help] ", color: "gold"}, {text: "--- Showing page #{page}/#{pages} (#{gcoms.count} commands) ---", color: "aqua"})
+          page_contents[page-1].each do |com|
+            desc = com[1] ? {text: " #{com[1]}", color: "reset"} : {text: " no description", color: "gray", italic: true}
+            handler.trawm(player, {text: "[help] ", color: "gold"}, {text: com[0], color: "light_purple"}, desc)
+          end
+          handler.trawm(player, {text: "[help] ", color: "gold"}, {text: "Use ", color: "aqua"}, {text: "!help [str] <page>", color: "light_purple"}, {text: " to [filter] and/or <paginate>.", color: "aqua"})
+        else
+          handler.trawm(player, {text: "[help] ", color: "gold"}, {text: "No commands found for that filter/page!", color: "red"})
         end
-        handler.trawm(player, {text: "[help] ", color: "gold"}, {text: "Use ", color: "aqua"}, {text: "!help [str] <page>", color: "light_purple"}, {text: " to [filter] and/or <paginate>.", color: "aqua"})
       end
 
 
