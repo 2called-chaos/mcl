@@ -69,7 +69,7 @@ module Mcl
 
       # filter
       if args[0] && args[0].to_i == 0
-        sfiles = sfiles.select{|c, _| c.to_s =~ /#{args[0]}/ }
+        sfiles = sfiles.select{|c| c.to_s =~ /#{args[0]}/ }
         page = 1
         page = (args[1] || 1).to_i
       else
@@ -82,10 +82,7 @@ module Mcl
 
       if sfiles.any?
         tellm(player, {text: "--- Showing page #{page}/#{pages} (#{sfiles.count} schematics) ---", color: "aqua"})
-        page_contents[page-1].each do |com|
-          desc = com[1] ? {text: " #{com[1]}", color: "reset"} : {text: " no description", color: "gray", italic: true}
-          tellm(player, {text: com[0], color: "light_purple"}, desc)
-        end
+        page_contents[page-1].each {|schem| tellm(player, {text: com[0], color: "reset"}) }
         tellm(player, {text: "Use ", color: "aqua"}, {text: "!schembu list [str] <page>", color: "light_purple"}, {text: " to [filter] and/or <paginate>.", color: "aqua"})
       else
         tellm(player, {text: "No schematics found for that filter/page!", color: "red"})
