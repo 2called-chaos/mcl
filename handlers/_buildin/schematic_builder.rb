@@ -63,7 +63,7 @@ module Mcl
         pram = memory(p)
 
         case args[0]
-        when "book", "add", "list", "load", "rotate", "masked", "pos", "status", "reset", "build"
+        when "book", "add", "list", "load", "rotate", "air", "pos", "status", "reset", "build"
           handler.send("com_#{args[0]}", player, args[1..-1])
         else
           handler.tellm(player, {text: "book", color: "gold"}, {text: " gives you a book with more info", color: "reset"})
@@ -71,7 +71,7 @@ module Mcl
           handler.tellm(player, {text: "list [filter]", color: "gold"}, {text: " list available schematics", color: "reset"})
           handler.tellm(player, {text: "load <name>", color: "gold"}, {text: " load schematic from library", color: "reset"})
           # handler.tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic", color: "reset"})
-          handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: "copy air yes or no", color: "reset"})
+          handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no", color: "reset"})
           # handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
           # handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
           # handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
@@ -153,7 +153,7 @@ module Mcl
       unless require_schematic(player)
         pram = memory(player)
         if args[0]
-          tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+          pram[:current_schematic][:air] = strbool(args[0])
         end
         tellm(player, {text: "Air blocks will be ", color: "yellow"}, (pram[:current_schematic][:air] ? {text: "COPIED", color: "green"} : {text: "IGNORED", color: "red"}))
       end
