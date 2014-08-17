@@ -30,7 +30,7 @@ module Mcl
     # ===========
     # = Helpers =
     # ===========
-    def schematics
+    def available_schematics
       Dir["#{$mcl.server.root}/schematics/*.schematic"].map{|f| File.basename(f, ".schematic") }
     end
 
@@ -65,7 +65,7 @@ module Mcl
 
     def com_list player, args
       acl_verify(player)
-      sfiles = $mcl.command_names.to_a
+      sfiles = available_schematics
 
       # filter
       if args[0] && args[0].to_i == 0
