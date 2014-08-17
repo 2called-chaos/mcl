@@ -34,6 +34,16 @@ module Mcl
       Dir["#{$mcl.server.root}/schematics/*.schematic"].map{|f| File.basename(f, ".schematic") }
     end
 
+    def require_schematic p
+      pram = memory(p)
+      if pram[:current_schematic]
+        return false
+      else
+        tellm(p, {text: "No schematic loaded yet!", color: "red"})
+        return true
+      end
+    end
+
     # ============
     # = Commands =
     # ============
@@ -43,9 +53,10 @@ module Mcl
         pram = memory(p)
 
         case args[0]
-        when "add", "list", "load", "rotate", "masked", "pos", "status", "reset", "build"
+        when "book", "add", "list", "load", "rotate", "masked", "pos", "status", "reset", "build"
           handler.send("com_#{args[0]}", player, args[1..-1])
         else
+          handler.tellm(player, {text: "book", color: "gold"}, {text: " gives you a book with more info", color: "reset"})
           handler.tellm(player, {text: "add <name> <url>", color: "gold"}, {text: " add a remote schematic", color: "reset"})
           handler.tellm(player, {text: "list [filter]", color: "gold"}, {text: " list available schematics", color: "reset"})
           handler.tellm(player, {text: "load <name>", color: "gold"}, {text: " load schematic from library", color: "reset"})
@@ -57,6 +68,12 @@ module Mcl
           handler.tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
         end
       end
+    end
+
+    def com_book player, args
+      cmd = "/give #{player} written_book 1 0 "
+      cmd << %q{/give @a  {pages:["{\"text\":\"\",\"extra\":[{\"text\":\"ScheBu\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"Schematic Builder\n\",\"color\":\"red\"},{\"text\":\"-------------------\n\"},{\"text\":\"P2: Important Notes\n\"},{\"text\":\"P3: Process of building\n\"},{\"text\":\"P+: Command help\n\"}]}","{\"text\":\"\",\"extra\":[{\"text\":\"Important Notes\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"-------------------\n\"},{\"text\":\"ScheBu will read the schematic, convert it to a block matrix and send a setblock command to the server console, FOR EACH BLOCK! This is obviously very imperformant and you shouldn't use that for large schematics.\"}]}","{\"text\":\"\",\"extra\":[{\"text\":\"Important Notes\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"-------------------\n\"},{\"text\":\"MCL, which is the parent of ScheBu, will be unresponsive during builds.\"}]}","{\"text\":\"\",\"extra\":[{\"text\":\"Process\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"-------------------\n\"},{\"text\":\"When you load a schematic, we just check if it exists and contains valid NBT data. We also extract the dimensions of the schematic. All settings you change (rotation, etc.) will not be calculated until you issue the build command.\"}]}","{\"text\":\"\",\"extra\":[{\"text\":\"Process\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"-------------------\n\"},{\"text\":\"Upon build the schematic content will be loaded, converted, processed and then build. You cannot build 2 things at the same time!\"}]}"],title:"ScheBu Infosheet",author:ScheBu}}
+      $mcl.server.invoke(cmd)
     end
 
     def com_add player, args
@@ -94,7 +111,9 @@ module Mcl
     end
 
     def com_rotate player, args
-      tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+      unless require_schematic(player)
+        tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+      end
     end
 
     def com_masked player, args
@@ -122,3 +141,15 @@ end
 __END__
 
 r = SchematicBo2sConverter.convert(File.open("/Users/chaos/Downloads/town-hall.schematic"))
+
+
+"{\"text\":\"\",\"extra\":[{\"text\":\"ScheBu\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"Schematic Builder\n\",\"color\":\"red\"},{\"text\":\"-------------------\n\"},{\"text\":\"P2: Important Notes\n\"},{\"text\":\"P3: Process of building\n\"},{\"text\":\"P+: Command help\n\"}]}"
+"{\"text\":\"\",\"extra\":[{\"text\":\"Important Notes\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"-------------------\n\"},{\"text\":\"ScheBu will read the schematic, convert it to a block matrix and send a setblock command to the server console, FOR EACH BLOCK! This is obviously very imperformant and you shouldn't use that for large schematics.\"}]}"
+"{\"text\":\"\",\"extra\":[{\"text\":\"Important Notes\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"-------------------\n\"},{\"text\":\"MCL, which is the parent of ScheBu, will be unresponsive during builds.\"}]}"
+"{\"text\":\"\",\"extra\":[{\"text\":\"Process\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"-------------------\n\"},{\"text\":\"When you load a schematic, we just check if it exists and contains valid NBT data. We also extract the dimensions of the schematic. All settings you change (rotation, etc.) will not be calculated until you issue the build command.\"}]}"
+"{\"text\":\"\",\"extra\":[{\"text\":\"Process\n\",\"color\":\"red\",\"bold\":\"true\"},{\"text\":\"-------------------\n\"},{\"text\":\"Upon build the schematic content will be loaded, converted, processed and then build. You cannot build 2 things at the same time!\"}]}"
+
+
+
+/give @a written_book 1 0 {pages:[],title:"ScheBu Infosheet",author:ScheBu}
+
