@@ -5,6 +5,7 @@ gem 'rake'
 gem 'pry'
 gem 'daemons'
 gem 'file-tail'
+gem 'nbtfile'
 
 # database
 gem 'activerecord'

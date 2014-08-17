@@ -33,6 +33,9 @@ module Mcl
   # gems
   require "active_record"
 
+  # 3rd party
+  require "#{ROOT}/lib/massive_craft/s2b"
+
   # application
   "#{ROOT}/lib/mcl".tap do |lib|
     # require "#{lib}/version"
