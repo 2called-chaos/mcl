@@ -60,7 +60,7 @@ module Mcl
     def setup_parsers
       register_command :schebu, desc: "Schematic Builder (more info with !schebu)" do |handler, player, command, target, args, optparse|
         handler.acl_verify(player)
-        pram = memory(p)
+        pram = memory(player)
 
         case args[0]
         when "book", "add", "list", "load", "rotate", "air", "pos", "status", "reset", "build"
@@ -119,7 +119,7 @@ module Mcl
     def com_load player, args
       sname = args[0]
       if available_schematics.include?(sname)
-        pram = memory(p)
+        pram = memory(player)
         begin
           schematic = load_schematic(sname)
           new_schematic = {}.tap do |r|
