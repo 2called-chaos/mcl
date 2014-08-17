@@ -44,6 +44,16 @@ module Mcl
       end
     end
 
+    def load_schematic_as_bo2s name
+      file = "#{$mcl.server.root}/schematics/#{name}.schematic"
+      SchematicBo2sConverter.convert(File.open(file))
+    end
+
+    def load_schematic name
+      file = "#{$mcl.server.root}/schematics/#{name}.schematic"
+      SchematicBo2sConverter.open(File.open(file))
+    end
+
     # ============
     # = Commands =
     # ============
@@ -57,15 +67,15 @@ module Mcl
           handler.send("com_#{args[0]}", player, args[1..-1])
         else
           handler.tellm(player, {text: "book", color: "gold"}, {text: " gives you a book with more info", color: "reset"})
-          handler.tellm(player, {text: "add <name> <url>", color: "gold"}, {text: " add a remote schematic", color: "reset"})
+          # handler.tellm(player, {text: "add <name> <url>", color: "gold"}, {text: " add a remote schematic", color: "reset"})
           handler.tellm(player, {text: "list [filter]", color: "gold"}, {text: " list available schematics", color: "reset"})
           handler.tellm(player, {text: "load <name>", color: "gold"}, {text: " load schematic from library", color: "reset"})
-          handler.tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic", color: "reset"})
-          handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: "copy air yes or no", color: "reset"})
-          handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
-          handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
-          handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
-          handler.tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
+          # handler.tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic", color: "reset"})
+          # handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: "copy air yes or no", color: "reset"})
+          # handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
+          # handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
+          # handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
+          # handler.tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
         end
       end
     end
@@ -107,7 +117,30 @@ module Mcl
     end
 
     def com_load player, args
-      tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+      sname = args[0]
+      if available_schematics.include?(sname)
+        pram = memory(p)
+        begin
+          schematic = load_schematic(sname)
+          new_schematic = {}.tap do |r|
+            r[:name] = sname
+            r[:x] = schematic["Width"]
+            r[:y] = schematic["Height"]
+            r[:z] = schematic["Length"]
+            r[:dimensions] = [r[:x], r[:y], r[:z]]
+            r[:rotation] = 0
+            r[:air] = true
+            r[:pos] = pram[:current_schematic].try(:[], :pos)
+          end
+          pram[:current_schematic] = new_schematic
+          tellm(player, {text: "Schematic loaded ", color: "green"}, {text: "(#{new_schematic[:dimensions].join("x")} = #{new_schematic[:dimensions].inject(:*)})", color: "reset"})
+        rescue
+          tellm(player, {text: "Error loading schematic!", color: "red"})
+          tellm(player, {text: "#{$!.message}", color: "red"})
+        end
+      else
+        tellm(player, {text: "Schematic couldn't be found!", color: "red"})
+      end
     end
 
     def com_rotate player, args

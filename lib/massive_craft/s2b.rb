@@ -26,6 +26,10 @@ class SchematicBo2sConverter
     new(srcio).convert
   end
 
+  def self.open srcio
+    NBTFile.load(srcio)[1]
+  end
+
   def initialize srcio
     @srcio = srcio
   end
