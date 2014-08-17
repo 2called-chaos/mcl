@@ -71,7 +71,7 @@ module Mcl
           handler.tellm(player, {text: "list [filter]", color: "gold"}, {text: " list available schematics", color: "reset"})
           handler.tellm(player, {text: "load <name>", color: "gold"}, {text: " load schematic from library", color: "reset"})
           # handler.tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic", color: "reset"})
-          # handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: "copy air yes or no", color: "reset"})
+          handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: "copy air yes or no", color: "reset"})
           # handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
           # handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
           # handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
@@ -149,8 +149,14 @@ module Mcl
       end
     end
 
-    def com_masked player, args
-      tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+    def com_air player, args
+      unless require_schematic(player)
+        pram = memory(player)
+        if args[0]
+          tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+        end
+        tellm(player, {text: "Air blocks will be ", color: "yellow"}, (pram[:current_schematic][:air] ? {text: "COPIED", color: "green"} : {text: "IGNORED", color: "red"}))
+      end
     end
 
     def com_pos player, args
