@@ -186,7 +186,7 @@ module Mcl
 
         if args.count == 0 || args.count == 3
           pos = pram[:current_schematic][:pos]
-          indicate_coord(pos) if pos
+          indicate_coord(player, pos) if pos
           tellm(player, {text: "Insertion point ", color: "yellow"}, (pos ? {text: pos.join(" "), color: "green"} : {text: "unset", color: "gray", italic: true}))
         end
       end
