@@ -175,7 +175,7 @@ module Mcl
       unless require_schematic(player)
         pram = memory(player)
         if args.count == 3
-          pram[:current_schematic][:pos] = args
+          pram[:current_schematic][:pos] = args.map(&:to_i)
         elsif args.count > 0
           tellm(player, {text: "!schebu pos <x> <y> <z>", color: "red"})
         end
@@ -193,7 +193,7 @@ module Mcl
         schem = pram[:current_schematic]
 
         if p1 = schem[:pos]
-          p2 = shift_coords(p1, schem[:dimensions].map(&:to_i))
+          p2 = shift_coords(p1, schem[:dimensions])
           indicate_coord(player, p1, args[0])
           indicate_coord(player, p2, args[0])
         else
