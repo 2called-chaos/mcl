@@ -259,7 +259,7 @@ module Mcl
           tellm(player, {text: "Ins.Point: ", color: "yellow"}, {text: "unset", color: "gray", italic: true})
         end
         if schem[:building]
-          size = schem[:size]
+          size = schem[:build_size]
           proc = schem[:blocks_processed]
           perc = ((proc / size.to_f) * 100).round(2)
           tellm(player, {text: "BUILDING: ", color: "green"}, {text: proc, color: "yellow"}, spacer, {text: size, color: "gold"}, {text: " (#{perc}%)", color: "reset"})
@@ -279,6 +279,7 @@ module Mcl
         schem[:blocks_placed] = 0
         schem[:blocks_ignored] = 0
         schem[:blocks_processed] = 0
+        schem[:build_size] = schem[:size]
       end
     end
 
@@ -305,6 +306,7 @@ module Mcl
 
               # Announce build
               $mcl.synchronize do
+                schem[:build_size] = schemdat.count
                 tellm(player,
                   {text: "Build started (stop with ", color: "yellow"},
                   {
@@ -319,8 +321,7 @@ module Mcl
 
               # Actual build
               realtime = Benchmark.realtime do
-                # tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
-                while schem[:blocks_processed] <= schem[:size]
+                until schemdat.empty?
                   raise "canceled" if schem[:build_canceled]
                   raise "MCL is shutting down" if Thread.current[:mcl_halting]
                   raise "IPC down" unless $mcl.server.alive?
@@ -329,13 +330,16 @@ module Mcl
                   $mcl.synchronize do
                     placed = 0
 
-                    while placed <= 123
-                      entry = bo2s_map(schemdat.shift)
-                      skip = !schem[:air] && entry[:block_id] == 0
+                    while placed <= 123 && !schemdat.empty?
+                      ci = schemdat.shift
+                      next if ci.blank?
+                      entry = bo2s_map(ci)
 
-                      if skip
+                      if !schem[:air] && entry[:block_id] == 0 # essentially unused by now
                         schem[:blocks_ignored] += 1
                       else
+                        spos = shift_coords(schem[:pos], entry[:coord])
+                        $mcl.server.invoke %{/setblock #{spos.join(" ")} #{entry[:tile_name]} #{entry[:data_value]}}
                         placed += 1
                         schem[:blocks_placed] += 1
                       end
@@ -347,12 +351,13 @@ module Mcl
                 end
               end
               $mcl.synchronize do
-                tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:blocks_ignored]} ignored", color: "yellow"})
-                tellm(player, {text: "Build finished in #{realtime.round(2)}s (#{(schem[:size] / realtime).round(0)} blocks/s)!", color: "green"})
+                # tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:blocks_ignored]} ignored", color: "yellow"})
+                tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:size] - schem[:blocks_placed]} ignored", color: "yellow"})
+                tellm(player, {text: "Build finished in #{realtime.round(2)}s (#{(schem[:build_size] / realtime).round(0)} blocks/s)!", color: "green"})
               end
             rescue
               $mcl.synchronize do
-                tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:blocks_ignored]} ignored", color: "yellow"})
+                tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:size] - schem[:blocks_placed]} ignored", color: "yellow"})
                 tellm(player, {text: "Build failed (#{$!.message})!", color: "red"})
               end
             ensure
