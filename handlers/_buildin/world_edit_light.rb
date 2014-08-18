@@ -371,19 +371,14 @@ module Mcl
       [].tap do |indicate|
         indicate << pram[:pos1] if pram[:pos1] && (num.nil? || num == 1)
         indicate << pram[:pos2] if pram[:pos2] && (num.nil? || num == 2)
-      end.each{|coord| indicate_coord(p, coord) }
+      end.each{|coord| indicate_coord(p, coord, a[0]) }
     end
 
     def indicate_selection p, a
       pram = memory(p)
       unless require_selection(p)
-        sel_explode_selection(p).values.uniq.each{|coord| indicate_coord(p, coord) }
+        sel_explode_selection(p).values.uniq.each{|coord| indicate_coord(p, coord, a[0]) }
       end
-    end
-
-    def indicate_coord p, coord
-      coord = coord.join(" ") if coord.respond_to?(:each)
-      $mcl.server.invoke "/particle largeexplode #{coord} 0 0 0 1 10 force"
     end
 
     def stack_selection p, a

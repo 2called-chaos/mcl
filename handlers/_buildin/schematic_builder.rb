@@ -34,11 +34,6 @@ module Mcl
       Dir["#{$mcl.server.root}/schematics/*.schematic"].map{|f| File.basename(f, ".schematic") }
     end
 
-    def indicate_coord p, coord
-      coord = coord.join(" ") if coord.respond_to?(:each)
-      $mcl.server.invoke "/particle largeexplode #{coord} 0 0 0 1 10 force"
-    end
-
     def require_schematic p
       pram = memory(p)
       if pram[:current_schematic]
