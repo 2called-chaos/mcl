@@ -113,5 +113,21 @@ module Mcl
         else $mcl.server.invoke "/particle largeexplode #{coord} 0 0 0 1 10 force"
       end
     end
+
+    def coord_dimensions p1, p2
+      p1 && p2 && p1.zip(p2).map{|lh| (lh.max - lh.min).round(0) + 1 }
+    end
+
+    def coord_shifting_direction strdir
+      case strdir
+        when "n", "north" then [:north, :z, :-]
+        when "e", "east" then [:east, :x, :+]
+        when "s", "south" then [:south, :z, :+]
+        when "w", "west" then [:west, :x, :-]
+        when "u", "up" then [:up, :y, :+]
+        when "d", "down" then [:down, :y, :-]
+        else raise "unknown direction (n/e/s/w/u/d)"
+      end
+    end
   end
 end

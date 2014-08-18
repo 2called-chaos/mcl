@@ -162,43 +162,15 @@ module Mcl
 
     def selection_dimensions p
       pram = memory(p)
-      if pram[:pos1] && pram[:pos2]
-        zip = pram[:pos1].zip(pram[:pos2])
-        xd = (zip[0].max - zip[0].min).round(0) + 1
-        yd = (zip[1].max - zip[1].min).round(0) + 1
-        zd = (zip[2].max - zip[2].min).round(0) + 1
-        [xd, yd, zd]
-      else
-        false
-      end
+      coord_dimensions(pram[:pos1], pram[:pos2])
     end
 
     def selection_size p
-      if dim = selection_dimensions(p)
-        dim.inject(&:*)
-      else
-        false
-      end
+      selection_dimensions(p).try(:inject, &:*)
     end
 
     def shift_coords one, two
       [one[0] + two[0], one[1] + two[1], one[2] + two[2]]
-    end
-
-    def lg_coord p1, p2
-      [p1, p2]
-    end
-
-    def stack_coord_shifting lp, strdir
-      case strdir
-        when "n", "north" then [:north, :z, :-]
-        when "e", "east" then [:east, :x, :+]
-        when "s", "south" then [:south, :z, :+]
-        when "w", "west" then [:west, :x, :-]
-        when "u", "up" then [:up, :y, :+]
-        when "d", "down" then [:down, :y, :-]
-        else raise "unknown direction (n/e/s/w/u/d)"
-      end
     end
 
     def sel_explode_selection p
@@ -408,7 +380,7 @@ module Mcl
           s1, s2              = cube[:xyz], cube[:XYZ]              # source selection
           p1, p2              = cube[:xyz], cube[:XYZ]              # frame selection
           seldim              = selection_dimensions(p)             # selection dimensions
-          dir, axis, operator = stack_coord_shifting(p1, direction) # coord shifting instructions
+          dir, axis, operator = coord_shifting_direction(direction) # coord shifting instructions
 
           # stack
           amount.times do
