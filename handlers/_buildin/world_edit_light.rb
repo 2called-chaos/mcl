@@ -173,8 +173,6 @@ module Mcl
       pram = memory(p)
       selection_vertices(pram[:pos1], pram[:pos2])
     end
-      end
-    end
 
 
     # ============
@@ -339,7 +337,12 @@ module Mcl
     def indicate_selection p, a
       pram = memory(p)
       unless require_selection(p)
-        sel_explode_selection(p).values.uniq.each{|coord| indicate_coord(p, coord, a[0]) }
+        if a[1] == "outline"
+          # sel_outline_explode(p)
+          tellm(p, {text: "Not yet implemented, sorry", color: "red"})
+        else
+          sel_explode_selection(p).values.uniq.each{|coord| indicate_coord(p, coord, a[0]) }
+        end
       end
     end
 
