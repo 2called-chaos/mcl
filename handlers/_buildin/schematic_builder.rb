@@ -70,7 +70,7 @@ module Mcl
           # handler.tellm(player, {text: "add <name> <url>", color: "gold"}, {text: " add a remote schematic", color: "reset"})
           handler.tellm(player, {text: "list [filter]", color: "gold"}, {text: " list available schematics", color: "reset"})
           handler.tellm(player, {text: "load <name>", color: "gold"}, {text: " load schematic from library", color: "reset"})
-          # handler.tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic", color: "reset"})
+          handler.tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic", color: "reset"})
           handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no", color: "reset"})
           # handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
           # handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
@@ -145,7 +145,14 @@ module Mcl
 
     def com_rotate player, args
       unless require_schematic(player)
-        tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+        pram = memory(player)
+        deg = args[0].to_i
+        if deg > 0
+          pram[:current_schematic][:rotation] = 360 % (args[0].to_i + pram[:current_schematic][:rotation])
+        else
+          tellm(player, {text: "Rotation must be divisible by 90", color: "red"})
+        end
+        tellm(player, {text: "Schematic rotation is #{pram[:current_schematic][:rotation]} degrees", color: "yellow"})
       end
     end
 
