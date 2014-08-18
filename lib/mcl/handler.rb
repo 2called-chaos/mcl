@@ -103,13 +103,13 @@ module Mcl
       coord = coord.join(" ") if coord.respond_to?(:each)
       parts = coord.split(" ").map(&:to_f)
       case type.to_s.strip
-        when "p", "particle" then $mcl.server.invoke "/particle reddust #{coord} 0 0 0 1 1000 force"
+        when "p", "particle" then $mcl.server.invoke "/particle reddust #{coord} 0 0 0 1 100 force"
         when "b", "barrier" then $mcl.server.invoke "/particle barrier #{coord} 0 0 0 1 1 force"
         when "crystal" then $mcl.server.invoke "/summon EnderCrystal #{parts[0]} #{parts[1] - 0.5} #{parts[2]}"
         when "c", "cross"
-          $mcl.server.invoke "/particle reddust #{coord} 1 0 0 1 1000 force"
-          $mcl.server.invoke "/particle reddust #{coord} 0 1 0 1 1000 force"
-          $mcl.server.invoke "/particle reddust #{coord} 0 0 1 1 1000 force"
+          $mcl.server.invoke "/particle reddust #{coord} 1 0 0 1 100 force"
+          $mcl.server.invoke "/particle reddust #{coord} 0 1 0 1 100 force"
+          $mcl.server.invoke "/particle reddust #{coord} 0 0 1 1 100 force"
         else $mcl.server.invoke "/particle largeexplode #{coord} 0 0 0 1 10 force"
       end
     end
