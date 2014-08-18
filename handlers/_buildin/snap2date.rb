@@ -98,21 +98,22 @@ module Mcl
             handler.tellm(player, {text: "Define a version to watch!", color: "red"})
           end
         when "unwatch"
-          if args[1]
-            vel = args[1] == "all" ? watched_versions : args[1..-1]
-            vel.each do |v|
-              ve = StringExpandRange.expand(v)
-              if ve.count > 20
-                handler.tellm(player, {text: "Expression result in too many items (#{ve.count}>20)...", color: "reset"})
-              else
-                ve.each do |v|
-                  handler.unwatch_version v.downcase
-                  handler.tellm(player, {text: "Stop watching version #{v.downcase}...", color: "reset"})
-                end
+          case args[1]
+            when nil then handler.tellm(player, {text: "Define a version to unwatch!", color: "red"})
+            when "all" then vel = watched_versions
+            when "old" then vel = watched_versions.select{|v| numeric_version(v) <= numeric_version($mcl.server.version) }
+            else vel = args[1..-1]
+          end
+          vel.each do |v|
+            ve = StringExpandRange.expand(v)
+            if ve.count > 30
+              handler.tellm(player, {text: "Expression result in too many items (#{ve.count}>30)...", color: "reset"})
+            else
+              ve.each do |v|
+                handler.unwatch_version v.downcase
+                handler.tellm(player, {text: "Stop watching version #{v.downcase}...", color: "reset"})
               end
             end
-          else
-            handler.tellm(player, {text: "Define a version to unwatch!", color: "red"})
           end
         when "update"
           handler.tellm(player, {text: "Attempting update...", color: "reset"})
