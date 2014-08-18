@@ -71,9 +71,10 @@ module Mcl
     def bo2s_map entry
       coord, blockdata = entry.split(":")
       bid, bval = blockdata.split(".").map(&:to_i)
+      x, z, y = coord.split(",").map(&:to_i)
 
       {
-        coord: coord.split(",").map(&:to_i),
+        coord: [x, y, z],
         data_value: bval,
         tile_id: bid,
         tile_name: Id2mcn.conv(bid),
