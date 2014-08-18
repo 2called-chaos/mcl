@@ -50,7 +50,9 @@ module Mcl
         pram = h.memory(p)
         unless require_selection(p)
           if a.count > 0
-            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} replace #{a.join(" ")}}
+            h.coord_32k_units(pram[:pos1], pram[:pos2]) do |p1, p2|
+              $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{a.shift} #{a.shift || "0"} replace #{a.join(" ")}}
+            end
           else
             tellm(p, {text: "!!set <TileName> [dataValue] [dataTag]", color: "yellow"})
           end
@@ -86,7 +88,9 @@ module Mcl
         pram = h.memory(p)
         unless require_selection(p)
           if a.count > 0
-            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{a.shift} #{a.shift || "0"} keep #{a.join(" ")}}
+            h.coord_32k_units(pram[:pos1], pram[:pos2]) do |p1, p2|
+              $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{a.shift} #{a.shift || "0"} keep #{a.join(" ")}}
+            end
           else
             tellm(p, {text: "!!fill <TileName> [dataValue] [dataTag]", color: "yellow"})
           end
@@ -100,7 +104,9 @@ module Mcl
           is, should = a.join(" ").split(">").map(&:strip).reject(&:blank?)
           if is && should && is.is_a?(String) && should.is_a?(String)
             should = should.split(" ")
-            $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{should[0]} #{should[1] || "1"} replace #{is}}
+            h.coord_32k_units(pram[:pos1], pram[:pos2]) do |p1, p2|
+              $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{should[0]} #{should[1] || "1"} replace #{is}}
+            end
           else
             tellm(p, {text: "!!replace <IS:TileName> [IS:dataValue] > <SHOULD:TileName> [SHOULD:dataValue]", color: "yellow"})
           end
