@@ -74,7 +74,7 @@ module Mcl
           handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no", color: "reset"})
           # handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
           # handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
-          # handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
+          handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
           # handler.tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
         end
       end
@@ -179,7 +179,8 @@ module Mcl
     end
 
     def com_reset player, args
-      tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+      memory(player).delete(:current_schematic)
+      tellm(player, {text: "Build settings cleared!", color: "green"})
     end
 
     def com_build player, args
