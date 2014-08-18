@@ -114,8 +114,32 @@ module Mcl
       end
     end
 
+    def selection_vertices p1, p2
+      corners = %w[xyz Xyz xYz XYz xyZ XyZ xYZ XYZ]
+      x = [p1[0], p2[0]].sort
+      y = [p1[1], p2[1]].sort
+      z = [p1[2], p2[2]].sort
+
+      corners.each_with_object({}) do |corner, res|
+        res[corner.to_sym] = corner.each_char.map do |c|
+          case c
+            when "x" then x[0]
+            when "X" then x[1]
+            when "y" then y[0]
+            when "Y" then y[1]
+            when "z" then z[0]
+            when "Z" then z[1]
+          end
+        end
+      end
+    end
+
     def coord_dimensions p1, p2
       p1 && p2 && p1.zip(p2).map{|lh| (lh.max - lh.min).round(0) + 1 }
+    end
+
+    def shift_coords coord, shift_by
+      [coord[0] + shift_by[0], coord[1] + shift_by[1], coord[2] + shift_by[2]]
     end
 
     def coord_shifting_direction strdir

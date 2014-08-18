@@ -169,28 +169,10 @@ module Mcl
       selection_dimensions(p).try(:inject, &:*)
     end
 
-    def shift_coords one, two
-      [one[0] + two[0], one[1] + two[1], one[2] + two[2]]
-    end
-
     def sel_explode_selection p
       pram = memory(p)
-      corners = %w[xyz Xyz xYz XYz xyZ XyZ xYZ XYZ]
-      x = [pram[:pos1][0], pram[:pos2][0]].sort
-      y = [pram[:pos1][1], pram[:pos2][1]].sort
-      z = [pram[:pos1][2], pram[:pos2][2]].sort
-
-      corners.each_with_object({}) do |corner, res|
-        res[corner.to_sym] = corner.each_char.map do |c|
-          case c
-            when "x" then x[0]
-            when "X" then x[1]
-            when "y" then y[0]
-            when "Y" then y[1]
-            when "z" then z[0]
-            when "Z" then z[1]
-          end
-        end
+      selection_vertices(pram[:pos1], pram[:pos2])
+    end
       end
     end
 
