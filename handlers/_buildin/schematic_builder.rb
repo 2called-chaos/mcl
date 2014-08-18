@@ -34,10 +34,24 @@ module Mcl
       Dir["#{$mcl.server.root}/schematics/*.schematic"].map{|f| File.basename(f, ".schematic") }
     end
 
-    def require_schematic p
+    def require_schematic p, req_nobuild = true
       pram = memory(p)
       if pram[:current_schematic]
-        return false
+        if req_nobuild && pram[:current_schematic][:building]
+          tellm(p,
+            {text: "Build in progress (stop with ", color: "red"},
+            {
+              text: "!schebu cancel",
+              color: "aqua",
+              underlined: true,
+              clickEvent: {action: "suggest_command", value: "!schebu cancel"}
+            },
+            {text: ")", color: "red"}
+          )
+          return true
+        else
+          return false
+        end
       else
         tellm(p, {text: "No schematic loaded yet!", color: "red"})
         return true
@@ -63,7 +77,7 @@ module Mcl
         pram = memory(player)
 
         case args[0]
-        when "book", "add", "list", "load", "rotate", "air", "ipos", "pos", "status", "reset", "build"
+        when "book", "add", "list", "load", "rotate", "air", "ipos", "pos", "status", "reset", "build", "cancel"
           handler.send("com_#{args[0]}", player, args[1..-1])
         else
           handler.tellm(player, {text: "book", color: "gold"}, {text: " gives you a book with more info", color: "reset"})
@@ -118,29 +132,38 @@ module Mcl
     end
 
     def com_load player, args
-      sname = args[0]
-      if available_schematics.include?(sname)
-        pram = memory(player)
+      pram, sname = memory(player), args[0]
+
+      if pram[:current_schematic] && pram[:current_schematic][:building]
+        tellm(player, {text: "Build in progress!", color: "red"})
+      elsif !sname
+        tellm(player, {text: "!schebu load <name>", color: "red"})
+      elsif !available_schematics.include?(sname)
+        tellm(player, {text: "Schematic couldn't be found!", color: "red"})
+      else
         begin
           schematic = load_schematic(sname)
           new_schematic = {}.tap do |r|
+            r[:building] = false
             r[:name] = sname
             r[:x] = schematic["Width"].to_i
             r[:y] = schematic["Height"].to_i
             r[:z] = schematic["Length"].to_i
             r[:dimensions] = [r[:x], r[:y], r[:z]]
+            r[:size] = r[:dimensions].inject(:*)
             r[:rotation] = 0
             r[:air] = true
             r[:pos] = pram[:current_schematic].try(:[], :pos)
+            r[:blocks_placed] = 0
+            r[:blocks_ignored] = 0
+            r[:blocks_processed] = 0
           end
           pram[:current_schematic] = new_schematic
-          tellm(player, {text: "Schematic loaded ", color: "green"}, {text: "(#{new_schematic[:dimensions].join("x")} = #{new_schematic[:dimensions].inject(:*)})", color: "reset"})
+          tellm(player, {text: "Schematic loaded ", color: "green"}, {text: "(#{new_schematic[:dimensions].join("x")} = #{new_schematic[:size]})", color: "reset"})
         rescue
           tellm(player, {text: "Error loading schematic!", color: "red"})
           tellm(player, {text: "#{$!.message}", color: "red"})
         end
-      else
-        tellm(player, {text: "Schematic couldn't be found!", color: "red"})
       end
     end
 
@@ -188,7 +211,7 @@ module Mcl
     end
 
     def com_ipos player, args
-      unless require_schematic(player)
+      unless require_schematic(player, false)
         pram  = memory(player)
         schem = pram[:current_schematic]
 
@@ -208,11 +231,9 @@ module Mcl
     def com_status player, args
       pram  = memory(player)
       schem = pram[:current_schematic]
-      unless require_schematic(player)
-
-        if
+      unless require_schematic(player, false)
         tellm(player, {text: "Name: ", color: "yellow"}, {text: schem[:name], color: "aqua"})
-        tellm(player, {text: "Size: ", color: "yellow"}, {text: "#{schem[:dimensions].join("x")} (#{schem[:dimensions].inject(:*)})", color: "aqua"})
+        tellm(player, {text: "Size: ", color: "yellow"}, {text: "#{schem[:dimensions].join("x")} (#{schem[:size]})", color: "aqua"})
         tellm(player, {text: "Rotation: ", color: "yellow"}, {text: "#{schem[:rotation]} degrees", color: "aqua"})
         tellm(player, {text: "Air: ", color: "yellow"}, (schem[:air] ? {text: "COPY", color: "green"} : {text: "IGNORE", color: "red"}))
         if schem[:pos]
@@ -225,6 +246,12 @@ module Mcl
         else
           tellm(player, {text: "Ins.Point: ", color: "yellow"}, {text: "unset", color: "gray", italic: true})
         end
+        if schem[:building]
+          size = schem[:size]
+          proc = schem[:blocks_processed]
+          perc = ((proc / size.to_f) * 100).round(2)
+          tellm(player, {text: "BUILDING: ", color: "green"}, {text: proc, color: "yellow"}, spacer, {text: size, color: "gold"}, {text: " (#{perc}%)", color: "reset"})
+        end
       end
     end
 
@@ -233,8 +260,87 @@ module Mcl
       tellm(player, {text: "Build settings cleared!", color: "green"})
     end
 
+    def build_reset schem, building
+      $mcl.synchronize do
+        schem[:building] = building
+        schem[:build_canceled] = false
+        schem[:blocks_placed] = 0
+        schem[:blocks_ignored] = 0
+        schem[:blocks_processed] = 0
+      end
+    end
+
     def com_build player, args
-      tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+      unless require_schematic(player)
+        pram  = memory(player)
+        schem = pram[:current_schematic]
+
+        # ins_point shortcut
+        if args.count == 3
+          com_pos(player, args)
+        end
+
+        if !schem[:pos]
+          tellm(player, {text: "Insertion point required!", color: "red"})
+        else
+          async do
+            realtime = false
+            begin
+              build_reset(schem, true)
+              # Prepare build
+              $mcl.synchronize { tellm(player, {text: "Preparing build...", color: "yellow"}) }
+              sleep 3
+
+              # Announce build
+              $mcl.synchronize do
+                tellm(player,
+                  {text: "Build started (stop with ", color: "yellow"},
+                  {
+                    text: "!schebu cancel",
+                    color: "aqua",
+                    underlined: true,
+                    clickEvent: {action: "suggest_command", value: "!schebu cancel"}
+                  },
+                  {text: ")", color: "yellow"}
+                )
+              end
+
+              # Actual build
+              realtime = Benchmark.realtime do
+                # tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+                while schem[:blocks_processed] <= schem[:size]
+                  raise "canceled" if schem[:build_canceled]
+                  raise "MCL is shutting down" if Thread.current[:mcl_halting]
+                  raise "IPC down" unless $mcl.server.alive?
+                  $mcl.synchronize { schem[:blocks_processed] += 123 }
+                  sleep 0.2
+                end
+              end
+              $mcl.synchronize do
+                tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:blocks_ignored]} ignored", color: "yellow"})
+                tellm(player, {text: "Build finished in #{realtime.round(2)}s (#{(schem[:size] / realtime).round(0)} blocks/s)!", color: "green"})
+              end
+            rescue
+              $mcl.synchronize { tellm(player, {text: "Build failed (#{$!.message})!", color: "red"}) }
+            ensure
+              build_reset(schem, false)
+            end
+          end
+        end
+      end
+    end
+
+    def com_cancel player, args
+      unless require_schematic(player, false)
+        pram  = memory(player)
+        schem = pram[:current_schematic]
+        if schem[:building]
+          schem[:build_canceled] = true
+          tellm(player, {text: "Canceling build...", color: "yellow"})
+        else
+          tellm(player, {text: "No build active!", color: "yellow"})
+        end
+      end
     end
   end
 end

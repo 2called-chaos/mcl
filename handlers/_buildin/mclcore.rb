@@ -226,10 +226,12 @@ module Mcl
       rescue Exception
         if retried
           traw(player, "[MCL] Reload failed, FATAL!", color: "red", underlined: true)
+          traw(player, $!.message, color: "red")
         else
           retried = true
           Handler.descendants.replace(oh)
           traw(player, "[MCL] Reload failed, restoring!", color: "red", underlined: true)
+          traw(player, $!.message, color: "red")
           retry
         end
       end
