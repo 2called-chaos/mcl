@@ -346,7 +346,7 @@ module Mcl
                       schem[:blocks_processed] += 1
                     end
                   end
-                  sleep 0.0001
+                  sleep schem[:blocks_placed] % 2500 == 0 ? 3 : 0.0001
                   Thread.pass
                 end
               end
