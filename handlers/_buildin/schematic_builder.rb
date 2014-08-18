@@ -72,7 +72,7 @@ module Mcl
           handler.tellm(player, {text: "load <name>", color: "gold"}, {text: " load schematic from library", color: "reset"})
           handler.tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic", color: "reset"})
           handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no", color: "reset"})
-          # handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
+          handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
           # handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
           handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
           # handler.tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
@@ -171,7 +171,18 @@ module Mcl
     end
 
     def com_pos player, args
-      tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+      unless require_schematic(player)
+        pram = memory(player)
+        if args.count == 3
+          pram[:current_schematic][:pos] = args
+        elsif args.count > 0
+          tellm(player, {text: "!schebu pos <x> <y> <z>", color: "red"})
+        end
+
+        if args.count == 0 || args.count == 3
+          tellm(player, {text: "Insertion point", color: "yellow"}, (pram[:current_schematic][:pos] ? {text: pram[:current_schematic][:pos].join(" "), color: "green"} : {text: "unset", color: "gray", italic: true}))
+        end
+      end
     end
 
     def com_status player, args
