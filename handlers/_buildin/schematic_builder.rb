@@ -193,7 +193,7 @@ module Mcl
         schem = pram[:current_schematic]
 
         if p1 = schem[:pos]
-          p2 = shift_coords(p1, schem[:dimensions])
+          p2 = shift_coords(p1, schem[:dimensions].map(&:to_i))
           indicate_coord(player, p1, args[0])
           indicate_coord(player, p2, args[0])
         else
