@@ -38,6 +38,13 @@ module Mcl
           handler.trawm(player, *cl.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (cl.count-1)).flatten.compact)
         end
       end
+      register_command :id, desc: "shows you the new block name for an old block ID" do |handler, player, command, target, args, optparse|
+        if h = Id2mcn.conv(args[0].to_i)
+          handler.trawm(player, {text: "TileID: ", color: "gold"}, {text: "#{args[0]}", color: "green"}, {text: "  TileName: ", color: "gold"}, {text: "#{h}", color: "green"})
+        else
+          handler.trawm(player, {text: "No name could be resolved for block ID #{args[0]}", color: "red"})
+        end
+      end
       register_command :version, desc: "shows you the MC and MCL version" do |handler, player, command, target, args, optparse|
         handler.trawm(player, {text: "[MC] ", color: "gold"}, {text: "#{$mcl.server.version || "unknown"}", color: "light_purple"}, {text: " (booted in #{($mcl.server.boottime||-1).round(2)}s)", color: "reset"})
         handler.trawm(player, {text: "[MCL] ", color: "gold"}, {text: "git: ", color: "light_purple"}, {text: "#{handler.git_message}", color: "reset"})
