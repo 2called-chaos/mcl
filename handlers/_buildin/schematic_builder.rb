@@ -180,7 +180,7 @@ module Mcl
         end
 
         if args.count == 0 || args.count == 3
-          tellm(player, {text: "Insertion point", color: "yellow"}, (pram[:current_schematic][:pos] ? {text: pram[:current_schematic][:pos].join(" "), color: "green"} : {text: "unset", color: "gray", italic: true}))
+          tellm(player, {text: "Insertion point ", color: "yellow"}, (pram[:current_schematic][:pos] ? {text: pram[:current_schematic][:pos].join(" "), color: "green"} : {text: "unset", color: "gray", italic: true}))
         end
       end
     end
