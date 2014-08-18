@@ -194,11 +194,10 @@ module Mcl
 
         if p1 = schem[:pos]
           p2 = shift_coords(p1, schem[:dimensions])
-          if args[1] == "outline"
-            tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
-          else
-            indicate_coord(player, p1, args[0])
-            indicate_coord(player, p2, args[0])
+          case args[1]
+            when "o", "outline" then tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+            when "c", "corners" then selection_vertices(p1, p2).values.uniq.each{|coord| indicate_coord(p, coord, args[0]) }
+            else indicate_coord(player, p1, args[0]) ; indicate_coord(player, p2, args[0])
           end
         else
           tellm(player, {text: "Insertion point required!", color: "red"})
