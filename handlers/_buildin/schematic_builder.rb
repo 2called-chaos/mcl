@@ -302,7 +302,14 @@ module Mcl
             begin
               build_reset(schem, true)
               # Prepare build
-              $mcl.synchronize { tellm(player, {text: "Preparing build...", color: "yellow"}) }
+              $mcl.synchronize do
+                tellm(player, {text: "Preparing build...", color: "yellow"})
+                if schem[:air]
+                  # $mcl.server.invoke %{/fill #{schem[:pos]} #{shift_coords(schem[:pos], schem[:dimensions])} diamond_block}
+                  puts "Moep"
+                  $mcl.server.invoke %{/fill #{schem[:pos].join(" ")} #{shift_coords(schem[:pos], schem[:dimensions]).join(" ")} air}
+                end
+              end
               schemdat = load_schematic_as_bo2s(schem[:name])[:data]
 
               # Announce build
