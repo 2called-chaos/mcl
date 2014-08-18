@@ -50,8 +50,10 @@ module Mcl
         pram = h.memory(p)
         unless require_selection(p)
           if a.count > 0
+            block = a.shift
+            bval  = a.shift || "0"
             h.coord_32k_units(pram[:pos1], pram[:pos2]) do |p1, p2|
-              $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{a.shift} #{a.shift || "0"} replace #{a.join(" ")}}
+              $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{block} #{bval} replace #{a.join(" ")}}
             end
           else
             tellm(p, {text: "!!set <TileName> [dataValue] [dataTag]", color: "yellow"})
@@ -88,8 +90,10 @@ module Mcl
         pram = h.memory(p)
         unless require_selection(p)
           if a.count > 0
+            block = a.shift
+            bval  = a.shift || "0"
             h.coord_32k_units(pram[:pos1], pram[:pos2]) do |p1, p2|
-              $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{a.shift} #{a.shift || "0"} keep #{a.join(" ")}}
+              $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{block} #{bval} keep #{a.join(" ")}}
             end
           else
             tellm(p, {text: "!!fill <TileName> [dataValue] [dataTag]", color: "yellow"})
