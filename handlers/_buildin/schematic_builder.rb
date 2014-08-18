@@ -125,9 +125,9 @@ module Mcl
           schematic = load_schematic(sname)
           new_schematic = {}.tap do |r|
             r[:name] = sname
-            r[:x] = schematic["Width"]
-            r[:y] = schematic["Height"]
-            r[:z] = schematic["Length"]
+            r[:x] = schematic["Width"].to_i
+            r[:y] = schematic["Height"].to_i
+            r[:z] = schematic["Length"].to_i
             r[:dimensions] = [r[:x], r[:y], r[:z]]
             r[:rotation] = 0
             r[:air] = true
