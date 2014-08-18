@@ -149,7 +149,7 @@ module Mcl
         deg = args[0].to_i
         if deg > 0
           if deg % 90 == 0
-            pram[:current_schematic][:rotation] = 360 % (pram[:current_schematic][:rotation] + deg)
+            pram[:current_schematic][:rotation] = (pram[:current_schematic][:rotation] + deg) % 360
             tellm(player, {text: "Schematic rotation is #{pram[:current_schematic][:rotation]} degrees", color: "yellow"})
           else
             tellm(player, {text: "Rotation must be divisible by 90", color: "red"})
