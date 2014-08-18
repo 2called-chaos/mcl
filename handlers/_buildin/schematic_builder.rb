@@ -68,6 +68,18 @@ module Mcl
       SchematicBo2sConverter.open(File.open(file))
     end
 
+    def bo2s_map entry
+      coord, blockdata = entry.split(":")
+      bid, bval = blockdata.split(".").map(&:to_i)
+
+      {
+        coord: coord.split(",").map(&:to_i),
+        data_value: bval,
+        tile_id: bid,
+        tile_name: Id2mcn.conv(bid),
+      }
+    end
+
     # ============
     # = Commands =
     # ============
@@ -174,12 +186,12 @@ module Mcl
         if deg != 0
           if deg % 90 == 0
             pram[:current_schematic][:rotation] = (pram[:current_schematic][:rotation] + deg) % 360
-            tellm(player, {text: "Schematic rotation is #{pram[:current_schematic][:rotation]} degrees", color: "yellow"})
+            tellm(player, {text: "Schematic rotation is #{pram[:current_schematic][:rotation]} degrees (NOT IMPLEMENTED)", color: "yellow"})
           else
             tellm(player, {text: "Rotation must be divisible by 90", color: "red"})
           end
         else
-          tellm(player, {text: "Schematic rotation is #{pram[:current_schematic][:rotation]} degrees", color: "yellow"})
+          tellm(player, {text: "Schematic rotation is #{pram[:current_schematic][:rotation]} degrees (NOT IMPLEMENTED)", color: "yellow"})
         end
       end
     end
@@ -289,7 +301,7 @@ module Mcl
               build_reset(schem, true)
               # Prepare build
               $mcl.synchronize { tellm(player, {text: "Preparing build...", color: "yellow"}) }
-              sleep 3
+              schemdat = load_schematic_as_bo2s(schem[:name])[:data]
 
               # Announce build
               $mcl.synchronize do
@@ -312,8 +324,26 @@ module Mcl
                   raise "canceled" if schem[:build_canceled]
                   raise "MCL is shutting down" if Thread.current[:mcl_halting]
                   raise "IPC down" unless $mcl.server.alive?
-                  $mcl.synchronize { schem[:blocks_processed] += 123 }
-                  sleep 0.2
+
+                  # place(!) 123 blocks and then Thread.pass
+                  $mcl.synchronize do
+                    placed = 0
+
+                    while placed <= 123
+                      entry = bo2s_map(schemdat.shift)
+                      skip = !schem[:air] && entry[:block_id] == 0
+
+                      if skip
+                        schem[:blocks_ignored] += 1
+                      else
+                        placed += 1
+                        schem[:blocks_placed] += 1
+                      end
+                      schem[:blocks_processed] += 1
+                    end
+                  end
+                  sleep 0.0001
+                  Thread.pass
                 end
               end
               $mcl.synchronize do
@@ -321,7 +351,10 @@ module Mcl
                 tellm(player, {text: "Build finished in #{realtime.round(2)}s (#{(schem[:size] / realtime).round(0)} blocks/s)!", color: "green"})
               end
             rescue
-              $mcl.synchronize { tellm(player, {text: "Build failed (#{$!.message})!", color: "red"}) }
+              $mcl.synchronize do
+                tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:blocks_ignored]} ignored", color: "yellow"})
+                tellm(player, {text: "Build failed (#{$!.message})!", color: "red"})
+              end
             ensure
               build_reset(schem, false)
             end
