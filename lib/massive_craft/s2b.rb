@@ -61,7 +61,7 @@ class SchematicBo2sConverter
         rows.each_with_index do |columns, x|
           # x -= schematic["Width"] / 2 # Center the object on the X axis
           columns.each_with_index do |(block, data), y|
-            next if block == 0 || (block == 35 && (data == 2 || data == 11)) # We ignore air and magentawool
+            next if block == 0
             # y -= schematic["Length"] / 2 # Center the object on the Y axis
             line = [y, x, z, block, data]
             if NEEDY_BLOCKS.include?(block)
