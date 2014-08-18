@@ -137,7 +137,7 @@ module Mcl
 
       if sfiles.any?
         tellm(player, {text: "--- Showing page #{page}/#{pages} (#{sfiles.count} schematics) ---", color: "aqua"})
-        page_contents[page-1].each {|schem| tellm(player, {text: schem, color: "reset"}) }
+        page_contents[page-1].each {|schem| tellm(player, {text: schem, color: "reset", clickEvent: {action: "suggest_command", value: "!schebu load #{schem}"}}) }
         tellm(player, {text: "Use ", color: "aqua"}, {text: "!schembu list [str] <page>", color: "light_purple"}, {text: " to [filter] and/or <paginate>.", color: "aqua"})
       else
         tellm(player, {text: "No schematics found for that filter/page!", color: "red"})
