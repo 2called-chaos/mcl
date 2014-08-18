@@ -114,6 +114,24 @@ module Mcl
       end
     end
 
+    def coord_32k_units p1, p2, &block
+      dimm = coord_dimensions(p1, p2)
+      mtrx = selection_vertices(p1, p2)
+      p_, pa, pb = mtrx[:xyz], mtrx[:xyz], mtrx[:XYZ]
+
+      [].tap do |r|
+        if dimm.inject(:*) > 32768
+          while p_ != pb
+            pn = shift_coords(p_, [[pb[0] - p_[0], 32].min, [pb[1] - p_[1], 32].min, [pb[2] - p_[2], 32].min])
+            r << [p_, pn]
+            p_ = pn
+          end
+        else
+          r << [p1, p2]
+        end
+      end.each(&block)
+    end
+
     def selection_vertices p1, p2
       corners = %w[xyz Xyz xYz XYz xyZ XyZ xYZ XYZ]
       x = [p1[0], p2[0]].sort

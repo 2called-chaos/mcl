@@ -294,83 +294,91 @@ module Mcl
           com_pos(player, args)
         end
 
-        if !schem[:pos]
-          tellm(player, {text: "Insertion point required!", color: "red"})
+        # clear feature
+        if args[0] == "clear"
+          coord_32k_units(schem[:pos], shift_coords(schem[:pos], schem[:dimensions])) do |p1, p2|
+            $mcl.server.invoke %{/fill #{p1.join(" ")} #{p2.join(" ")} air}
+          end
         else
-          async do
-            realtime = false
-            begin
-              build_reset(schem, true)
-              # Prepare build
-              $mcl.synchronize do
-                tellm(player, {text: "Preparing build...", color: "yellow"})
-                if schem[:air]
-                  # $mcl.server.invoke %{/fill #{schem[:pos]} #{shift_coords(schem[:pos], schem[:dimensions])} diamond_block}
-                  puts "Moep"
-                  $mcl.server.invoke %{/fill #{schem[:pos].join(" ")} #{shift_coords(schem[:pos], schem[:dimensions]).join(" ")} air}
-                end
-              end
-              schemdat = load_schematic_as_bo2s(schem[:name])[:data]
-
-              # Announce build
-              $mcl.synchronize do
-                schem[:build_size] = schemdat.count
-                tellm(player,
-                  {text: "Build started (stop with ", color: "yellow"},
-                  {
-                    text: "!schebu cancel",
-                    color: "aqua",
-                    underlined: true,
-                    clickEvent: {action: "suggest_command", value: "!schebu cancel"}
-                  },
-                  {text: ")", color: "yellow"}
-                )
-              end
-
-              # Actual build
-              realtime = Benchmark.realtime do
-                until schemdat.empty?
-                  raise "canceled" if schem[:build_canceled]
-                  raise "MCL is shutting down" if Thread.current[:mcl_halting]
-                  raise "IPC down" unless $mcl.server.alive?
-
-                  # place(!) 123 blocks and then Thread.pass
-                  $mcl.synchronize do
-                    placed = 0
-
-                    while placed <= 123 && !schemdat.empty?
-                      ci = schemdat.shift
-                      next if ci.blank?
-                      entry = bo2s_map(ci)
-
-                      if !schem[:air] && entry[:block_id] == 0 # essentially unused by now
-                        schem[:blocks_ignored] += 1
-                      else
-                        spos = shift_coords(schem[:pos], entry[:coord])
-                        $mcl.server.invoke %{/setblock #{spos.join(" ")} #{entry[:tile_name]} #{entry[:data_value]}}
-                        placed += 1
-                        schem[:blocks_placed] += 1
-                        sleep 3 if schem[:blocks_placed] % 2500 == 0
-                      end
-                      schem[:blocks_processed] += 1
+          if !schem[:pos]
+            tellm(player, {text: "Insertion point required!", color: "red"})
+          else
+            async do
+              realtime = false
+              begin
+                build_reset(schem, true)
+                # Prepare build
+                $mcl.synchronize do
+                  tellm(player, {text: "Preparing build...", color: "yellow"})
+                  if schem[:air]
+                    # $mcl.server.invoke %{/fill #{schem[:pos]} #{shift_coords(schem[:pos], schem[:dimensions])} diamond_block}
+                    coord_32k_units(schem[:pos], shift_coords(schem[:pos], schem[:dimensions])) do |p1, p2|
+                      $mcl.server.invoke %{/fill #{p1.join(" ")} #{p2.join(" ")} air}
                     end
                   end
-                  sleep 0.0001
-                  Thread.pass
                 end
+                schemdat = load_schematic_as_bo2s(schem[:name])[:data]
+
+                # Announce build
+                $mcl.synchronize do
+                  schem[:build_size] = schemdat.count
+                  tellm(player,
+                    {text: "Build started (stop with ", color: "yellow"},
+                    {
+                      text: "!schebu cancel",
+                      color: "aqua",
+                      underlined: true,
+                      clickEvent: {action: "suggest_command", value: "!schebu cancel"}
+                    },
+                    {text: ")", color: "yellow"}
+                  )
+                end
+
+                # Actual build
+                realtime = Benchmark.realtime do
+                  until schemdat.empty?
+                    raise "canceled" if schem[:build_canceled]
+                    raise "MCL is shutting down" if Thread.current[:mcl_halting]
+                    raise "IPC down" unless $mcl.server.alive?
+
+                    # place(!) 123 blocks and then Thread.pass
+                    $mcl.synchronize do
+                      placed = 0
+
+                      while placed <= 123 && !schemdat.empty?
+                        ci = schemdat.shift
+                        next if ci.blank?
+                        entry = bo2s_map(ci)
+
+                        if !schem[:air] && entry[:block_id] == 0 # essentially unused by now
+                          schem[:blocks_ignored] += 1
+                        else
+                          spos = shift_coords(schem[:pos], entry[:coord])
+                          $mcl.server.invoke %{/setblock #{spos.join(" ")} #{entry[:tile_name]} #{entry[:data_value]}}
+                          placed += 1
+                          schem[:blocks_placed] += 1
+                          sleep 3 if schem[:blocks_placed] % 2500 == 0
+                        end
+                        schem[:blocks_processed] += 1
+                      end
+                    end
+                    sleep 0.0001
+                    Thread.pass
+                  end
+                end
+                $mcl.synchronize do
+                  # tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:blocks_ignored]} ignored", color: "yellow"})
+                  tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:size] - schem[:blocks_placed]} ignored", color: "yellow"})
+                  tellm(player, {text: "Build finished in #{realtime.round(2)}s (#{(schem[:build_size] / realtime).round(0)} blocks/s)!", color: "green"})
+                end
+              rescue
+                $mcl.synchronize do
+                  tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:size] - schem[:blocks_placed]} ignored", color: "yellow"})
+                  tellm(player, {text: "Build failed (#{$!.message})!", color: "red"})
+                end
+              ensure
+                build_reset(schem, false)
               end
-              $mcl.synchronize do
-                # tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:blocks_ignored]} ignored", color: "yellow"})
-                tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:size] - schem[:blocks_placed]} ignored", color: "yellow"})
-                tellm(player, {text: "Build finished in #{realtime.round(2)}s (#{(schem[:build_size] / realtime).round(0)} blocks/s)!", color: "green"})
-              end
-            rescue
-              $mcl.synchronize do
-                tellm(player, {text: "#{schem[:blocks_placed]} placed, #{schem[:size] - schem[:blocks_placed]} ignored", color: "yellow"})
-                tellm(player, {text: "Build failed (#{$!.message})!", color: "red"})
-              end
-            ensure
-              build_reset(schem, false)
             end
           end
         end
