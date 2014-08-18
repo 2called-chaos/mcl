@@ -103,7 +103,7 @@ module Mcl
           handler.tellm(player, {text: "ipos [indicator]", color: "gold"}, {text: " indicate build area", color: "reset"})
           handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
           handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
-          # handler.tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
+          handler.tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
         end
       end
     end
@@ -343,11 +343,12 @@ module Mcl
                         $mcl.server.invoke %{/setblock #{spos.join(" ")} #{entry[:tile_name]} #{entry[:data_value]}}
                         placed += 1
                         schem[:blocks_placed] += 1
+                        sleep 3 if schem[:blocks_placed] % 2500 == 0
                       end
                       schem[:blocks_processed] += 1
                     end
                   end
-                  sleep schem[:blocks_placed] % 2500 == 0 ? 3 : 0.0001
+                  sleep 0.0001
                   Thread.pass
                 end
               end
