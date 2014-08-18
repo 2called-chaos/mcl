@@ -194,8 +194,12 @@ module Mcl
 
         if p1 = schem[:pos]
           p2 = shift_coords(p1, schem[:dimensions])
-          indicate_coord(player, p1, args[0])
-          indicate_coord(player, p2, args[0])
+          if args[1] == "outline"
+            tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+          else
+            indicate_coord(player, p1, args[0])
+            indicate_coord(player, p2, args[0])
+          end
         else
           tellm(player, {text: "Insertion point required!", color: "red"})
         end
