@@ -63,7 +63,7 @@ module Mcl
         pram = memory(player)
 
         case args[0]
-        when "book", "add", "list", "load", "rotate", "air", "pos", "status", "reset", "build"
+        when "book", "add", "list", "load", "rotate", "air", "ipos", "pos", "status", "reset", "build"
           handler.send("com_#{args[0]}", player, args[1..-1])
         else
           handler.tellm(player, {text: "book", color: "gold"}, {text: " gives you a book with more info", color: "reset"})
@@ -73,6 +73,7 @@ module Mcl
           handler.tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic", color: "reset"})
           handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no", color: "reset"})
           handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
+          handler.tellm(player, {text: "ipos [indicator]", color: "gold"}, {text: " indicate build area", color: "reset"})
           # handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
           handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
           # handler.tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
@@ -181,8 +182,22 @@ module Mcl
 
         if args.count == 0 || args.count == 3
           pos = pram[:current_schematic][:pos]
-          indicate_coord(player, pos) if pos
           tellm(player, {text: "Insertion point ", color: "yellow"}, (pos ? {text: pos.join(" "), color: "green"} : {text: "unset", color: "gray", italic: true}))
+        end
+      end
+    end
+
+    def com_ipos player, args
+      unless require_schematic(player)
+        pram  = memory(player)
+        schem = pram[:current_schematic]
+
+        if p1 = schem[:pos]
+          p2 = shift_coords(p1, schem[:dimensions])
+          indicate_coord(player, p1, args[0])
+          indicate_coord(player, p2, args[0])
+        else
+          tellm(player, {text: "Insertion point required!", color: "red"})
         end
       end
     end
