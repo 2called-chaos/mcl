@@ -128,7 +128,11 @@ module Mcl
       end
 
       register_command "!ipos", desc: "indicate pos1 and pos2 with particles" do |h, p, c, t, a, o|
-        h.indicate_pos(nil, p, a)
+        if !memory(p)[:pos1] && !memory(p)[:pos2]
+          h.tellm(p, {text:"pos1 & pos2 are unset!", color: "aqua"})
+        else
+          h.indicate_pos(nil, p, a)
+        end
       end
 
       [1,2].each do |num|
@@ -141,7 +145,11 @@ module Mcl
         end
 
         register_command "!ipos#{num}", desc: "indicate pos#{num} with particles" do |h, p, c, t, a, o|
-          h.indicate_pos(num, p, a)
+          if !memory(p)[:"pos#{num}"]
+            h.tellm(p, {text:"pos#{num} is unset!", color: "aqua"})
+          else
+            h.indicate_pos(num, p, a)
+          end
         end
       end
     end
