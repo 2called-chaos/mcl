@@ -74,7 +74,7 @@ module Mcl
           handler.tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no", color: "reset"})
           handler.tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
           handler.tellm(player, {text: "ipos [indicator]", color: "gold"}, {text: " indicate build area", color: "reset"})
-          # handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
+          handler.tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
           handler.tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
           # handler.tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
         end
@@ -206,7 +206,26 @@ module Mcl
     end
 
     def com_status player, args
-      tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+      pram  = memory(player)
+      schem = pram[:current_schematic]
+      unless require_schematic(player)
+
+        if
+        tellm(player, {text: "Name: ", color: "yellow"}, {text: schem[:name], color: "aqua"})
+        tellm(player, {text: "Size: ", color: "yellow"}, {text: "#{schem[:dimensions].join("x")} (#{schem[:dimensions].inject(:*)})", color: "aqua"})
+        tellm(player, {text: "Rotation: ", color: "yellow"}, {text: "#{schem[:rotation]} degrees", color: "aqua"})
+        tellm(player, {text: "Air: ", color: "yellow"}, (schem[:air] ? {text: "COPY", color: "green"} : {text: "IGNORE", color: "red"}))
+        if schem[:pos]
+          tellm(player,
+            {text: "Ins.Point: ", color: "yellow"},
+            {text: schem[:pos].join(" "), color: "aqua"},
+            {text: " => ", color: "yellow"},
+            {text: shift_coords(schem[:pos], schem[:dimensions]).join(" "), color: "aqua"}
+          )
+        else
+          tellm(player, {text: "Ins.Point: ", color: "yellow"}, {text: "unset", color: "gray", italic: true})
+        end
+      end
     end
 
     def com_reset player, args
