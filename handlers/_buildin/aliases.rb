@@ -30,6 +30,12 @@ module Mcl
       register_command :boat, desc: "summons a boat above your or target's head" do |handler, player, command, target, args, optparse|
         $mcl.server.invoke "/execute #{target} ~ ~ ~ summon Boat ~ ~2 ~"
       end
+      register_command :minecart, desc: "summons a minecart above your or target's head" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/execute #{target} ~ ~ ~ summon Minecart ~ ~2 ~"
+      end
+      register_command :airblock, desc: "setblocks the block below you or target to dirt" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/execute #{target} ~ ~ ~ setblock ~ ~-1 ~ dirt"
+      end
 
 
 
