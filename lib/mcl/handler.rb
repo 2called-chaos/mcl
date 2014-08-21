@@ -116,51 +116,52 @@ module Mcl
 
     def coord_32k_units p1, p2, &block
       [].tap do |r|
-        # if coord_dimensions(p1, p2).inject(:*) > 32768
-        #   mtrx = selection_vertices(p1, p2)
-        #   p_, pa, pb = mtrx[:xyz], mtrx[:xyz], mtrx[:XYZ]
-        #   xt, yt, zt = pb[0] / 32, pb[1] / 32, pb[2] / 32
-        #   xr, yr, zr = pb[0] % 32, pb[1] % 32, pb[2] % 32
+        pdim = coord_dimensions(p1, p2)
+        if pdim.inject(:*) > 32768
+          mtrx = selection_vertices(p1, p2)
+          pa, pb = mtrx[:xyz], mtrx[:XYZ]
+          xt, yt, zt = pdim[0] / 32, pdim[1] / 32, pdim[2] / 32
+          xr, yr, zr = pdim[0] % 32, pdim[1] % 32, pdim[2] % 32
 
-        #   zt.times do |zi|
-        #     yt.times do |yi|
-        #       xt.times do |xi|
-        #         a = [xi * 32, yi * 32, zi * 32]
-        #         r << [a, shift_coords(a, [31, 31, 31])]
-        #       end
-        #       # xrest
-        #       a = [xt * 32, yi * 32, zi * 32]
-        #       r << [a, shift_coords(a, [xr, 31, 31])]
-        #     end
-        #     # yrest
-        #     xt.times do |xi|
-        #       a = [xi * 32, yt * 32, zi * 32]
-        #       r << [a, shift_coords(a, [31, yr, 31])]
-        #     end
-        #     a = [xt * 32, yt * 32, zi * 32]
-        #     r << [a, shift_coords(a, [xr, yr, 31])]
-        #   end
+          zt.times do |zi|
+            yt.times do |yi|
+              xt.times do |xi|
+                a = [pa[0] + xi * 32, pa[1] + yi * 32, pa[2] + zi * 32]
+                r << [:x, a, shift_coords(a, [31, 31, 31])]
+              end
+              # xrest
+              a = [pa[0] + xt * 32, pa[1] + yi * 32, pa[2] + zi * 32]
+              r << [:xr, a, shift_coords(a, [xr - 1, 31, 31])]
+            end
+            # yrest
+            xt.times do |xi|
+              a = [pa[0] + xi * 32, pa[1] + yt * 32, pa[2] + zi * 32]
+              r << [:yrx, a, shift_coords(a, [31, yr-1, 31])]
+            end
+            a = [pa[0] + xt * 32, pa[1] + yt * 32, pa[2] + zi * 32]
+            r << [:yrxr, a, shift_coords(a, [xr-1, yr-1, 31])]
+          end
 
-        #   # zrest
-        #   yt.times do |yi|
-        #     xt.times do |xi|
-        #       a = [xi * 32, yi * 32, zt * 32]
-        #       r << [a, shift_coords(a, [31, 31, zr])]
-        #     end
-        #     # xrest
-        #     a = [xt * 32, yi * 32, zt * 32]
-        #     r << [a, shift_coords(a, [xr, 31, zr])]
-        #   end
-        #   # yrest
-        #   xt.times do |xi|
-        #     a = [xi * 32, yt * 32, zt * 32]
-        #     r << [a, shift_coords(a, [31, yr, zr])]
-        #   end
-        #   a = [xt * 32, yt * 32, zt * 32]
-        #   r << [a, shift_coords(a, [xr, yr, zr])]
-        # else
+          # zrest
+          yt.times do |yi|
+            xt.times do |xi|
+              a = [pa[0] + xi * 32, pa[1] + yi * 32, pa[2] + zt * 32]
+              r << [:zx, a, shift_coords(a, [31, 31, zr-1])]
+            end
+            # xrest
+            a = [pa[0] + xt * 32, pa[1] + yi * 32, pa[2] + zt * 32]
+            r << [:zxr, a, shift_coords(a, [xr-1, 31, zr-1])]
+          end
+          # yrest
+          xt.times do |xi|
+            a = [pa[0] + xi * 32, pa[1] + yt * 32, pa[2] + zt * 32]
+            r << [:zyx, a, shift_coords(a, [31, yr-1, zr-1])]
+          end
+          a = [pa[0] + xt * 32, pa[1] + yt * 32, pa[2] + zt * 32]
+          r << [:zyxr, a, shift_coords(a, [xr-1, yr-1, zr-1])]
+        else
           r << [p1, p2]
-        # end
+        end
       end.each(&block)
     end
 
