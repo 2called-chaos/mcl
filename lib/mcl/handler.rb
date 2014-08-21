@@ -127,11 +127,11 @@ module Mcl
             yt.times do |yi|
               xt.times do |xi|
                 a = [pa[0] + xi * 32, pa[1] + yi * 32, pa[2] + zi * 32]
-                r << [:x, a, shift_coords(a, [31, 31, 31])]
+                r << [a, shift_coords(a, [31, 31, 31])]
               end
               # xrest
               a = [pa[0] + xt * 32, pa[1] + yi * 32, pa[2] + zi * 32]
-              r << [:xr, a, shift_coords(a, [xr - 1, 31, 31])]
+              r << [a, shift_coords(a, [xr - 1, 31, 31])]
             end
             # yrest
             xt.times do |xi|
@@ -139,26 +139,26 @@ module Mcl
               r << [:yrx, a, shift_coords(a, [31, yr-1, 31])]
             end
             a = [pa[0] + xt * 32, pa[1] + yt * 32, pa[2] + zi * 32]
-            r << [:yrxr, a, shift_coords(a, [xr-1, yr-1, 31])]
+            r << [a, shift_coords(a, [xr-1, yr-1, 31])]
           end
 
           # zrest
           yt.times do |yi|
             xt.times do |xi|
               a = [pa[0] + xi * 32, pa[1] + yi * 32, pa[2] + zt * 32]
-              r << [:zx, a, shift_coords(a, [31, 31, zr-1])]
+              r << [a, shift_coords(a, [31, 31, zr-1])]
             end
             # xrest
             a = [pa[0] + xt * 32, pa[1] + yi * 32, pa[2] + zt * 32]
-            r << [:zxr, a, shift_coords(a, [xr-1, 31, zr-1])]
+            r << [a, shift_coords(a, [xr-1, 31, zr-1])]
           end
           # yrest
           xt.times do |xi|
             a = [pa[0] + xi * 32, pa[1] + yt * 32, pa[2] + zt * 32]
-            r << [:zyx, a, shift_coords(a, [31, yr-1, zr-1])]
+            r << [a, shift_coords(a, [31, yr-1, zr-1])]
           end
           a = [pa[0] + xt * 32, pa[1] + yt * 32, pa[2] + zt * 32]
-          r << [:zyxr, a, shift_coords(a, [xr-1, yr-1, zr-1])]
+          r << [a, shift_coords(a, [xr-1, yr-1, zr-1])]
         else
           r << [p1, p2]
         end
