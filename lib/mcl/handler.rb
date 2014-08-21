@@ -115,20 +115,52 @@ module Mcl
     end
 
     def coord_32k_units p1, p2, &block
-      dimm = coord_dimensions(p1, p2)
-      mtrx = selection_vertices(p1, p2)
-      p_, pa, pb = mtrx[:xyz], mtrx[:xyz], mtrx[:XYZ]
-
       [].tap do |r|
-        if dimm.inject(:*) > 32768
-          while p_ != pb
-            pn = shift_coords(p_, [[pb[0] - p_[0], 32].min, [pb[1] - p_[1], 32].min, [pb[2] - p_[2], 32].min])
-            r << [p_, pn]
-            p_ = pn
-          end
-        else
+        # if coord_dimensions(p1, p2).inject(:*) > 32768
+        #   mtrx = selection_vertices(p1, p2)
+        #   p_, pa, pb = mtrx[:xyz], mtrx[:xyz], mtrx[:XYZ]
+        #   xt, yt, zt = pb[0] / 32, pb[1] / 32, pb[2] / 32
+        #   xr, yr, zr = pb[0] % 32, pb[1] % 32, pb[2] % 32
+
+        #   zt.times do |zi|
+        #     yt.times do |yi|
+        #       xt.times do |xi|
+        #         a = [xi * 32, yi * 32, zi * 32]
+        #         r << [a, shift_coords(a, [31, 31, 31])]
+        #       end
+        #       # xrest
+        #       a = [xt * 32, yi * 32, zi * 32]
+        #       r << [a, shift_coords(a, [xr, 31, 31])]
+        #     end
+        #     # yrest
+        #     xt.times do |xi|
+        #       a = [xi * 32, yt * 32, zi * 32]
+        #       r << [a, shift_coords(a, [31, yr, 31])]
+        #     end
+        #     a = [xt * 32, yt * 32, zi * 32]
+        #     r << [a, shift_coords(a, [xr, yr, 31])]
+        #   end
+
+        #   # zrest
+        #   yt.times do |yi|
+        #     xt.times do |xi|
+        #       a = [xi * 32, yi * 32, zt * 32]
+        #       r << [a, shift_coords(a, [31, 31, zr])]
+        #     end
+        #     # xrest
+        #     a = [xt * 32, yi * 32, zt * 32]
+        #     r << [a, shift_coords(a, [xr, 31, zr])]
+        #   end
+        #   # yrest
+        #   xt.times do |xi|
+        #     a = [xi * 32, yt * 32, zt * 32]
+        #     r << [a, shift_coords(a, [31, yr, zr])]
+        #   end
+        #   a = [xt * 32, yt * 32, zt * 32]
+        #   r << [a, shift_coords(a, [xr, yr, zr])]
+        # else
           r << [p1, p2]
-        end
+        # end
       end.each(&block)
     end
 
