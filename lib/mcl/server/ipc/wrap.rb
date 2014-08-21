@@ -17,6 +17,7 @@ module Mcl
             app.log.info "[SHUTDOWN] Stopping minecraft server..."
             if @_ipc_thread
               begin
+                app.server.update_status :stopping
                 Process.kill("TERM", @_ipc_thread.pid)
 
                 app.log.debug "[SHUTDOWN] waiting up to 30 seconds for the minecraft server to stop..."
@@ -38,6 +39,7 @@ module Mcl
                 end
               end
             end
+            app.server.update_status :stopped unless alive?
           end
 
           if $_ipc_reattach
