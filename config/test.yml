@@ -17,7 +17,7 @@ tick_rate: 0.25
 # Define the location in which your minecraft server is installed in (where the server.properties file is).
 # If you leave this field blank or no server.properties file can be found in the location all local features
 # will be disabled (restart, backing up/restoring/moving/cloning world files, etc.)
-root: /Volumes/code/_project-production/mcl/_server
+root: /Volumes/code/_private/mcl/_server
 
 
 # You have to choose one of these IPC methods to communicate with your minecraft server instance.
