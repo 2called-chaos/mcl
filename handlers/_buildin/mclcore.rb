@@ -21,9 +21,10 @@ module Mcl
       end
 
       # boot time
-      register_parser(/Done \(([\d\.]+)s\)! For help, type "help" or "\?"/i) do |res, r|
-        $mcl.log.info "[CORE] Recognized SRVRDY after #{r[1]}s"
-        $mcl_server_boottime = $mcl.server.boottime = r[1].to_f
+      register_parser(/Done \(([\d\.,]+)s\)! For help, type "help" or "\?"/i) do |res, r|
+        srvrdy = r[1].to_s.gsub(",", ".")
+        $mcl.log.info "[CORE] Recognized SRVRDY after #{srvrdy}s"
+        $mcl_server_boottime = $mcl.server.boottime = srvrdy.to_f
         $mcl.server.update_status :running
       end
 
