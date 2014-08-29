@@ -136,7 +136,7 @@ module Mcl
             # yrest
             xt.times do |xi|
               a = [pa[0] + xi * 32, pa[1] + yt * 32, pa[2] + zi * 32]
-              r << [:yrx, a, shift_coords(a, [31, yr-1, 31])]
+              r << [a, shift_coords(a, [31, yr-1, 31])]
             end
             a = [pa[0] + xt * 32, pa[1] + yt * 32, pa[2] + zi * 32]
             r << [a, shift_coords(a, [xr-1, yr-1, 31])]
