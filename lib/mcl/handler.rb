@@ -61,6 +61,12 @@ module Mcl
       end
     end
 
+    def pmemo p
+      app.ram[:players] ||= {}
+      app.ram[:players][p.to_s] ||= {}
+      app.ram[:players][p.to_s]
+    end
+
     def register_parser *a, &b
       eman.parser.register(*a, &b)
     end
@@ -82,8 +88,8 @@ module Mcl
     end
 
     def strbool v
-      v = true if ["true", "t", "1", "y", "yes"].include?(v)
-      v = false if ["false", "f", "0", "n", "no"].include?(v)
+      v = true if ["true", "t", "1", "y", "yes", "on"].include?(v)
+      v = false if ["false", "f", "0", "n", "no", "off"].include?(v)
       v
     end
 
@@ -114,10 +120,29 @@ module Mcl
       end
     end
 
-    def coord_32k_units p1, p2, &block
+    def require_danger_mode p, text = "Danger mode required!"
+      if pmemo(p)[:danger_mode]
+        return false
+      else
+        tellm(p, {text: text, color: "red"}, {text: " (enable with '!danger on/off')", color: "yellow"})
+        return true
+      end
+    end
+
+    def require_dm_for_selection p, p1, p2
+      !pmemo(p)[:danger_mode] && coord_dimensions(p1, p2).inject(:*) > 100_000 && require_danger_mode(p, "Selections >100k blocks require danger mode to be enabled!")
+    end
+
+    def coord_32k_units p1, p2, require_danger_mode_for_player = nil, &block
       [].tap do |r|
         pdim = coord_dimensions(p1, p2)
         if pdim.inject(:*) > 32768
+          # require danger mode
+          if p = require_danger_mode_for_player
+            return [] if require_dm_for_selection(p, p1, p2)
+          end
+
+          # calc
           mtrx = selection_vertices(p1, p2)
           pa, pb = mtrx[:xyz], mtrx[:XYZ]
           xt, yt, zt = pdim[0] / 32, pdim[1] / 32, pdim[2] / 32

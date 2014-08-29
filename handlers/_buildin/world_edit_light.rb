@@ -52,7 +52,7 @@ module Mcl
           if a.count > 0
             block = a.shift
             bval  = a.shift || "0"
-            h.coord_32k_units(pram[:pos1], pram[:pos2]) do |p1, p2|
+            h.coord_32k_units(pram[:pos1], pram[:pos2], p) do |p1, p2|
               $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{block} #{bval} replace #{a.join(" ")}}
             end
           else
@@ -92,7 +92,7 @@ module Mcl
           if a.count > 0
             block = a.shift
             bval  = a.shift || "0"
-            h.coord_32k_units(pram[:pos1], pram[:pos2]) do |p1, p2|
+            h.coord_32k_units(pram[:pos1], pram[:pos2], p) do |p1, p2|
               $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{block} #{bval} keep #{a.join(" ")}}
             end
           else
@@ -108,7 +108,7 @@ module Mcl
           is, should = a.join(" ").split(">").map(&:strip).reject(&:blank?)
           if is && should && is.is_a?(String) && should.is_a?(String)
             should = should.split(" ")
-            h.coord_32k_units(pram[:pos1], pram[:pos2]) do |p1, p2|
+            h.coord_32k_units(pram[:pos1], pram[:pos2], p) do |p1, p2|
               $mcl.server.invoke %{/execute #{p} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{should[0]} #{should[1] || "1"} replace #{is}}
             end
           else
@@ -364,11 +364,17 @@ module Mcl
         tellm(p, {text: "!!stack <direction> [amount] [shift_selection] [masked|filtered <TileName>]", color: "aqua"})
       else
         unless require_selection(p)
+          # vars
           direction = chunks.shift
           amount    = chunks.any? ? [chunks.shift.to_i, 1].max : 1
           shift_sel = chunks.any? ? strbool(chunks.shift) : false
           mode      = chunks.any? ? chunks.shift : "replace"
           tile_name = chunks.shift
+
+          # precheck
+          if !pmemo(p)[:danger_mode] && amount > 50
+            return require_danger_mode(p, "Stacking >50 times require danger mode to be enabled!")
+          end
 
           # prepare
           cube                = sel_explode_selection(p)            # corners

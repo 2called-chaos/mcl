@@ -45,6 +45,11 @@ module Mcl
         handler.acl_verify(player)
         $mcl.server.invoke "#{args.join(" ")}"
       end
+      register_command :danger, desc: "enable danger mode for you to bypass security limits" do |handler, player, command, target, args, optparse|
+        handler.acl_verify(player)
+        pmemo(player)[:danger_mode] = strbool(args.first) if args.any?
+        handler.trawm(player, {text: "Danger mode ", color: "gold"}, pmemo(player)[:danger_mode] ? {text: "ENABLED", color: "red"} : {text: "disabled", color: "green"})
+      end
       register_command :colors, desc: "shows all available colors" do |handler, player, command, target, args, optparse|
         chunks = %w[black dark_blue dark_green dark_aqua dark_red dark_purple gold gray dark_gray blue green aqua red light_purple yellow white].in_groups_of(4, false)
 
