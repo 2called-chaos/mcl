@@ -36,6 +36,16 @@ module Mcl
       register_command :airblock, desc: "setblocks the block below you or target to dirt" do |handler, player, command, target, args, optparse|
         $mcl.server.invoke "/execute #{target} ~ ~ ~ setblock ~ ~-1 ~ dirt"
       end
+      register_command :cbt, desc: "inventory for command block trickery" do |handler, player, command, target, args, optparse|
+        $mcl.server.invoke "/clear #{target}"
+        $mcl.server.invoke "/give #{target} command_block"
+        $mcl.server.invoke "/give #{target} redstone_block"
+        $mcl.server.invoke "/give #{target} stone_button"
+        $mcl.server.invoke "/give #{target} repeater"
+        $mcl.server.invoke "/give #{target} comparator"
+        $mcl.server.invoke "/give #{target} sign"
+        $mcl.server.invoke "/give #{target} diamond_sword"
+      end
 
 
 
