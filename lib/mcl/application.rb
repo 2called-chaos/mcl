@@ -1,6 +1,6 @@
 module Mcl
   class Application
-    attr_reader :log, :instance, :config, :ram, :handlers, :eman, :server, :scheduler, :acl, :async, :command_names
+    attr_reader :log, :instance, :config, :ram, :handlers, :eman, :server, :scheduler, :acl, :async, :command_names, :delayed
 
     include Setup
     include Loop
@@ -9,6 +9,7 @@ module Mcl
       @mutex = Monitor.new
       @instance = instance
       @graceful = []
+      @delayed = []
       @exit_code = 0
       @acl = {}
       @async = []
@@ -109,6 +110,10 @@ module Mcl
         # t.abort_on_exception = true
         async << t
       end
+    end
+
+    def delay &block
+      @delayed << block
     end
 
     def acl_reload

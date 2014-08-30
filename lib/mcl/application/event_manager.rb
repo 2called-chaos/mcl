@@ -146,7 +146,9 @@ module Mcl
               # short tick handlers
               begin
                 shortticktime = Benchmark.realtime do
-                  #
+                  while cb = app.delayed.shift
+                    cb.call
+                  end
                 end
               ensure
               end
