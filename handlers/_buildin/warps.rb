@@ -36,12 +36,12 @@ module Mcl
       $mcl.server.invoke %{/tp #{player} #{warp.join(" ")}}
     end
 
-    def find_warp player, name
+    def find_warp player, name, fallback = true
       pram, sram = memory(player), memory(:__server)
       if name.start_with?("$")
-        pram[:__global][name.to_s] || sram[:__global][name.to_s]
+        [:__global, pram[:__global][name.to_s] || (fallback && sram[:__global][name.to_s])]
       else
-        pram[$mcl.server.world].try(:[], name.to_s) || sram[$mcl.server.world].try(:[], name.to_s)
+        [$mcl.server.world, pram[$mcl.server.world].try(:[], name.to_s) || (fallback && sram[$mcl.server.world].try(:[], name.to_s))]
       end
     end
 
@@ -75,12 +75,12 @@ module Mcl
         handler.acl_verify(player)
 
         case args[0]
-        when "set", "delete", "list"
+        when "set", "delete", "list", "share"
           handler.send("com_#{args[0]}", player, args[1..-1])
         else
           srv = args.delete("-s")
           if args.any?
-            if warp = handler.find_warp(srv ? :__server : player, args[0])
+            if warp = handler.find_warp(srv ? :__server : player, args[0]).last
               handler.warp(player, warp)
               sleep 0.1
               sound = %w[mob.endermen.portal mob.enderdragon.growl mob.ghast.scream mob.horse.donkey.angry mob.villager.hit].sample(1)[0]
@@ -95,6 +95,7 @@ module Mcl
             handler.tellm(player, {text: "<name>", color: "gold"}, {text: " beam to given warp", color: "reset"})
             handler.tellm(player, {text: "set <name> [<x> <y> <z>]", color: "gold"}, {text: " add/update warp to current or given position", color: "reset"})
             handler.tellm(player, {text: "delete <name>", color: "gold"}, {text: " delete warp", color: "reset"})
+            handler.tellm(player, {text: "share <name> [target]", color: "gold"}, {text: " reveal warp to target (@a by default)", color: "reset"})
             handler.tellm(player, {text: "list [-a|-s] [page|filter] [page]", color: "gold"}, {text: " list/search warps", color: "reset"})
           end
         end
@@ -131,7 +132,7 @@ module Mcl
       srv = args.delete("-s")
       name = args.shift.presence
       if name
-        if find_warp(srv ? :__server : player, name)
+        if find_warp(srv ? :__server : player, name, false).last
           delete_warp(srv ? :__server : player, name)
           tellm(player, {text: "Warp is gone!", color: "green"})
         else
@@ -139,6 +140,29 @@ module Mcl
         end
       else
         tellm(player, {text: "!warp delete <name>", color: "red"})
+      end
+    end
+
+    def com_share player, args
+      srv = args.delete("-s")
+      name = args.shift.presence
+      target = args.shift.presence || "@a"
+      if name
+        warp = find_warp(srv ? :__server : player, name)
+        if warp.last
+          tellm(player, {text: "You shared a #{"server " if srv}warp with ", color: "yellow"}, {text: "#{target}", color: "aqua"}, {text: ":", color: "yellow"})
+          tellm(target, {text: "#{player}", color: "aqua"}, {text: " shared a #{"server " if srv}warp with ", color: "yellow"}, {text: "#{target}", color: "aqua"}, {text: ":", color: "yellow"})
+          tellm(target, warp[0] == :__global ? {text: "GLOBAL", color: "red"} : {text: warp[0], color: "gold"}, {text: " #{name} ", color: "green"},{text: warp.last.join(" "), color: "yellow"})
+          tellm(target,
+            {text: "save warp", color: "aqua", underlined: true, hoverEvent: {action: "show_text", value: {text: "click to save"}}, clickEvent: {action: "run_command", value: "!warp set #{name} #{warp.last.join(" ")}"}},
+            {text: " "},
+            {text: "customize", color: "dark_aqua", underlined: true, hoverEvent: {action: "show_text", value: {text: "click to customize"}}, clickEvent: {action: "suggest_command", value: "!warp set #{name} #{warp.last.join(" ")}"}}
+          )
+        else
+          tellm(player, {text: "Unknown warp!", color: "red"})
+        end
+      else
+        tellm(player, {text: "!warp share <name> [target]", color: "red"})
       end
     end
 
