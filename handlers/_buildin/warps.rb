@@ -141,30 +141,44 @@ module Mcl
     end
 
     def com_list player, args
-      tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
-      return
       acl_verify(player)
-      sfiles = available_schematics
+      pram = memory(player)
+      all = args.delete("-a")
+      page, filter = 1, nil
 
       # filter
       if args[0] && args[0].to_i == 0
-        sfiles = sfiles.select{|c| c.to_s =~ /#{args[0]}/ }
-        page = 1
+        filter = /#{args[0]}/
         page = (args[1] || 1).to_i
       else
         page = (args[0] || 1).to_i
       end
 
-      # paginate
-      page_contents = sfiles.in_groups_of(7, false)
-      pages = (sfiles.count/7.0).ceil
+      # warps
+      swarps = [].tap do |r|
+        pram.each do |world, warps|
+          if all || (world == $mcl.server.world || world == :__global)
+            warps.each do |name, pos|
+              if !filter || name.to_s.match(filter)
+                r << [
+                  world == :__global ? {text: "GLOBAL", color: "red"} : {text: world, color: "gold"},
+                  {text: " #{name} ", color: "green"},{text: pos.join(" "), color: "yellow"}
+                ]
+              end
+            end
+          end
+        end
+      end
 
-      if sfiles.any?
-        tellm(player, {text: "--- Showing page #{page}/#{pages} (#{sfiles.count} schematics) ---", color: "aqua"})
-        page_contents[page-1].each {|schem| tellm(player, {text: schem, color: "reset", clickEvent: {action: "suggest_command", value: "!schebu load #{schem}"}}) }
-        tellm(player, {text: "Use ", color: "aqua"}, {text: "!schembu list [str] <page>", color: "light_purple"}, {text: " to [filter] and/or <paginate>.", color: "aqua"})
+      # paginate
+      page_contents = swarps.in_groups_of(7, false)
+      pages = (swarps.count/7.0).ceil
+
+      if swarps.any?
+        tellm(player, {text: "--- Showing page #{page}/#{pages} (#{swarps.count} warps) ---", color: "aqua"})
+        page_contents[page-1].each {|warp| tellm(player, *warp) }
       else
-        tellm(player, {text: "No schematics found for that filter/page!", color: "red"})
+        tellm(player, {text: "No warps found for that filter/page!", color: "red"})
       end
     end
   end
