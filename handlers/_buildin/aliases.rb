@@ -69,7 +69,8 @@ module Mcl
       # = Weather =
       # ===========
       register_command :sun, desc: "Clears the weather for 11 days" do |handler, player, command, target, args, optparse|
-        $mcl.server.invoke "/weather clear 999999"
+        duration = args[0].presence
+        $mcl.server.invoke "/weather clear #{duration || 999999}"
       end
       register_command :rain, desc: "Lets it rain, you may pass a duration in seconds" do |handler, player, command, target, args, optparse|
         handler.acl_verify(player)
