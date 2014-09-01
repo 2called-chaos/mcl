@@ -161,7 +161,7 @@ module Mcl
       swarps = [].tap do |r|
         pram.each do |world, warps|
           if all || (world == $mcl.server.world || world == :__global)
-            warps.each do |name, pos|
+            warps.sort_by(&:first).each do |name, pos|
               if !filter || name.to_s.match(filter)
                 r << [
                   world == :__global ? {text: "GLOBAL", color: "red"} : {text: world, color: "gold"},
@@ -174,7 +174,7 @@ module Mcl
       end
 
       # paginate
-      page_contents = swarps.sort.in_groups_of(7, false)
+      page_contents = swarps.in_groups_of(7, false)
       pages = (swarps.count/7.0).ceil
 
       if swarps.any?
