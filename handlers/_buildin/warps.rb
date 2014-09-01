@@ -174,7 +174,7 @@ module Mcl
       end
 
       # paginate
-      page_contents = swarps.in_groups_of(7, false)
+      page_contents = swarps.sort.in_groups_of(7, false)
       pages = (swarps.count/7.0).ceil
 
       if swarps.any?
