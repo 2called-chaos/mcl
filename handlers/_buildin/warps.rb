@@ -152,7 +152,7 @@ module Mcl
         if warp.last
           tellm(player, {text: "You shared a #{"server " if srv}warp with ", color: "yellow"}, {text: "#{target}", color: "aqua"}, {text: ":", color: "yellow"})
           tellm(target, {text: "#{player}", color: "aqua"}, {text: " shared a #{"server " if srv}warp with ", color: "yellow"}, {text: "#{target}", color: "aqua"}, {text: ":", color: "yellow"})
-          tellm(target, warp[0] == :__global ? {text: "GLOBAL", color: "red"} : {text: warp[0], color: "gold"}, {text: " #{name} ", color: "green"},{text: warp.last.join(" "), color: "yellow"})
+          tellm(target, warp[0] == :__global ? {text: "GLOBAL", color: "red"} : {text: warp[0], color: "gold"}, {text: " #{name} ", color: "green", hoverEvent: {action: "show_text", value: {text: "warp now"}}, clickEvent: {action: "run_command", value: "!warp #{name}"}},{text: warp.last.join(" "), color: "yellow"})
           tellm(target,
             {text: "save warp", color: "aqua", underlined: true, hoverEvent: {action: "show_text", value: {text: "click to save"}}, clickEvent: {action: "run_command", value: "!warp set #{name} #{warp.last.join(" ")}"}},
             {text: " "},
