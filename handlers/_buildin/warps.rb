@@ -71,7 +71,7 @@ module Mcl
     # = Commands =
     # ============
     def setup_parsers
-      register_command :warp, desc: "Beam me up, Scotty (more info with !warp)" do |handler, player, command, target, args, optparse|
+      register_command :warp, :warps, desc: "Beam me up, Scotty (more info with !warp)" do |handler, player, command, target, args, optparse|
         handler.acl_verify(player)
 
         case args[0]
