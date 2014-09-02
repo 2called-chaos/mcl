@@ -189,7 +189,7 @@ module Mcl
               if !filter || name.to_s.match(filter)
                 r << [
                   world == :__global ? {text: "GLOBAL", color: "red"} : {text: world, color: "gold"},
-                  {text: " #{name} ", color: "green", hoverEvent: {action: "show_text", value: {text: "warp now"}}, clickEvent: {action: "run_command", value: "!warp #{name}"}},{text: pos.join(" "), color: "yellow"}
+                  {text: " #{name} ", color: "green", hoverEvent: {action: "show_text", value: {text: "warp to #{name} now"}}, clickEvent: {action: "run_command", value: "!warp #{name}"}},{text: pos.join(" "), color: "yellow"}
                 ]
               end
             end
