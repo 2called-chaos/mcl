@@ -135,3 +135,44 @@ the core. Plugins that is.
   - run_at
   - locked_by
   - handler
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- =============  -->
+  <!-- = Worldedit =  -->
+  <!-- =============  -->
+  # outline selection with particle: /particle barrier ~ ~ ~ 0 0 0 1 1 force
+  # move selection: !!move 5n        /clone p p p
+
+  <!-- ==========  -->
+  <!-- = Schebu =  -->
+  <!-- ==========  -->
+  # download new
+  # rotate
+
+
+
+  world book
+
+  flagbook / bannerbook
+  warp book
+  backup & restore book
+  schebu add
