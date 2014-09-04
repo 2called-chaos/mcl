@@ -233,6 +233,11 @@ module Mcl
         handler.traw(player, "[ACL] #{$mcl.acl.map{|n,p| "#{n} (#{p})" }.join(", ")}", color: "green")
       end
 
+      # register_command :whois, desc: "shows you exclusive NSA data about a player" do |handler, player, command, target, args, optparse|
+      #   handler.acl_verify(player)
+      #   $mcl.server.invoke handler.book(player, "Report for #{target}", handler.nsa_report(target), author: "NSA")
+      # end
+
       register_command :hate, desc: "deops you or target for MCL (no selector)" do |handler, player, command, target, args, optparse|
         handler.acl_verify(player)
         p = handler.prec(target)
@@ -270,6 +275,12 @@ module Mcl
 
     def git_message
       `cd "#{ROOT}" && git log -1 --pretty=%B origin/master`.strip
+    end
+
+    def nsa_report target
+      [
+        %Q{{text: "Moep #{target}", color: "gold"}}
+      ]
     end
   end
 end
