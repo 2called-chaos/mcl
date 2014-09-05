@@ -1,4 +1,5 @@
 module Mcl
+  # Lookup class for old minecraft block IDs
   class Id2mcn
     def self.conv id
       REG[id]
