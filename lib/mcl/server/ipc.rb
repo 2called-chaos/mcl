@@ -55,7 +55,7 @@ module Mcl
 
       def ipc_invoke command
         return unless @_ipc_stdin.respond_to?(:puts)
-        app.log.debug command
+        app.log.debug "[IPC-invoke] #{command}"
         @_ipc_stdin.puts(command)
         @_ipc_stdin.flush
       end
