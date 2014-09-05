@@ -1,34 +1,28 @@
 module Mcl
-  # init dependencies
-  # Bundler.require
-
-  # sync output
-  STDOUT.sync = true
-
   # core dependencies
   require "open3"
   require "yaml"
-  # require "open-uri"
-  # require "optparse"
-  # require "benchmark"
-  # require "thread"
-  # require "monitor"
-  # require "digest/sha1"
-  # require "net/http"
-  # require "fileutils"
+  require "open-uri"
+  require "optparse"
+  require "benchmark"
+  require "thread"
+  require "monitor"
+  require "digest/sha1"
+  require "net/http"
+  require "fileutils"
 
   # gems
   require "active_record"
 
   # 3rd party
-  # require "#{ROOT}/lib/massive_craft/s2b"
+  require "#{ROOT}/lib/massive_craft/s2b"
   require "#{ROOT}/lib/bmonkeys/string_expand_range"
 
   # application
   "#{ROOT}/lib/mcl".tap do |lib|
     require "#{lib}/id2mcn"
     require "#{lib}/multi_io"
-  #   require "#{lib}/command"
+    require "#{lib}/promise"
     require "#{lib}/handler/api"
     require "#{lib}/handler/book_verter"
     require "#{lib}/handler/geometry"
@@ -52,6 +46,3 @@ module Mcl
     require "#{lib}/application"
   end
 end
-
-__END__
-

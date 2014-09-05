@@ -3,11 +3,20 @@ module Mcl
     module Setup
       include DbSchema
 
+      def ensure_directories
+        begin
+          %w[log tmp vendor/data].each{|dir| FileUtils.mkdir_p("#{ROOT}/#{dir}") }
+        rescue Errno::EPERM
+          $stderr.puts "Can't create `log/' and/or `tmp/' and/or `vendor/data/' directory. Permissons? (Errno::EPERM)"
+          exit 1
+        end
+      end
+
       def setup_logger
         @logger = Logger.new(STDOUT)
         @logger.instance_variable_set(:"@mcl_uncloseable", true)
-        @logfile = Logger.new("#{ROOT}/log/console.log", 10, 1024000)
-        @logfile.progname = "mcld"
+        @logfile = Logger.new("#{ROOT}/log/console_#{@instance}.log", 10, 1024000)
+        @logfile.progname = "mcld_#{@instance}"
         @log = MultiIO.new(@logger, @logfile)
         graceful do
           @log.info "[SHUTDOWN] Halting logger..."
@@ -28,13 +37,17 @@ module Mcl
 
             # fix paths
             if @config["database"]["adapter"] == "sqlite3"
-              @config["database"]["database"] = Pathname.new(ROOT).join(@config["database"]["database"]).to_s
+              dbfile = @config["database"]["database"].presence || "vendor/data/#{@instance}.sqlite"
+              @config["database"]["database"] = Pathname.new(ROOT).join(dbfile).to_s
             end
 
             # apply debug
             toggle_debug @config["debug"], false
+
+            # apply AR debug
+            ActiveRecord::Base.logger = @config["attach_ar_logger"] ? @logger : nil
           rescue
-            raise "Failed to load config, is the syntax correct?"
+            raise "Failed to load config, is the syntax correct? (#{$!.message}"
           end
         else
           log.fatal "[SETUP] Instance `#{ARGV[0]}' has no corresponding config file `#{@config_file}'"
@@ -97,6 +110,7 @@ module Mcl
         end
 
         @handlers.each(&:init)
+        log.debug "[SETUP] #{@command_names.count} commands registered..."
       end
 
       def trap_signals
@@ -112,6 +126,16 @@ module Mcl
           Signal.trap("TSTP", "DEFAULT")
           Signal.trap("USR1", "DEFAULT")
         end
+      end
+
+      def prepare_loop
+        setup_event_manager # controller (ticking)
+        setup_scheduler     # scheduled tasks
+        setup_server        # setup server communication
+        setup_handlers      # setup all handlers
+        acl_reload
+
+        eman.ready!
       end
     end
   end

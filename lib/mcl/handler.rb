@@ -24,62 +24,26 @@ module Mcl
       descendants << descendant
     end
 
-    def register_command *cmds, &b
-      opts = cmds.extract_options!
-      handler = self
-      cmds = [*cmds].flatten
-
-      # register name
-      app.command_names["!" << cmds.join(" !")] = opts[:desc]
-
-      # register handler
-      cmds.each do |cmd|
-        cmd = cmd.to_s
-        register_parser(/<([^>]+)> \!(.+)/i) do |res, r|
-          if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
-            catch(:handler_exit) do
-              b[handler, r[1], r[2], "#{r[2]}".split(" ")[1].presence || r[1], r[2].split(" ")[1..-1], OptionParser.new]
-            end
-          end
-        end
-      end
-    end
-
-    def pmemo p
-      app.ram[:players] ||= {}
-      app.ram[:players][p.to_s] ||= {}
-      app.ram[:players][p.to_s]
-    end
-
     def strbool v
       v = true if ["true", "t", "1", "y", "yes", "on"].include?(v)
       v = false if ["false", "f", "0", "n", "no", "off"].include?(v)
       v
     end
 
-    def prec p
-      Player.where(nickname: p).first_or_initialize
-    end
-
     def acl_verify p, level = 13337
       $mcl.acl_verify(p, level)
+    end
+
+    def promise opts = {}, &block
+      Promise.new(app, opts, &block).tap{|p| app.promises << p }
     end
 
     def detect_player_position p, opts = {}, &block
       opts = opts.reverse_merge(pos: "~ ~1 ~", block: "minecraft:air")
       $mcl.server.invoke %{/execute #{p} ~ ~ ~ testforblock #{opts[:pos]} #{opts[:block]}}
-      async do
-        Thread.current[:tries] = 0
-        Thread.current[:tick] = $mcl.eman.tick
-        while !pmemo(p)[:detected_pos]
-          Thread.current.kill if Thread.current[:mcl_halting]
-          Thread.current[:tries] += 1
-          break if Thread.current[:tries] > 50 || ($mcl.eman.tick - Thread.current[:tick]) > 10
-          Thread.pass
-          sleep 0.1
-        end
-
-        $mcl.sync{ block.call(pmemo(p).delete(:detected_pos)) }
+      promise do |pr|
+        pr.condition { pmemo(p)[:detected_pos] }
+        pr.callback { block.call(pmemo(p).delete(:detected_pos)) }
       end
     end
 

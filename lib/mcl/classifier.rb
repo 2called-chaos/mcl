@@ -25,6 +25,26 @@ module Mcl
       @preparser << [pattern, block]
     end
 
+    def register_command handler, *cmds, &b
+      opts = cmds.extract_options!
+      cmds = [*cmds].flatten
+
+      # register name
+      app.command_names["!" << cmds.join(" !")] = opts[:desc]
+
+      # register handler
+      cmds.each do |cmd|
+        cmd = cmd.to_s
+        register(/<([^>]+)> \!(.+)/i) do |res, r|
+          if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
+            catch(:handler_exit) do
+              b[handler, r[1], r[2], "#{r[2]}".split(" ")[1].presence || r[1], r[2].split(" ")[1..-1], OptionParser.new]
+            end
+          end
+        end
+      end
+    end
+
     def pattern &block
       block
     end

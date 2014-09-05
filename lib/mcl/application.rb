@@ -1,23 +1,22 @@
 module Mcl
   class Application
-    attr_reader :log, :instance, :config, :ram, :handlers, :eman, :server, :scheduler, :acl, :async, :command_names, :delayed
+    attr_reader :acl, :async, :command_names, :config, :delayed, :eman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises
 
     include Setup
-    include Loop
 
     def initialize instance
       @mutex = Monitor.new
       @instance = instance
       @graceful = []
+      @promises = []
       @delayed = []
       @exit_code = 0
       @acl = {}
       @async = []
-      @ram = {
-        exceptions: []
-      }
+      @ram = { exceptions: [], players: {}, tick: {} }
 
       begin
+        ensure_directories
         setup_logger
         load_config
         trap_signals
@@ -37,7 +36,18 @@ module Mcl
       end
     end
 
-    def synchronize &b
+    def loop!
+      prepare_loop
+
+      loop do
+        mayexit
+        eman.tick!
+      end
+    ensure
+      graceful_shutdown
+    end
+
+    def sync &b
       @mutex.synchronize(&b)
     end
 
@@ -46,7 +56,7 @@ module Mcl
     end
 
     def graceful_shutdown
-      log.debug "Performing graceful shutdown"
+      log.info "Performing graceful shutdown"
       @graceful.each do |task|
         begin
           task.call
@@ -71,6 +81,10 @@ module Mcl
         log.level = Logger::DEBUG
         log.debug "[!] Debug mode enabled" if announce
       end
+    end
+
+    def devlog *a
+      log.debug(*a) if @config["dev"]
     end
 
     # define point where application or unsafe can safely exit when term signal is received
