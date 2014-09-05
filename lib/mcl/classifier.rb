@@ -1,108 +1,110 @@
 module Mcl
   class Classifier
+    R_TIME = '(?:(?:[0-1][0-9])|(?:[2][0-3])|(?:[0-9])):(?:[0-5][0-9])(?::[0-5][0-9])?'
+    R_UUID = '[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}'
+
     attr_reader :app
-    include Parsing
 
     def initialize app
       @app = app
       @parser = []
       @preparser = []
-      internal_parser
     end
 
-    def internal_parser
-      # a_uauth
-      # a_clientstate
-      # a_boot
-      # a_chat
+    # ---------
+
+    def r_splitline line
+      line.match(/\[(#{R_TIME})\] \[([^\/]+)\/([^\]]+)\]: (.*)/)
     end
 
-    def a_uauth
-      pat = pattern do |res|
-        res.thread.start_with?("user authenticator")
-      end
-      register(pat) do |res|
-        m = data.match(/UUID of player ([^\s]+) is (#{R_UUID})/)
-        res.thread = "user authenticator"
-        res.type = :uauth
-        res.origin_type = :player
-        res.origin = m[1]
-        res.data = m[2]
-      end
+    def register pattern, &block
+      @parser << [pattern, block]
     end
 
-    def a_clientstate
-      # connect
-      # [19:15:29] [Server thread/INFO]: toastyyyx[/84.62.171.204:49797] logged in with entity id 4390588 at (-120.69999998807907, 46.0, 239.23091316042147)
-      pat = pattern do |res|
-        res.thread == "server thread" &&
-        res.channel == "info" &&
-        !res.data.start_with?("<") &&
-        res.data.include?("logged in with entity id")
-      end
-      register(pat) do |res|
-        m = data.match(/UUID of player ([^\s]+) is (#{R_UUID})/)
-        res.type = :clientstate
-        res.origin_type = :connect
-        res.origin = m[1]
-        res.data = m[2]
-      end
+    def register_pre pattern, &block
+      @preparser << [pattern, block]
+    end
 
-      # join
-      # [19:15:29] [Server thread/INFO]: toastyyyx joined the game
-      pat = pattern do |res|
-        res.thread == "server thread" &&
-        res.channel == "info" &&
-        !res.data.start_with?("<") &&
-        res.data.end_with?("joined the game")
-      end
-      register(pat) do |res|
-        m = data.match(/UUID of player ([^\s]+) is (#{R_UUID})/)
-        res.type = :clientstate
-        res.origin_type = :join
-        res.origin = m[1]
-        res.data = m[2]
-      end
+    def pattern &block
+      block
+    end
 
-      # disconnect
-      # [19:18:46] [Server thread/INFO]: toastyyyx lost connection: TextComponent{text='Disconnected', siblings=[], style=Style{hasParent=false, color=null, bold=null, italic=null, underlined=null, obfuscated=null, clickEvent=null, hoverEvent=null, insertion=null}}
-      pat = pattern do |res|
-        res.thread == "server thread" &&
-        res.channel == "info" &&
-        !res.data.start_with?("<") &&
-        res.data.end_with?("joined the game")
-      end
-      register(pat) do |res|
-        m = data.match(/UUID of player ([^\s]+) is (#{R_UUID})/)
-        res.type = :clientstate
-        res.origin_type = :disconnect
-        res.origin = m[1]
-        res.data = m[2]
-      end
-
-      # leave
-      # [19:18:46] [Server thread/INFO]: toastyyyx left the game
-      pat = pattern do |res|
-        res.thread == "server thread" &&
-        res.channel == "info" &&
-        !res.data.start_with?("<") &&
-        res.data.end_with?("left the game")
-      end
-      register(pat) do |res|
-        m = data.match(/UUID of player ([^\s]+) is (#{R_UUID})/)
-        res.type = :clientstate
-        res.origin_type = :leave
-        res.origin = m[1]
-        res.data = m[2]
+    def parser_match resource
+      @parser.detect do |pattern, callback|
+        if pattern.respond_to?(:call)
+          m = pattern[resource]
+        else
+          m = resource.data.match(pattern)
+        end
+        m ? callback[resource, m] : false
       end
     end
 
-    def a_boot
-
+    def preparser_match resource
+      @preparser.detect do |pattern, callback|
+        if pattern.respond_to?(:call)
+          m = pattern[resource]
+        else
+          m = resource.data.match(pattern)
+        end
+        m ? callback[resource, m] : false
+      end
     end
 
-    def a_chat
+    def classify line
+      Result.new(line).tap do |res|
+        begin
+          r = preparser_match(res)
 
+          unless r
+            if m = r_splitline(line)
+              res.date = Time.parse("#{Time.current.to_date.to_s} #{m[1]}")
+              res.thread = m[2].downcase
+              res.channel = m[3].downcase
+              res.data = m[4]
+              res.classified = true
+
+              r = parser_match(res)
+              unless r # unknown
+                res.classified = false
+              end
+            else
+              # raise "no exception expected"
+              # r = parser_match(res)
+              # unless r # unknown
+              #   res.data = line
+              #   res.classified = true
+              #   res.type = :exception
+              #   res.append = true
+              # end
+            end
+          end
+        rescue
+          app.log.debug $!.message
+          $!.backtrace.each {|m| app.log.debug(m) }
+          app.server.traw("@a", "[ERROR] #{$!.message}", color: "red")
+          app.server.traw("@a", "        #{$!.backtrace[0].to_s.gsub(ROOT, "%")}", color: "red")
+          res.date = Time.current
+          res.data = $!.message
+          res.type = :exception
+          res.subtype = :mcl_exception
+        end
+      end
+    end
+
+    class Result
+      [:classified, :append, :command].each {|m| define_method("#{m}?") { send(:"@#{m}") } }
+      attr_accessor :line, :type, :subtype, :thread, :channel, :origin_type, :origin, :data, :command, :date, :append, :classified
+
+      def initialize(line = nil)
+        @line = line
+        @classified = false
+        @type = :unknown
+      end
+
+      def command
+        !!@command
+      end
     end
   end
 end
