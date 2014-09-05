@@ -39,8 +39,6 @@ module Mcl
         end
       end
 
-
-
       def ready?
         @ready
       end
@@ -64,17 +62,21 @@ module Mcl
 
       # that is the most awful method I've ever written, I swear!
       def tick!
-        # if @tick > 500
-          # raise Application::Halt, "ticklimit of 500 reached"
-        # end
+        # raise Application::Halt, "ticklimit of 500 reached" if @tick > 500
 
-        app.synchronize do
+        app.sync do
           begin
             @tick += 1
             events, jobs = 0, 0
-            parsetime, dispatchtime, shortticktime, schedulertime = nil
+            processtime, shortticktime, delayedtime, schedulertime = nil
 
             ticktime = Benchmark.realtime do
+              # detect MCL lag
+              if Thread.current[:last_tick] && (Time.current - Thread.current[:last_tick]) > (app.config["tick_rate"]*2)
+                diff = Time.current - Thread.current[:last_tick]
+                app.log.warn "[CORE] main loop is lagging (delayed for #{diff.to_f}s)"
+              end
+
               # detect died minecraft server
               if app.server.died?
                 app.log.fatal "[IPC] connection to minecraft server lost after tick ##{@tick - 1}, rebooting..."
@@ -92,9 +94,31 @@ module Mcl
                 app.async.select!(&:alive?)
               end
 
-              # parse spool to events
-              begin
-                parsetime = Benchmark.realtime do
+              # scrub promises
+              if @tick % 100 == 0
+                app.promises.select!(&:alive?)
+              end
+
+              # purge caches
+              app.ram[:tick] = { players: {} }
+              app.delay { app.ram[:tick][:players].values.each(&:save) }
+
+              # process spool to events
+              processtime = Benchmark.realtime do
+                begin
+                  # promises
+                  app.promises.each_with_index do |promise, i|
+                    begin
+                      promise.tick!
+                      app.promises.delete_at(i) unless promise.alive?
+                    rescue Exception
+                      app.handle_exception($!) do |ex|
+                        app.log.error "PromiseTickError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                      end
+                    end
+                  end
+
+                  # actual spool
                   while !@spool.empty?
                     val = @spool.pop(true) rescue nil
                     break if val.nil?
@@ -104,28 +128,23 @@ module Mcl
                     begin
                       # parse event
                       evd = parser.classify(val.chomp)
-
-                      if evd.append?
-                        # append event data to last event
-                        if @last_event
-                          @last_event.append!(evd)
-                        else
-                          app.log.error "EventAppendError on tick #{@tick}: encountered append call with no @last_event present"
-                        end
-                      else
-                        new_event = Event.build_from_classification(evd)
-                        begin
-                          # new_event.save!
-                          @last_event = new_event
-                          # if !evd.classified?
-                          #   app.log.debug "Ignored unclassifiable event ##{new_event.id}"
-                          # end
-                        rescue Exception
-                          app.handle_exception($!) do |ex|
-                            app.log.error "EventParseError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
-                          end
-                        end
+                    rescue Exception
+                      app.handle_exception($!) do |ex|
+                        app.log.error "EventParseError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
                       end
+                    end
+                  end
+
+                  # listeners
+                  while !@spool.empty?
+                    val = @spool.pop(true) rescue nil
+                    break if val.nil?
+                    events += 1
+
+                    # handle stuff
+                    begin
+                      # parse event
+                      evd = parser.classify(val.chomp)
                     rescue Exception
                       app.handle_exception($!) do |ex|
                         app.log.error "EventParseError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
@@ -135,36 +154,50 @@ module Mcl
                 end
               end
 
-              # dispatch events to handlers
-              begin
-                dispatchtime = Benchmark.realtime do
-                  #
-                end
-              ensure
-              end
-
               # short tick handlers
-              begin
-                shortticktime = Benchmark.realtime do
-                  while cb = app.delayed.shift
-                    cb.call
+              shortticktime = Benchmark.realtime do
+                begin
+                  app.handlers.each do |handler|
+                    begin
+                      handler.tick!
+                    rescue Exception
+                      app.handle_exception($!) do |ex|
+                        app.log.error "ShortTickPerformError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                      end
+                    end
                   end
                 end
-              ensure
+              end
+
+              # delayed tasks
+              delayedtime = Benchmark.realtime do
+                while cb = app.delayed.shift
+                  begin
+                    cb.call
+                  rescue Exception
+                    app.handle_exception($!) do |ex|
+                      app.log.error "DelayedPerformError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                    end
+                  end
+                end
               end
 
               # tick scheduler
-              begin
-                schedulertime = Benchmark.realtime do
-                  #
+              schedulertime = Benchmark.realtime do
+                begin
+                  jobs = app.scheduler.tick!
+                rescue Exception
+                  app.handle_exception($!) do |ex|
+                    app.log.error "DelayedPerformError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                  end
                 end
-              ensure
               end
             end
           ensure
+            Thread.current[:last_tick] = Time.current
             if ticktime
               diff = app.config["tick_rate"] - ticktime
-              # app.log.debug "[T#{@tick}] #{events} events, #{jobs} jobs (RT: #{atime(ticktime)} P: #{atime(parsetime)} D: #{atime(dispatchtime)} ST: #{atime(shortticktime)} S: #{atime(schedulertime)} W: #{atime(diff)})"
+              app.devlog "[T#{@tick}] #{events} events, #{jobs} jobs (RT: #{atime(ticktime)} P: #{atime(processtime)} ST: #{atime(shortticktime)} D: #{atime(delayedtime)} S: #{atime(schedulertime)} W: #{atime(diff)})"
 
               # sleep and give the collector a explicit chance to do something
               Thread.pass
