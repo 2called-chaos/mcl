@@ -3,6 +3,7 @@ module Mcl
     attr_reader :app, :status, :players
     attr_accessor :version, :boottime, :world
     include Getters
+    include IPC
     include IO
 
     def initialize app
