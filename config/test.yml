@@ -1,49 +1,37 @@
-# Define if MCL should start in debug mode or not.
-# You can change it with "!mcl debug" later.
-debug: true
-
-# Define usernames or uuid of ultra admins (you need at least one to setup MCL ingame)
+# Define usernames or uuid of ultra admins (you need at least one to setup MCL ingame).
+# These admins may, at any time, op themself with either the server or MCL itself!
 admins:
-  - a2called_chaos
-  - a93cc6d87-776e-459f-b40a-530a5670c07c
-
-# MCL tick rate. Should be between 0 and 1 (default is 0.25).
-# The lower the value the higher the resource load caused by MCL.
-tick_rate: 0.25
+  - 2called_chaos
+  - 93cc6d87-776e-459f-b40a-530a5670c07c
 
 # =============
 # = Minecraft =
 # =============
 # Define the location in which your minecraft server is installed in (where the server.properties file is).
-# If you leave this field blank or no server.properties file can be found in the location all local features
-# will be disabled (restart, backing up/restoring/moving/cloning world files, etc.)
+# WARNING: MCL contains components which alter the contents of the folder you specify!
+#          MCL may download, create, symlink, backup, restore, delete or modify files and folders such as:
+#            - Schematics
+#            - server.properties (to switch worlds via !world command)
+#            - World directories
+#          MCL might update your server and by that overwrite your current server jar. Be sure to always
+#          make backups of everything,
 root: /Volumes/code/_private/mcl/_server
 
-
-# You have to choose one of these IPC methods to communicate with your minecraft server instance.
-# We recommend in this order: screen, tmux
-ipc:
-  # screen (screen_name)
-  adapter: wrap
-  command: "java -jar minecraft_server.jar" # command to start your server (note that MCL will start your server, you MUST NOT!)
-
-  # screen (screen_name)
-  # adapter: screen
-  # name: my_screen_name # start like "screen -dmS my_screen_name java…"
-  # command: "screen -dmS cd /some/where && java -jar …" # command to start the screen with your server (or we can't restart it)
-
-  # tmux (name.paneNo <=> example.0)
-  #adapter: tmux
-  #name: "" # start like ""
-
+# Define the full command to start your minecraft server. The command will be executed within the root
+# directory you've specified so there is no need to `cd` into it.
+# If you plan to use automatic server updates use `minecraft_server.jar` (MCL uses symlinks).
+launch_cmd: java -jar minecraft_server.jar
 
 # ============
 # = Database =
 # ============
-# see below if you want to use mysql
+# Use the set below if you want to use MySQL.
+# NOTE: If you use SQLite you cannot share the same database across multiple instances of MCL as SQLite
+#       does not support concurrent access. Make sure to define a unique filename for each instance,
+#       or comment it out to use `vendor/data/<instance>.sqlite`. The file is relative to the MCL root directory.
 database:
   adapter: sqlite3
-  database: data/database.sqlite
+  # database: vendor/data/database.sqlite
 
 #database:
 #  adapter: mysql2
@@ -60,22 +48,18 @@ database:
 # = YOU PROBABLY WONT NEED TO EDIT ANYTHING BELOW HERE! =
 # =======================================================
 
+# MCL tick rate. Should be between 0 and 1 (default is 0.25).
+# The lower the value the higher the resource load caused by MCL.
+# The higher the value the slower MCL responds.
+tick_rate: 0.25
 
-# Replay latest.log on startup. This allows late MCL starts.
-# Don't deactivate replay in production! MCL may work without
-# a full replay but it is not guaranteed.
-log_replay: true
+# Define if MCL should start in debug mode or not.
+# You can toggle it later (either ingame or via USR1 signal).
+debug: yes
 
+# The developer mode is very verbose (dozens and hundreds of messages per second)
+# so you may use it for debugging only.
+dev: yes
 
-# ===========
-# = Backlog =
-# ===========
-# For statistical and backlog query kind of features MCL saves a copy of the processed log in the internal format.
-# You may want to fiddle with these values but you should be fine with the defaults.
-backlog:
-  # Purge if older than X days. Default is 90 days. Setting it to 0 disables pruning based on age.
-  age: 90
-
-  # Only keep last X events (tape storage). Default is 50k but you may lower this to 5k without problems.
-  # Don't set it too low though or strange things might happen.
-  tape: 50000
+# Define if MCL should attach ActiveRecord's logger in dev mode or not.
+attach_ar_logger: yes
