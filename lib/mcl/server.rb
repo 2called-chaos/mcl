@@ -12,12 +12,12 @@ module Mcl
       @version = $mcl_server_version
       @boottime = $mcl_server_boottime
       @world = $mcl_server_world
-      @status = :stopped # booting, running, stalled, stopping
+      @status = $mcl_server_status || :stopped # booting, running, stalled, stopping
       ipc_setup
     end
 
     def update_status status
-      @status = status.to_sym
+      $mcl_server_status = @status = status.to_sym
     end
 
     def died?
