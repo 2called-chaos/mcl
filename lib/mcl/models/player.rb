@@ -47,5 +47,21 @@ module Mcl
       $mcl.ram[:players][nickname] ||= {}
       $mcl.ram[:players][nickname][scope] ||= {} if scope
     end
+
+    def playtime incl_session = false
+      data[:playtime] + (incl_session ? session_playtime(Time.current) : 0)
+    end
+
+    def fplaytime incl_session = false
+      Player.fseconds(playtime(incl_session))
+    end
+
+    def session_playtime end_date = nil
+      ((end_date || online ? Time.current : last_disconnect) - last_connect).to_i
+    end
+
+    def fsession_playtime
+      Player.fseconds(session_playtime)
+    end
   end
 end

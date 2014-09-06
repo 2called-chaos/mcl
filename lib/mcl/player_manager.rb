@@ -51,10 +51,8 @@ module Mcl
         p.last_disconnect = Time.current
 
         # playtime
-        session_playtime = (p.last_disconnect - p.last_connect).to_i
-        p.data[:playtime] += session_playtime
-
-        app.log.info "[PMAN] lost player `#{player}' after #{Player.fseconds(session_playtime)}"
+        p.data[:playtime] += p.session_playtime
+        app.log.info "[PMAN] lost player `#{player}' after #{p.fsession_playtime}"
       end
     end
 
@@ -70,7 +68,7 @@ module Mcl
 
         # first connect
         if p.first_connect
-          app.log.info "[PMAN] recognized recurring player `#{player}' (#{p.data[:connects]} connects)"
+          app.log.info "[PMAN] recognized recurring player `#{player}' (#{p.data[:connects]} connects, #{p.fplaytime} playtime)"
         else
           app.log.info "[PMAN] recognized new player `#{player}'"
           p.first_connect = Time.current
