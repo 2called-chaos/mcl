@@ -107,11 +107,13 @@ module Mcl
         @pman.cleanup
       end
 
-      def setup_handlers
+      def setup_handlers load_files = true
         @handlers = []
         @command_names = {}
-        files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/handlers/**/*.rb"]
-        files.reject{|f| File.basename(f).start_with?("__") }.each{|f| load f }
+        if load_files
+          files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/handlers/**/*.rb"]
+          files.reject{|f| File.basename(f).start_with?("__") }.each{|f| load f }
+        end
 
         Mcl::Handler.descendants.uniq.each do |klass|
           @handlers << klass.new(self)

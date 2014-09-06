@@ -9,6 +9,10 @@ module Mcl
         app.eman
       end
 
+      def pman
+        app.pman
+      end
+
       def pmemo p, scope = nil
         app.ram[:players][p.to_s] ||= {}
         app.ram[:players][p.to_s][scope] ||= {} if scope

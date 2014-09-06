@@ -53,7 +53,7 @@ module Mcl
         elsif time < 0.001
           "< 1ms"
         elsif time > 1
-          "#{time.round(5)}s"
+          "#{time.round(3)}s"
         else
           "#{(time * 1000.0).round(0)}ms"
         end

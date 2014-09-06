@@ -16,6 +16,21 @@ module Mcl
       }
     end
 
+    def lvlname name
+      return val if name.is_a?(String)
+      @groups.key(name.to_s) || "guest"
+    end
+
+    def lvlval val
+      return val if val.is_a?(Integer)
+      @groups[val.to_s] || 0
+    end
+
+    def minlvl val
+      val = lvlval(val) if val.is_a?(String)
+      @groups.detect{|n, l| n if l <= val }.try(&:second)
+    end
+
     def acl_reload
       acl.clear
       Player.find_each do |p|
@@ -30,13 +45,8 @@ module Mcl
       end
     end
 
-    def lvlname name
-      return name if name.is_a?(Integer)
-      @groups[name.to_s] || 0
-    end
-
     def acl_verify p, level = :admin
-      level = lvlname(level)
+      level = lvlval(level)
       perm = acl[p] || 0
       diff = level - perm
       if diff > 0

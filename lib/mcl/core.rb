@@ -10,6 +10,7 @@ module Mcl
   require "digest/sha1"
   require "net/http"
   require "fileutils"
+  require "pry"
 
   # gems
   require "active_record"
@@ -24,6 +25,7 @@ module Mcl
     require "#{lib}/multi_io"
     require "#{lib}/promise"
     require "#{lib}/player_manager"
+    require "#{lib}/handler/helper"
     require "#{lib}/handler/api"
     require "#{lib}/handler/book_verter"
     require "#{lib}/handler/geometry"
