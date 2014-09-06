@@ -3,6 +3,7 @@ class CreatePlayers < ActiveRecord::Migration
     create_table :players do |t|
       t.string :uuid
       t.string :nickname
+      t.string :ip
       t.text :data, limit: 4294967295
       t.integer :permission, default: 1337
       t.boolean :online, default: false

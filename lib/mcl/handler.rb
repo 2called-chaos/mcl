@@ -30,14 +30,6 @@ module Mcl
       v
     end
 
-    def acl_verify p, level = 13337
-      $mcl.acl_verify(p, level)
-    end
-
-    def promise opts = {}, &block
-      Promise.new(app, opts, &block).tap{|p| app.promises << p }
-    end
-
     def detect_player_position p, opts = {}, &block
       opts = opts.reverse_merge(pos: "~ ~1 ~", block: "minecraft:air")
       $mcl.server.invoke %{/execute #{p} ~ ~ ~ testforblock #{opts[:pos]} #{opts[:block]}}

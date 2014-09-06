@@ -1,6 +1,6 @@
 module Mcl
   class Application
-    attr_reader :acl, :async, :command_names, :config, :delayed, :eman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises
+    attr_reader :async, :command_names, :config, :delayed, :eman, :pman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises
 
     include Setup
 
@@ -11,7 +11,6 @@ module Mcl
       @promises = []
       @delayed = []
       @exit_code = 0
-      @acl = {}
       @async = []
       @ram = { exceptions: [], players: {}, tick: {} }
 
@@ -21,6 +20,7 @@ module Mcl
         load_config
         trap_signals
         setup_database
+        setup_player_manager
         setup_async
         log.info "[SETUP] Core ready!"
       rescue Exception
@@ -128,23 +128,6 @@ module Mcl
 
     def delay &block
       @delayed << block
-    end
-
-    def acl_reload
-      acl.clear
-      Player.find_each do |p|
-        acl[p.nickname] = p.permission
-      end
-    end
-
-    def acl_verify p, level = 13337
-      allowed = acl[p]
-      allowed = allowed >= level if allowed
-      unless allowed
-        server.invoke %{/tellraw #{p} [#{{text: "[ACL] ", color: "light_purple"}.to_json},#{{text: "I hate you, bugger off!", color: "red"}.to_json}]}
-        throw :handler_exit, :acl
-      end
-      allowed
     end
   end
 end

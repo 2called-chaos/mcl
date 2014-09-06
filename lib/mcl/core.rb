@@ -23,6 +23,7 @@ module Mcl
     require "#{lib}/id2mcn"
     require "#{lib}/multi_io"
     require "#{lib}/promise"
+    require "#{lib}/player_manager"
     require "#{lib}/handler/api"
     require "#{lib}/handler/book_verter"
     require "#{lib}/handler/geometry"

@@ -9,12 +9,21 @@ module Mcl
         app.eman
       end
 
-      def pmemo p
+      def pmemo p, scope = nil
         app.ram[:players][p.to_s] ||= {}
+        app.ram[:players][p.to_s][scope] ||= {} if scope
       end
 
       def prec p
-        app.ram[:tick][:players][p] ||= Player.where(nickname: p).first_or_initialize
+        $mcl.pman.prec(p)
+      end
+
+      def acl_verify p, level = 13337
+        $mcl.pman.acl_verify(p, level)
+      end
+
+      def promise opts = {}, &block
+        Promise.new(app, opts, &block).tap{|p| app.promises << p }
       end
 
       def register_parser *a, &b

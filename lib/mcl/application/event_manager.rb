@@ -98,9 +98,8 @@ module Mcl
                 app.promises.select!(&:alive?)
               end
 
-              # purge caches
-              app.ram[:tick] = { players: {} }
-              app.delay { app.ram[:tick][:players].values.each(&:save) }
+              # player cache
+              app.delay { app.pman.clear_cache }
 
               # process spool to events
               processtime = Benchmark.realtime do

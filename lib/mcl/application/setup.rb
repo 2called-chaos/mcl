@@ -99,6 +99,16 @@ module Mcl
         @scheduler = Scheduler.new(self)
       end
 
+      def setup_player_manager
+        graceful do
+          log.debug "[SHUTDOWN] Saving players..."
+          pman.clear_cache
+        end
+
+        @pman = PlayerManager.new(self)
+        @pman.cleanup
+      end
+
       def setup_handlers
         @handlers = []
         @command_names = {}
@@ -133,7 +143,7 @@ module Mcl
         setup_scheduler     # scheduled tasks
         setup_server        # setup server communication
         setup_handlers      # setup all handlers
-        acl_reload
+        pman.acl_reload
 
         eman.ready!
       end
