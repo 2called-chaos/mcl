@@ -1,11 +1,19 @@
 module Mcl
   class PlayerManager
-    attr_reader :app, :acl
+    attr_reader :app, :acl, :groups
 
     def initialize app
       @app = app
       @acl = {}
       @cache = {}
+      @groups = {
+        "root"    => 13333337,
+        "admin"   => 1333337,
+        "mod"     => 133337,
+        "builder" => 13337,
+        "member"  => 1337,
+        "guest"   => 0,
+      }
     end
 
     def acl_reload
@@ -24,25 +32,18 @@ module Mcl
 
     def lvlname name
       return name if name.is_a?(Integer)
-      case name.to_s
-        when "root"    then 13333337
-        when "admin"   then 1333337
-        when "mod"     then 133337
-        when "builder" then 13337
-        when "member"  then 1337
-        when "guest"   then 0
-      end
+      @groups[name.to_s] || 0
     end
 
-    def acl_verify p, level = 13337
+    def acl_verify p, level = :admin
       level = lvlname(level)
-      allowed = acl[p]
-      allowed = allowed >= level if allowed
-      unless allowed
-        app.server.trawm(p, {text: "[ACL] ", color: "light_purple"}, {text: "I hate you, bugger off!", color: "red"})
+      perm = acl[p] || 0
+      diff = level - perm
+      if diff > 0
+        app.server.trawm(p, {text: "[ACL] ", color: "light_purple"}, {text: "#{diff} more magic orbs required!", color: "red"})
         throw :handler_exit, :acl
       end
-      allowed
+      true
     end
 
     def prec player

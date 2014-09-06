@@ -5,7 +5,7 @@ class CreatePlayers < ActiveRecord::Migration
       t.string :nickname
       t.string :ip
       t.text :data, limit: 4294967295
-      t.integer :permission, default: 1337
+      t.integer :permission, default: 0
       t.boolean :online, default: false
 
       t.datetime :first_connect
