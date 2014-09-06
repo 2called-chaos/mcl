@@ -22,7 +22,20 @@ module Mcl
       end
     end
 
+    def lvlname name
+      return name if name.is_a?(Integer)
+      case name.to_s
+        when "root"    then 13333337
+        when "admin"   then 1333337
+        when "mod"     then 133337
+        when "builder" then 13337
+        when "member"  then 1337
+        when "guest"   then 0
+      end
+    end
+
     def acl_verify p, level = 13337
+      level = lvlname(level)
       allowed = acl[p]
       allowed = allowed >= level if allowed
       unless allowed
