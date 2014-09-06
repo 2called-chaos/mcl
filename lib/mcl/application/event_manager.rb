@@ -73,7 +73,7 @@ module Mcl
               # detect MCL lag
               if Thread.current[:last_tick] && (Time.current - Thread.current[:last_tick]) > (app.config["tick_rate"]*2)
                 diff = Time.current - Thread.current[:last_tick]
-                app.log.warn "[CORE] main loop is lagging (delayed for #{diff.to_f}s)"
+                app.log.warn "[CORE] main loop is lagging (delayed for #{diff.to_f - app.config["tick_rate"]}s)"
               end
 
               # detect died minecraft server

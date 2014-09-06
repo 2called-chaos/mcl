@@ -8,7 +8,7 @@ module Mcl
       t_week = t_day * 7
       "".tap do |r|
         if secs >= t_week
-          r << "#{secs / t_week}d "
+          r << "#{secs / t_week}w "
           secs = secs % t_week
         end
 
@@ -18,12 +18,12 @@ module Mcl
         end
 
         if secs >= t_hour || !r.blank?
-          r << "#{secs / t_hour}d "
+          r << "#{secs / t_hour}h "
           secs = secs % t_hour
         end
 
         if secs >= t_minute || !r.blank?
-          r << "#{secs / t_minute}d "
+          r << "#{secs / t_minute}m "
           secs = secs % t_minute
         end
 
