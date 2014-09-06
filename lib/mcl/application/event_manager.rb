@@ -1,7 +1,7 @@
 module Mcl
   class Application
     class EventManager
-      attr_reader :app, :spool, :cond, :collector, :tick, :events, :parser, :commands, :listener
+      attr_reader :app, :spool, :cond, :collector, :tick, :events, :parser, :commands
 
       def initialize app
         @app = app
@@ -11,7 +11,6 @@ module Mcl
         @ready = false
         @tick = 0
         @commands = {}
-        @listener = {}
 
         setup_parser
         spawn_collector
@@ -119,23 +118,6 @@ module Mcl
                   end
 
                   # actual spool
-                  while !@spool.empty?
-                    val = @spool.pop(true) rescue nil
-                    break if val.nil?
-                    events += 1
-
-                    # handle stuff
-                    begin
-                      # parse event
-                      evd = parser.classify(val.chomp)
-                    rescue Exception
-                      app.handle_exception($!) do |ex|
-                        app.log.error "EventParseError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
-                      end
-                    end
-                  end
-
-                  # listeners
                   while !@spool.empty?
                     val = @spool.pop(true) rescue nil
                     break if val.nil?
