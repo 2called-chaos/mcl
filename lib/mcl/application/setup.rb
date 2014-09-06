@@ -43,9 +43,6 @@ module Mcl
 
             # apply debug
             toggle_debug @config["debug"], false
-
-            # apply AR debug
-            ActiveRecord::Base.logger = @config["attach_ar_logger"] ? @logger : nil
           rescue
             raise "Failed to load config, is the syntax correct? (#{$!.message}"
           end
@@ -57,7 +54,7 @@ module Mcl
 
       def setup_database
         log.debug "[SETUP] Establishing database connection (#{@config["database"]["adapter"]})..."
-        ActiveRecord::Base.logger = @log
+        ActiveRecord::Base.logger = @config["dev"] && @config["attach_ar_logger"] ? @logger : nil
         ActiveRecord::Base.establish_connection(@config["database"])
         log.debug "[SETUP] Running migrations..."
         define_database_schema
@@ -101,7 +98,8 @@ module Mcl
 
       def setup_player_manager
         graceful do
-          log.debug "[SHUTDOWN] Saving players..."
+          log.info "[SHUTDOWN] Saving players..."
+          Player.online.each{|p| pman.logout_user(p.nickname) }
           pman.clear_cache
         end
 

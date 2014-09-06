@@ -89,17 +89,19 @@ module Mcl
               end
 
               # scrub async threads
-              if @tick % 100 == 0
+              if @tick % app.config["async_scrub_rate"] == 0
                 app.async.select!(&:alive?)
               end
 
               # scrub promises
-              if @tick % 100 == 0
+              if @tick % app.config["promise_scrub_rate"] == 0
                 app.promises.select!(&:alive?)
               end
 
               # player cache
-              app.delay { app.pman.clear_cache }
+              if @tick % app.config["player_cache_save_rate"] == 0
+                app.delay { app.pman.clear_cache }
+              end
 
               # process spool to events
               processtime = Benchmark.realtime do
