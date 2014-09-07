@@ -32,6 +32,7 @@ module Mcl
     end
 
     def acl_reload
+      clear_cache
       acl.clear
       Player.find_each do |p|
         acl[p.nickname] = p.permission
