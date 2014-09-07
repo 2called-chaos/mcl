@@ -54,6 +54,9 @@ module Mcl
       register_command :help, desc: "too complicated to explain :)", acl: :guest do |player, args|
         gcoms = $mcl.command_names.to_a
 
+        # filter by permission
+        gcoms = gcoms.select {|com| ($mcl.pman.acl[player] || 0) >= $mcl.command_acls[com[0]] }
+
         # filter
         if args[0] && args[0].to_i == 0
           gcoms = gcoms.select{|c, _| c.to_s =~ /#{args[0]}/ }

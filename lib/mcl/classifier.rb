@@ -33,6 +33,7 @@ module Mcl
 
       # register name
       app.command_names["!" << cmds.join(" !")] = opts[:desc]
+      app.command_acls["!" << cmds.join(" !")] = app.pman.lvlval(opts[:acl])
 
       # register handler
       cmds.each do |cmd|

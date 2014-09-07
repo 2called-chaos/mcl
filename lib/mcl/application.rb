@@ -1,6 +1,6 @@
 module Mcl
   class Application
-    attr_reader :async, :command_names, :config, :delayed, :eman, :pman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises
+    attr_reader :async, :command_acls, :command_names, :config, :delayed, :eman, :pman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises
 
     include Setup
 

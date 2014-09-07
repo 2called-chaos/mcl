@@ -109,6 +109,7 @@ module Mcl
 
       def setup_handlers load_files = true
         @handlers = []
+        @command_acls = {}
         @command_names = {}
         if load_files
           files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/vendor/handlers/**/*.rb"]

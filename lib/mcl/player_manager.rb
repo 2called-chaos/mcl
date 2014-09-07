@@ -23,7 +23,7 @@ module Mcl
 
     def lvlval val
       return val if val.is_a?(Integer)
-      @groups[val.to_s] || 0
+      @groups[val.to_s] || 0
     end
 
     def minlvl val
