@@ -39,6 +39,13 @@ the shipped handlers just ask your question in the issues.
   * MCL may download, create, symlink, backup, restore, delete or modify files and folders inside your server folder.
 
 
+## Use MCL for multiple servers
+MCL supports multiple instances. Create a new configuration and start/stop the instance like this:
+```
+MCLI=config_name mcld start
+# or
+mcld start MCLI=config_name
+```
 
 ## Requirements
   * Ruby >= 1.9.3 (preferably >2) incl. RubyGems
@@ -46,7 +53,6 @@ the shipped handlers just ask your question in the issues.
   * git (`apt-get install git` / `brew install git`)
   * Unixoid OS (such as Ubuntu/Debian, OS X, maybe others)
   * local minecraft server(s)
-
 
 
 ## Setup
