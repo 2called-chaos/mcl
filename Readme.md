@@ -1,11 +1,9 @@
 # MCL - Minecraft Listener
 
-MCL is a ruby script which acts as a process wrapper for your vanilla minecraft server. It is limited to what the Minecraft
-server console outputs and accepts in form of commands. It's original use was to autoupdate snapshot servers but it now offers
-a lot more features which are mostly controlled via chat commands. You can compare MCL to an IRC bot or something.
+MCL is a ruby script which acts as a **wrapper** for your vanilla Minecraft server. It's original use was to autoupdate snapshot servers but it now offers a lot more features which are mostly controlled via chat commands. You can compare MCL to an IRC bot or something.
 
 It should be somewhat easy to write custom commands but there are some gotchas to it. If you can't figure it out from
-the shipped handlers just ask your question as an issue.
+the shipped handlers just ask your question in the issues.
 
 
 
@@ -36,6 +34,7 @@ the shipped handlers just ask your question as an issue.
 ## Facts
   * MCL starts the minecraft server for you, essentially wrapping it. Therefore, if MCL dies, your minecraft server
     goes along with it. But MCL tries everything to prevent this from happening. It even restarts died servers.
+  * MCL is limited to what the Minecraft server console outputs and accepts in form of commands.
   * MCL does not modify minecraft itself in any way! It's reading and writing from and to the server console only.
   * MCL may download, create, symlink, backup, restore, delete or modify files and folders inside your server folder.
 
@@ -53,26 +52,26 @@ the shipped handlers just ask your question as an issue.
 ## Setup
   **WARNING: MCL isn't released yet and might not work for you**
 
-  0. Do everything as the user which runs the servers except maybe the symlink in step 2.
-  1. Download or clone the whole thing to a convenient location:
+  1. Do everything as the user which runs the servers except maybe the symlink in step 3.
+  2. Download or clone the whole thing to a convenient location:
       <pre>
         cd ~
         git clone https://github.com/2called-chaos/mcl.git</pre>
-  2. Optional but recommended: Add the bin directory to your $PATH variable or create a symlink to the executable:
+  3. Optional but recommended: Add the bin directory to your $PATH variable or create a symlink to the executable:
       <pre>
         echo 'export PATH="$HOME/mcl/bin:$PATH"' >> ~/.profile && source ~/.profile
         OR
         ln -s /home/minecraft_server/mcl/bin/mcld /usr/local/bin/mcld</pre>
-  3. Install the bundle
+  4. Install the bundle
       <pre>
         cd ~/mcl && bundle install --without mysql --deployment</pre>
      **NOTE:** If you want to use MySQL (not recommended) replace `mysql` with `sqlite`
-  4. Copy and edit the example configuration to fit your needs and server settings.
+  5. Copy and edit the example configuration to fit your needs and server settings.
      Please note that there is currently no user support which means all servers need to run under the same user as MCL does.
       <pre>
         cd ~/mcl
         nano config/default.yml</pre>
-  5. Done! Run `mcld start` to start the MCL daemon. Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
+  6. Done! Run `mcld start` to start the MCL daemon. Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
 
 
 
