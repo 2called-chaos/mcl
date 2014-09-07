@@ -30,10 +30,11 @@ module Mcl
     def register_command handler, *cmds, &b
       opts = cmds.extract_options!
       cmds = [*cmds].flatten
+      acl_lvl = app.pman.lvlval(opts[:acl] || :admin)
 
       # register name
       app.command_names["!" << cmds.join(" !")] = opts[:desc]
-      app.command_acls["!" << cmds.join(" !")] = app.pman.lvlval(opts[:acl])
+      app.command_acls["!" << cmds.join(" !")] = acl_lvl
 
       # register handler
       cmds.each do |cmd|
@@ -41,7 +42,7 @@ module Mcl
         register(/<([^>]+)> \!(.+)/i) do |res, r|
           if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
             catch(:handler_exit) do
-              handler.acl_verify(r[1], opts[:acl]) if opts[:acl]
+              handler.acl_verify(r[1], acl_lvl) if opts[:acl]
               b[r[1], r[2].split(" ")[1..-1], handler, OptionParser.new]
             end
           end

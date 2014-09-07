@@ -126,7 +126,7 @@ module Mcl
     end
 
     def register_stopmc
-      register_command(:stopmc, desc: "sends /stop to server which will reboot MCL and MC", desc: :admin) { $mcl.server.invoke "/stop" }
+      register_command(:stopmc, desc: "sends /stop to server which will reboot MCL and MC", acl: :admin) { $mcl.server.invoke "/stop" }
     end
 
     def register_version
