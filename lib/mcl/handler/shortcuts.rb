@@ -14,8 +14,8 @@ module Mcl
       end
 
       def pmemo p, scope = nil
-        app.ram[:players][p.to_s] ||= {}
-        app.ram[:players][p.to_s][scope] ||= {} if scope
+        r = app.ram[:players][p.to_s] ||= {}
+        scope ? (r[scope] ||= {}) : r
       end
 
       def prec p
