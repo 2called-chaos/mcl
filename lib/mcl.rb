@@ -25,6 +25,7 @@ module Mcl
 
       # Remove all references to the application instance and run GC.
       # This prevents the app from using twice the ram when rebooted.
+      Handler.descendants.clear
       $mcl = app = Thread.main[:app] = nil
       GC.start
 
