@@ -111,7 +111,7 @@ module Mcl
         @handlers = []
         @command_names = {}
         if load_files
-          files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/handlers/**/*.rb"]
+          files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/vendor/handlers/**/*.rb"]
           files.reject{|f| File.basename(f).start_with?("__") }.each{|f| load f }
         end
 
