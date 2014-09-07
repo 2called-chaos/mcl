@@ -66,5 +66,6 @@ tick_rate: 0.25
 
 # Must be integer values, relates to tick rate.
 async_scrub_rate: 100
-promise_scrub_rate: 123
+promise_scrub_rate: 143
 player_cache_save_rate: 20
+scheduler_dehibernation_rate: 120

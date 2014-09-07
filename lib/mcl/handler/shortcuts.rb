@@ -61,6 +61,10 @@ module Mcl
       def trawt *a
         $mcl.server.trawt(*a)
       end
+
+      def schedule *a
+        $mcl.scheduler.schedule(*a)
+      end
     end
   end
 end

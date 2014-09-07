@@ -171,7 +171,7 @@ module Mcl
                   jobs = app.scheduler.tick!
                 rescue Exception
                   app.handle_exception($!) do |ex|
-                    app.log.error "DelayedPerformError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                    app.log.error "SchedulerPerformError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
                   end
                 end
               end
