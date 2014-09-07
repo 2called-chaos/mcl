@@ -54,7 +54,7 @@ debug: yes
 
 # The developer mode is very verbose (dozens and hundreds of messages per second)
 # so you may use it for debugging only.
-dev: no
+dev: yes
 
 # Define if MCL should attach ActiveRecord's logger in dev mode or not.
 attach_ar_logger: yes
