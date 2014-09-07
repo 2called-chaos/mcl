@@ -3,7 +3,7 @@ module Mcl
   class HMclButcher < Handler
     module Helper
       def tellm p, *msg
-        trawm(p, *([title("Butcher")] + msg))
+        trawt(p, "Butcher", *msg)
       end
 
       def butch_e player, radius, which
