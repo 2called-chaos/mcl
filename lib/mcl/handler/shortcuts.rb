@@ -57,6 +57,10 @@ module Mcl
       def trawm *a
         $mcl.server.trawm(*a)
       end
+
+      def trawt *a
+        $mcl.server.trawt(*a)
+      end
     end
   end
 end

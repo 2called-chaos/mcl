@@ -19,6 +19,14 @@ module Mcl
         end
         invoke %{/tellraw #{player} [#{r.map(&:to_json).join(",")}]}
       end
+
+      def trawt player, tit, *msgs
+        r = [{text: "[#{tit}] ", color: "light_purple"}]
+        msgs.each do |msg|
+          r << (msg.is_a?(Hash) ? msg : {text: msg})
+        end
+        invoke %{/tellraw #{player} [#{r.map(&:to_json).join(",")}]}
+      end
     end
   end
 end
