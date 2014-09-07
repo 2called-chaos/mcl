@@ -1,87 +1,73 @@
 module Mcl
-  Mcl.reloadable(:HWarps)
-  class HWarps < Handler
+  Mcl.reloadable(:HMclWarps)
+  class HMclWarps < Handler
+    module Helper
+      def memory p, &block
+        if block
+          prec(p).tap do |r|
+            r.data[:mcl_warps] ||= { __global: {} }
+            block.call(r.data[:mcl_warps])
+            r.save!
+          end
+        else
+          prec(p).data[:mcl_warps] ||= { __global: {} }
+        end
+      end
+
+      def tellm p, *msg
+        trawt(p, "Warp", *msg)
+      end
+
+      def warp player, warp
+        $mcl.server.invoke %{/tp #{player} #{warp.join(" ")}}
+      end
+
+      def find_warp player, name, fallback = true
+        pram, sram = memory(player), memory(:__server)
+        if name.start_with?("$")
+          [:__global, pram[:__global][name.to_s] || (fallback && sram[:__global][name.to_s])]
+        else
+          [$mcl.server.world, pram[$mcl.server.world].try(:[], name.to_s) || (fallback && sram[$mcl.server.world].try(:[], name.to_s))]
+        end
+      end
+
+      def set_warp player, name, pos
+        memory(player) do |pram|
+          if name.start_with?("$")
+            pram[:__global][name.to_s] = pos.map(&:to_i)
+          else
+            pram[$mcl.server.world] ||= {}
+            pram[$mcl.server.world][name.to_s] = pos.map(&:to_i)
+          end
+        end
+      end
+
+      def delete_warp player, name
+        memory(player) do |pram|
+          if name.start_with?("$")
+            pram[:__global].delete(name.to_s)
+          else
+            pram[$mcl.server.world].try(:delete, name.to_s)
+          end
+        end
+      end
+    end
+    include Helper
+
     def setup
-      setup_parsers
+      register_warp
     end
 
-    def memory p, &block
-      if block
-        prec(p).tap do |r|
-          r.data[:mcl_warps] ||= { __global: {} }
-          block.call(r.data[:mcl_warps])
-          r.save!
-        end
-      else
-        prec(p).data[:mcl_warps] ||= { __global: {} }
-      end
-    end
-
-    def title
-      {text: "[Warp] ", color: "light_purple"}
-    end
-
-    def spacer
-      {text: " / ", color: "reset"}
-    end
-
-    def tellm p, *msg
-      trawm(p, *([title] + msg))
-    end
-
-    # ===========
-    # = Helpers =
-    # ===========
-    def warp player, warp
-      $mcl.server.invoke %{/tp #{player} #{warp.join(" ")}}
-    end
-
-    def find_warp player, name, fallback = true
-      pram, sram = memory(player), memory(:__server)
-      if name.start_with?("$")
-        [:__global, pram[:__global][name.to_s] || (fallback && sram[:__global][name.to_s])]
-      else
-        [$mcl.server.world, pram[$mcl.server.world].try(:[], name.to_s) || (fallback && sram[$mcl.server.world].try(:[], name.to_s))]
-      end
-    end
-
-    def set_warp player, name, pos
-      memory(player) do |pram|
-        if name.start_with?("$")
-          pram[:__global][name.to_s] = pos.map(&:to_i)
-        else
-          pram[$mcl.server.world] ||= {}
-          pram[$mcl.server.world][name.to_s] = pos.map(&:to_i)
-        end
-      end
-    end
-
-    def delete_warp player, name
-      memory(player) do |pram|
-        if name.start_with?("$")
-          pram[:__global].delete(name.to_s)
-        else
-          pram[$mcl.server.world].try(:delete, name.to_s)
-        end
-      end
-    end
-
-
-    # ============
-    # = Commands =
-    # ============
-    def setup_parsers
-      register_command :warp, :warps, desc: "Beam me up, Scotty (more info with !warp)" do |handler, player, command, target, args, optparse|
-        handler.acl_verify(player)
-
+    def register_warp
+      register_command :warp, :warps, desc: "Beam me up, Scotty (more info with !warp)", acl: :member do |player, args, handler|
         case args[0]
         when "set", "delete", "list", "share"
           handler.send("com_#{args[0]}", player, args[1..-1])
         else
           srv = args.delete("-s")
           if args.any?
-            if warp = handler.find_warp(srv ? :__server : player, args[0]).last
-              handler.warp(player, warp)
+            if warp = find_warp(srv ? :__server : player, args[0]).last
+              warp(player, warp)
               sleep 0.1
               sound = %w[mob.endermen.portal mob.enderdragon.growl mob.ghast.scream mob.horse.donkey.angry mob.villager.hit].sample(1)[0]
               $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound #{sound} @a[r=25] #{warp.join(" ")} 3 1}
@@ -91,12 +77,12 @@ module Mcl
               tellm(player, {text: "Unknown warp!", color: "red"})
             end
           else
-            handler.tellm(player, {text: "Warp names may start with $ to be avail. in all worlds.", color: "aqua"})
-            handler.tellm(player, {text: "<name>", color: "gold"}, {text: " beam to given warp", color: "reset"})
-            handler.tellm(player, {text: "set <name> [<x> <y> <z>]", color: "gold"}, {text: " add/update warp to current or given position", color: "reset"})
-            handler.tellm(player, {text: "delete <name>", color: "gold"}, {text: " delete warp", color: "reset"})
-            handler.tellm(player, {text: "share <name> [target]", color: "gold"}, {text: " reveal warp to target (@a by default)", color: "reset"})
-            handler.tellm(player, {text: "list [-a|-s] [page|filter] [page]", color: "gold"}, {text: " list/search warps", color: "reset"})
+            tellm(player, {text: "Warp names may start with $ to be avail. in all worlds.", color: "aqua"})
+            tellm(player, {text: "<name>", color: "gold"}, {text: " beam to given warp", color: "reset"})
+            tellm(player, {text: "set <name> [<x> <y> <z>]", color: "gold"}, {text: " add/update warp to current or given position", color: "reset"})
+            tellm(player, {text: "delete <name>", color: "gold"}, {text: " delete warp", color: "reset"})
+            tellm(player, {text: "share <name> [target]", color: "gold"}, {text: " reveal warp to target (@a by default)", color: "reset"})
+            tellm(player, {text: "list [-a|-s] [page|filter] [page]", color: "gold"}, {text: " list/search warps", color: "reset"})
           end
         end
       end
@@ -105,16 +91,13 @@ module Mcl
     def com_set player, args
       srv = args.delete("-s")
       name = args.shift.presence
+      acl_verify(player, :admin) if srv
       if name && (args.count == 0 || args.count == 3)
         if args.count == 0
           detect_player_position(player) do |pos|
             if pos
-              $mcl.sync do
-                $mcl.delay do
-                  set_warp(srv ? :__server : player, name, pos)
-                  tellm(player, {text: "Warp ", color: "green"}, {text: name, color: "aqua"}, {text: " set to ", color: "green"}, {text: pos.join(" "), color: "aqua"}, {text: "!", color: "green"})
-                end
-              end
+              set_warp(srv ? :__server : player, name, pos)
+              tellm(player, {text: "Warp ", color: "green"}, {text: name, color: "aqua"}, {text: " set to ", color: "green"}, {text: pos.join(" "), color: "aqua"}, {text: "!", color: "green"})
             else
               tellm(player, {text: "Couldn't determine your position :/ Is your head in water?", color: "red"})
             end
@@ -131,6 +114,7 @@ module Mcl
     def com_delete player, args
       srv = args.delete("-s")
       name = args.shift.presence
+      acl_verify(player, :admin) if srv
       if name
         if find_warp(srv ? :__server : player, name, false).last
           delete_warp(srv ? :__server : player, name)
@@ -167,7 +151,6 @@ module Mcl
     end
 
     def com_list player, args
-      acl_verify(player)
       all = args.delete("-a")
       srv = args.delete("-s")
       pram = memory(srv ? :__server : player)
