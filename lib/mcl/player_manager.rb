@@ -72,12 +72,14 @@ module Mcl
 
     def logout_user player, opts = {}
       prec(player).tap do |p|
-        p.online = false
-        p.last_disconnect = Time.current
+        if p.online
+          p.online = false
+          p.last_disconnect = Time.current
 
-        # playtime
-        p.data[:playtime] += p.session_playtime
-        app.log.info "[PMAN] lost player `#{player}' after #{p.fsession_playtime}"
+          # playtime
+          p.data[:playtime] += p.session_playtime
+          app.log.info "[PMAN] lost player `#{player}' after #{p.fsession_playtime}"
+        end
       end
     end
 
