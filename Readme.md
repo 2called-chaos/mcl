@@ -1,6 +1,6 @@
 # MCL - Minecraft Listener
 
-MCL is a ruby script which acts as a **wrapper** for your vanilla Minecraft server. It's original use was to autoupdate snapshot servers but it now offers a lot more features which are mostly controlled via chat commands. You can compare MCL to an IRC bot or something.
+MCL is a ruby script which acts as a **wrapper** for your vanilla Minecraft server. It's original use was to autoupdate snapshot servers but it now offers a lot more features which are mostly controlled via chat commands. You can compare MCL to an IRC bot.
 
 It should be somewhat easy to write custom commands but there are some gotchas to it. If you can't figure it out from
 the shipped handlers just ask your question in the issues.
@@ -10,23 +10,23 @@ the shipped handlers just ask your question in the issues.
 ## Features
   * Monitors itself and your minecraft server and restart on crash
   * Reload handlers/commands without restarting
-  * Simple ACL support (level based ACL)
-  * Snap2date - autoupdate minecraft server
-  * Shortcuts, shortcuts, shortcuts (potions effects, cheats, gamerules, ...)
-  * Warps - save and warp to coordinates
-  * WorldEdit light - selections, stacking and more (using 1.8 commands)
-  * Schematic Builder - paste schematics in vanilla (sort of)
-  * Butcher - kill entities like a pro
-  * Worldbook - switch between and create new worlds (no, it's not multiverse)
+  * Simple **ACL** support (level based ACL)
+  * Snap2date - **autoupdate minecraft server**
+  * **Shortcuts**, shortcuts, shortcuts (potions effects, cheats, gamerules, ...)
+  * **Warps** - save and warp to coordinates
+  * **WorldEdit light** - selections, stacking and more (using 1.8 commands)
+  * **Schematic Builder** - paste schematics in vanilla (sort of)
+  * **Butcher** - kill entities like a pro
+  * **Worldbook** - switch between and create new worlds (no, it's not multiverse)
   * a lot more commands, shortcuts and awesome stuff...
 
 
 
 ## Upcoming features
-  * Backups - backup and restore your worlds (scheduled or when you need it)
-  * Flagbook - Easy access to flags
-  * Bannerbook - Easy access to banners
-  * generally, add more books. books are good!
+  * **Backups** - backup and restore your worlds (scheduled or when you need it)
+  * **Flagbook** - Easy access to flags
+  * **Bannerbook** - Easy access to banners
+  * generally, add **more** books. books are good!
   * [**» add something to the list**](https://github.com/2called-chaos/mcl/issues/new)
 
 
@@ -35,7 +35,7 @@ the shipped handlers just ask your question in the issues.
   * MCL starts the minecraft server for you, essentially wrapping it. Therefore, if MCL dies, your minecraft server
     goes along with it. But MCL tries everything to prevent this from happening. It even restarts died servers.
   * MCL is limited to what the Minecraft server console outputs and accepts in form of commands.
-  * MCL does not modify minecraft itself in any way! It's reading and writing from and to the server console only.
+  * **MCL does not modify minecraft** itself in any way! It's reading and writing from and to the server console only.
   * MCL may download, create, symlink, backup, restore, delete or modify files and folders inside your server folder.
 
 
