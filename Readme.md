@@ -1,178 +1,105 @@
-# Principle
+# MCL - Minecraft Listener
 
-MCL parses the log file on the fly and converts it into events. Handlers can then pickup these events and react upon them.
-MCL ships with (a growing amount) of handlers or plugins but it's really easy to create you own ones. Just look at what the core
-helps you with.
+MCL is a ruby script which acts as a process wrapper for your vanilla minecraft server. It is limited to what the Minecraft
+server console outputs and accepts in form of commands. It's original use was to autoupdate snapshot servers but it now offers
+a lot more features which are mostly controlled via chat commands. You can compare MCL to an IRC bot or something.
 
+It should be somewhat easy to write custom commands but there are some gotchas to it. If you can't figure it out from
+the shipped handlers just ask your question as an issue.
 
-LogFile -> Parser -> Event -> Handler -> Reaction
 
-# Core functionality
 
-  - Parser to convert Minecraft server log data into events
-    We do all the parsing, you just listen to the events you want
-  - Persistent ActiveRecord storage
-    AR with all it's features. Models, validations and you can choose between sqlite, mysql and postgres!
-  - Player manager (keeps track of currently online players. Persistently tracks join/leaves)
-    Keeps track of currently online players and provides simple access to player specific persistent and
-    non-persistent storage. It also tracks connect and disconnect events to measure some statistics.
-  - Time based scheduler
-    Need a timer? Just schedule a task for any time and with ActiveSupport we get this: Time.now + 5.minutes + 1.hour
-    Note that the scheduler only checks once per tick so it's not firing on the exact second.
-  - Server IPC
-    Don't care about IPC, we provide screen and tmux support.
+## Features
+  * Monitors itself and your minecraft server and restart on crash
+  * Reload handlers/commands without restarting
+  * Simple ACL support (level based ACL)
+  * Snap2date - autoupdate minecraft server
+  * Shortcuts, shortcuts, shortcuts (potions effects, cheats, gamerules, ...)
+  * Warps - save and warp to coordinates
+  * WorldEdit light - selections, stacking and more (using 1.8 commands)
+  * Schematic Builder - paste schematics in vanilla (sort of)
+  * Butcher - kill entities like a pro
+  * Worldbook - switch between and create new worlds (no, it's not multiverse)
+  * a lot more commands, shortcuts and awesome stuff...
 
 
 
-# Shipped handlers
+## Upcoming features
+  * Backups - backup and restore your worlds (scheduled or when you need it)
+  * Flagbook - Easy access to flags
+  * Bannerbook - Easy access to banners
+  * generally, add more books. books are good!
+  * [**» add something to the list**](https://github.com/2called-chaos/mcl/issues/new)
 
-These handlers can easily be deactivated by just removing the folder. All of these could have been done by somebody else without altering
-the core. Plugins that is.
 
-  - aliases
-    Define global or personal aliases for commonly used commands
 
-  - macros
-    Define global or personal macros (e.g. !foo executes /spawn Creeper)
-    You can chain and roughly time commands.
+## Facts
+  * MCL starts the minecraft server for you, essentially wrapping it. Therefore, if MCL dies, your minecraft server
+    goes along with it. But MCL tries everything to prevent this from happening. It even restarts died servers.
+  * MCL does not modify minecraft itself in any way! It's reading and writing from and to the server console only.
+  * MCL may download, create, symlink, backup, restore, delete or modify files and folders inside your server folder.
 
-  - gamemode
-    Just a bunch of shortcuts for the gamemode command
 
-  - inventory_slots
-    Useful for creative servers. Just save and restore your inventory with as many slots as you like.
-    !inv save redstone                # save current inventory as redstone
-    !inv sac redstone                 # "save and clear" current inventory as redstone
-    !inv delete redstone              # delete saved inventory
-    !inv restore tower_build          # restore saved inventory by name
-    !inv swap redstone tower_build    # swap inventory (save current as redstone and restore tower_build)
 
-  - mc (minecraft control)
-    A whole bunch of features to control your server.
+## Requirements
+  * Ruby >= 1.9.3 (preferably >2) incl. RubyGems
+    * Bundler gem (`gem install bundler`)
+  * git (`apt-get install git` / `brew install git`)
+  * Unixoid OS (such as Ubuntu/Debian, OS X, maybe others)
+  * local minecraft server(s)
 
-    !mc stop                                    # stop server
-    !mc restart                                 # restart minecraft server
-    !mc backup <slot>                           # backup current map
-    !mc restore <slot>                          # restore map
-    !mc update <url>                            # download jar, stop server, symlink, start server
-    !mc map "ThisAdventure"                     # stop server, swap map, start server
-    !mc instance "ThisAdventure" "ouradventure" # stop server, clone map, start server
-    !mc kickall                                 # kick all players
-    !op !deop
 
 
-  - mclag
-    Tracks "can't keep up" and provide some statistics for operators (like "when did we have a lot of lag spikes")
+## Setup
+  **WARNING: MCL isn't released yet and might not work for you**
 
-  - potion effects
-    A bunch of shortcuts for potion effects
+  0. Do everything as the user which runs the servers except maybe the symlink in step 2.
+  1. Download or clone the whole thing to a convenient location:
+      <pre>
+        cd ~
+        git clone https://github.com/2called-chaos/mcl.git</pre>
+  2. Optional but recommended: Add the bin directory to your $PATH variable or create a symlink to the executable:
+      <pre>
+        echo 'export PATH="$HOME/mcl/bin:$PATH"' >> ~/.profile && source ~/.profile
+        OR
+        ln -s /home/minecraft_server/mcl/bin/mcld /usr/local/bin/mcld</pre>
+  3. Install the bundle
+      <pre>
+        cd ~/mcl && bundle install --without mysql --deployment</pre>
+     **NOTE:** If you want to use MySQL (not recommended) replace `mysql` with `sqlite`
+  4. Copy and edit the example configuration to fit your needs and server settings.
+     Please note that there is currently no user support which means all servers need to run under the same user as MCL does.
+      <pre>
+        cd ~/mcl
+        nano config/default.yml</pre>
+  5. Done! Run `mcld start` to start the MCL daemon. Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
 
-  - spawns
-    Save positions and warp back to them (works similar to the inventory slot plugin)
 
-  - time
-    Time related shortcuts (for /time and /gamerule)
 
-  - weather
-    Just some shortcuts
+## Deactivate handlers
+If you want to deactivate buildin handlers (or 3rd party ones) just rename the file to start with two underscores (e.g.: `__warps.rb`).
 
-  - world_edit_light
-    One of the most interesting parts :)
-    The combination of volatile storage and some command magicery we can emulate some basic features of the famous worldedit.
 
-    !!pos1   # selection start
-    !!pos2   # selection end
-    !!insert # insert selection here
-    !!set    # set selection to block (fill)
 
-    Expect more features on this side (like generators (spheres, circles, etc.) or stacking of selections)
+## Custom handlers
+If you want to add a custom handler (there is not much of documentation yet but feel free to ask if you can't figure it out) just place a ruby file inside `vendor/handlers`. As long as it doesn't start with two underscores it get's loaded. You can nest directories as much as you want as MCL traverses this directory recursively.
 
 
 
+## Gotchas
+  * Players fetched via player manager get cached. The cache get saved and cleared according to the player_cache_save_rate.
+    If you fetch players via `Player` model class be sure to call `#clear_cache` on the player manager beforehand.
+  * Always make sure to synchronize to the main loop if necessary (it is in a lot of cases) when working with async tasks.
+  * Promises are already synchronized to the main loop as they get called by it.
+  * Don't block the main loop to long (this includes everything except async code which isn't synchronized to the main loop).
 
 
 
+## Contributing
+  Contributions are very welcome! Either report errors, bugs and propose features or directly submit code:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Event
-  - date
-  - origin (Player,Server,Entity,Nobody)
-  - thread (Server thread)
-  - channel (info/warn)
-  - data (text)
-  - command (true/false)
-  - processed (true/false)
-  - fingerprint (string)
-  - type
-    - chat
-    - exception
-    - uauth
-    - boot
-    - clientstate
-    - log
-    - unknown
-  - subtype
-    - connecting/disconnecting
-    - setup
-
-
-
-# Tasks
-  - run_at
-  - locked_by
-  - handler
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- =============  -->
-  <!-- = Worldedit =  -->
-  <!-- =============  -->
-  # outline selection with particle: /particle barrier ~ ~ ~ 0 0 0 1 1 force
-  # move selection: !!move 5n        /clone p p p
-
-  <!-- ==========  -->
-  <!-- = Schebu =  -->
-  <!-- ==========  -->
-  # download new
-  # rotate
-
-
-
-  world book
-
-  flagbook / bannerbook
-  warp book
-  backup & restore book
-  schebu add
+  1. Fork it
+  2. Create your feature branch (`git checkout -b my-new-feature`)
+  3. Commit your changes (`git commit -am 'Added some feature'`)
+  4. Push to the branch (`git push origin my-new-feature`)
+  5. Create new Pull Request

@@ -9,5 +9,5 @@ gem 'nbtfile'
 
 # database
 gem 'activerecord'
-gem 'sqlite3'
-gem 'mysql2'
+gem 'sqlite3', group: :sqlite
+gem 'mysql2', group: :mysql
