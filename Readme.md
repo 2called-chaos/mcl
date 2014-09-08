@@ -32,11 +32,13 @@ the shipped handlers just ask your question in the issues.
 
 
 ## Facts
+  * MCL encourages you to always make backups. MCL is not to blame for any data loss.
   * MCL starts the minecraft server for you, essentially wrapping it. Therefore, if MCL dies, your minecraft server
     goes along with it. But MCL tries everything to prevent this from happening. It even restarts died servers.
   * MCL is limited to what the Minecraft server console outputs and accepts in form of commands.
-  * **MCL does not modify minecraft** itself in any way! It's reading and writing from and to the server console only.
+  * **MCL does not modify minecraft** itself in any way! It's reading from and writing to the server console only.
   * MCL may download, create, symlink, backup, restore, delete or modify files and folders inside your server folder.
+  * The buildin _!eval_ plugin is disabled by default because it's evil!
 
 
 ## Use MCL for multiple servers

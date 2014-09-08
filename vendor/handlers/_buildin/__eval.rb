@@ -9,6 +9,12 @@
 # A malicious use of this command may read, modify or
 # destroy any file the user - which is running MCL - has
 # access to. Use this plugin only when you need it!
+#
+# In order to activate this plugin you need to rename
+# the file so that it does NOT start with two or more
+# underscores. You also have to enable the plugin below
+# but if you want to use this command you will figure
+# it out, I'm sure ;-)
 #########################################################
 
 module Mcl
@@ -22,8 +28,8 @@ module Mcl
 
     def register_eval
       register_command :eval, desc: "evals MCL code from pastebin.com ID", acl: :root do |player, args|
-        acl_verify(player)
         begin
+          raise "eval is not enabled"
           pasteid = args[0].to_s.strip
           content = Net::HTTP.get(URI("http://pastebin.com/raw.php?i=#{pasteid}"))
           eval content
