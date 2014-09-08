@@ -54,6 +54,7 @@ mcld start MCLI=config_name
     * Bundler gem (`gem install bundler`)
   * git (`apt-get install git` / `brew install git`)
   * Unixoid OS (such as Ubuntu/Debian, OS X, maybe others)
+    * Windows might work as well but I have no idea
   * local minecraft server(s)
 
 
