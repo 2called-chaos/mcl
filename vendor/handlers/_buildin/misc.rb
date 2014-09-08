@@ -1,5 +1,9 @@
 module Mcl
   Mcl.reloadable(:HMclMisc)
+  ## Miscellaneous commands
+  # !id [block_id]
+  # !colors
+  # !rec [rec] [pitch]
   class HMclMisc < Handler
     def setup
       register_id

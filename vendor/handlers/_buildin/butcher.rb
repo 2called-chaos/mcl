@@ -1,5 +1,18 @@
 module Mcl
   Mcl.reloadable(:HMclButcher)
+  ## Butcher (kills entities)
+  # !butcher [radius] / !butcher h/hostile [radius]
+  # !butcher p/player/players [radius]
+  # !butcher h/hostile [radius]
+  # !butcher m/mob/mobs [radius]
+  # !butcher an/animal/animals [radius]
+  # !butcher b/boat/boats [radius]
+  # !butcher mi/minecart/minecarts [radius]
+  # !butcher i/item/items [radius]
+  # !butcher x/xp [radius]
+  # !butcher t/tnt [radius]
+  # !butcher a/arrows [radius]
+  # !butcher pr/projectiles [radius]
   class HMclButcher < Handler
     module Helper
       def tellm p, *msg

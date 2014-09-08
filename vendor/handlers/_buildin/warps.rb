@@ -1,5 +1,11 @@
 module Mcl
   Mcl.reloadable(:HMclWarps)
+  ## Warps / saved teleports
+  # !<name>
+  # !set    [-s] <name> [<x> <y> <z>]
+  # !delete [-s] <name>
+  # !share  [-s] <name> [target]
+  # !list   [-a|-s] [page|filter] [page]
   class HMclWarps < Handler
     module Helper
       def memory p, &block
