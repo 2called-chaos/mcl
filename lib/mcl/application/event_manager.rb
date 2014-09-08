@@ -103,6 +103,11 @@ module Mcl
                 app.delay { app.pman.clear_cache }
               end
 
+              # garbage collection
+              if @tick % app.config["gc_rate"] == 0
+                GC.start
+              end
+
               # process spool to events
               processtime = Benchmark.realtime do
                 begin

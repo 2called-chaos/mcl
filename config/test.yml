@@ -65,6 +65,7 @@ attach_ar_logger: yes
 tick_rate: 0.25
 
 # Must be integer values, relates to tick rate.
+gc_rate: 1234
 async_scrub_rate: 100
 promise_scrub_rate: 143
 player_cache_save_rate: 20
