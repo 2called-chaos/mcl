@@ -45,8 +45,6 @@ the shipped handlers just ask your question in the issues.
 MCL supports multiple instances. Create a new configuration and start/stop the instance like this:
 ```
 MCLI=config_name mcld start
-# or
-mcld start MCLI=config_name
 ```
 
 ## Requirements
@@ -79,6 +77,7 @@ mcld start MCLI=config_name
      Please note that there is currently no user support which means all servers need to run under the same user as MCL does.
       <pre>
         cd ~/mcl
+        cp config/default.example.yml config/default.yml
         nano config/default.yml</pre>
   6. Done! Run `mcld start` to start the MCL daemon. Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
 
