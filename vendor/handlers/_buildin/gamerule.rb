@@ -31,10 +31,10 @@ module Mcl
     include Helper
 
     def setup
-      setup_parsers
+      register_commands
     end
 
-    def setup_parsers
+    def register_commands
       # commandBlockOutput
       register_command(:cbspam, desc: "activates commandBlockOutput", acl: :admin) { gamerule("commandBlockOutput", true) }
       register_command(:nocbspam, :cbnospam, desc: "deactivates commandBlockOutput", acl: :admin) { gamerule("commandBlockOutput", false) }

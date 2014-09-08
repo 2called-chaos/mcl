@@ -14,10 +14,10 @@ module Mcl
     include Helper
 
     def setup
-      setup_parsers
+      register_commands
     end
 
-    def setup_parsers
+    def register_commands
       register_command(:s, :survival,     desc: "be mortal and die!", acl: :guest)   {|player, args| gm(0, args.first || player) }
       register_command(:c, :creative,     desc: "be creative"       , acl: :builder) {|player, args| gm(1, args.first || player) }
       register_command(:adventure,        desc: "be creative"       , acl: :builder) {|player, args| gm(2, args.first || player) }
