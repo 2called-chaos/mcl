@@ -76,7 +76,7 @@ module Mcl
       register_command(:showdebug, :expanddebug, desc: "deactivates reduceDebugInfo", acl: :admin) { gamerule("reduceDebugInfo", false) }
 
       # tickspeed
-      register_command(:tickspeed, desc: "sets randomTickSpeed", acl: :admin) {|player, args| handler.gamerule("randomTickSpeed", args[0].presence) }
+      register_command(:tickspeed, desc: "sets randomTickSpeed (MC default is 3)", acl: :admin) {|player, args| gamerule("randomTickSpeed", args[0].presence) }
     end
   end
 end
