@@ -1,4 +1,4 @@
 /_server/
-data
-log
-vendor/bundle
+/log
+/vendor/bundle
+/vendor/data
