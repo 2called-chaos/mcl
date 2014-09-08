@@ -40,7 +40,7 @@ module Mcl
       end
 
       def ph names, effect, desc
-        register_command(*[*names], desc: desc, acl: ph_mcl) {|player, args| player_effect(args.first || player, *[*effect]) }
+        register_command(*[*names], desc: desc, acl: ph_acl) {|player, args| player_effect(args.first || player, *[*effect]) }
       end
 
       def player_effect target, effect, seconds = nil, amplifier = nil, particles = false
