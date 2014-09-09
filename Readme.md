@@ -17,7 +17,7 @@ the shipped handlers just ask your question in the issues.
   * **WorldEdit light** - selections, stacking and more (using 1.8 commands)
   * **Schematic Builder** - paste schematics in vanilla (sort of)
   * **Butcher** - kill entities like a pro
-  * **Worldbook** - switch between and create new worlds (no, it's not multiverse)
+  * **Worldbook** - switch between, backup and create new worlds (no, it's not multiverse)
   * a lot more commands, shortcuts and awesome stuff...
 
 
@@ -33,6 +33,7 @@ the shipped handlers just ask your question in the issues.
 
 ## Facts
   * MCL encourages you to always make backups. MCL is not to blame for any data loss.
+  * MCL may use features only available in snapshot versions but most parts should work for you.
   * MCL starts the minecraft server for you, essentially wrapping it. Therefore, if MCL dies, your minecraft server
     goes along with it. But MCL tries everything to prevent this from happening. It even restarts died servers.
   * MCL is limited to what the Minecraft server console outputs and accepts in form of commands.
@@ -125,6 +126,7 @@ MCL ships with a few buildin handlers which you may deactivate as described in t
   * **[Warps](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/warps.rb)** Save coordinates (per world or global/per player or all), share them or just teleport there.
   * **[XXX](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/XXX.rb)**
   * **[Weather and Time](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/weather_and_time.rb)** Shortcuts for weather and time commands/gamerules.
+  * **[Worlds](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/worlds.rb)** Worldbook (switch between, create new, backup worlds)
   * **[Misc](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/misc.rb)** Miscellaneous commands
 
 ## Custom handlers
