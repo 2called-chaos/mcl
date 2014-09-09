@@ -110,7 +110,7 @@ module Mcl
 
     module Helper
       def git_message
-        `cd "#{ROOT}" && git log -1 --pretty=%B origin/master`.strip
+        `cd "#{ROOT}" && git log -1 --pretty=%B HEAD`.strip
       end
 
       def mcl_reload player
