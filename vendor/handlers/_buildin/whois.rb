@@ -107,6 +107,8 @@ module Mcl
         # response = Net::HTTP.get_response("ipinfo.io","/#{tmem.ip}/json")
         response = Net::HTTP.get_response("ipinfo.io","/78.94.159.28/json")
         JSON.parse(response.body)
+      rescue
+        return nil
       end
     end
     include Helper
