@@ -8,6 +8,11 @@ module Mcl
   # !list   [-a|-s] [page|filter] [page]
   class HMclWarps < Handler
     module Helper
+      # ACL for modifying server warps
+      def acl_srv
+        :admin
+      end
+
       def memory p, &block
         if block
           prec(p).tap do |r|
@@ -61,11 +66,11 @@ module Mcl
     include Helper
 
     def setup
-      register_warp
+      register_warp(:member)
     end
 
-    def register_warp
-      register_command :warp, :warps, desc: "Beam me up, Scotty (more info with !warp)", acl: :member do |player, args, handler|
+    def register_warp acl_level
+      register_command :warp, :warps, desc: "Beam me up, Scotty (more info with !warp)", acl: acl_level do |player, args, handler|
         case args[0]
         when "set", "delete", "list", "share"
           handler.send("com_#{args[0]}", player, args[1..-1])
@@ -97,7 +102,7 @@ module Mcl
     def com_set player, args
       srv = args.delete("-s")
       name = args.shift.presence
-      acl_verify(player, :admin) if srv
+      acl_verify(player, acl_srv) if srv
       if name && (args.count == 0 || args.count == 3)
         if args.count == 0
           detect_player_position(player) do |pos|
@@ -120,7 +125,7 @@ module Mcl
     def com_delete player, args
       srv = args.delete("-s")
       name = args.shift.presence
-      acl_verify(player, :admin) if srv
+      acl_verify(player, acl_srv) if srv
       if name
         if find_warp(srv ? :__server : player, name, false).last
           delete_warp(srv ? :__server : player, name)

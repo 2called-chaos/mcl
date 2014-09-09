@@ -27,6 +27,10 @@ module Mcl
       def gamerule rule, value
         $mcl.server.invoke %{/gamerule #{rule} #{value}}
       end
+
+      def gr_acl
+        :admin
+      end
     end
     include Helper
 
@@ -36,47 +40,47 @@ module Mcl
 
     def register_commands
       # commandBlockOutput
-      register_command(:cbspam, desc: "activates commandBlockOutput", acl: :admin) { gamerule("commandBlockOutput", true) }
-      register_command(:nocbspam, :cbnospam, desc: "deactivates commandBlockOutput", acl: :admin) { gamerule("commandBlockOutput", false) }
+      register_command(:cbspam, desc: "activates commandBlockOutput", acl: gr_acl) { gamerule("commandBlockOutput", true) }
+      register_command(:nocbspam, :cbnospam, desc: "deactivates commandBlockOutput", acl: gr_acl) { gamerule("commandBlockOutput", false) }
 
       # mobGriefing
-      register_command(:grief, desc: "activates mobGriefing", acl: :admin) { gamerule("mobGriefing", true) }
-      register_command(:nogrief, desc: "deactivates mobGriefing", acl: :admin) { gamerule("mobGriefing", false) }
+      register_command(:grief, desc: "activates mobGriefing", acl: gr_acl) { gamerule("mobGriefing", true) }
+      register_command(:nogrief, desc: "deactivates mobGriefing", acl: gr_acl) { gamerule("mobGriefing", false) }
 
       # doFireTick
-      register_command(:firetick, :firespread, desc: "deactivates doFireTick", acl: :admin) { gamerule("doFireTick", true) }
-      register_command(:nofiretick, :nofirespread, :firealarm, desc: "activates doFireTick", acl: :admin) { gamerule("doFireTick", true) }
+      register_command(:firetick, :firespread, desc: "deactivates doFireTick", acl: gr_acl) { gamerule("doFireTick", true) }
+      register_command(:nofiretick, :nofirespread, :firealarm, desc: "activates doFireTick", acl: gr_acl) { gamerule("doFireTick", true) }
 
       # doMobLoot
-      register_command(:loot, desc: "activates doMobLoot", acl: :admin) { gamerule("doMobLoot", true) }
-      register_command(:noloot, desc: "deactivates doMobLoot", acl: :admin) { gamerule("doMobLoot", false) }
+      register_command(:loot, desc: "activates doMobLoot", acl: gr_acl) { gamerule("doMobLoot", true) }
+      register_command(:noloot, desc: "deactivates doMobLoot", acl: gr_acl) { gamerule("doMobLoot", false) }
 
       # doTileDrops
-      register_command(:drops, desc: "activates doTileDrops", acl: :admin) { gamerule("doTileDrops", true) }
-      register_command(:nodrops, desc: "deactivates doTileDrops", acl: :admin) { gamerule("doTileDrops", false) }
+      register_command(:drops, desc: "activates doTileDrops", acl: gr_acl) { gamerule("doTileDrops", true) }
+      register_command(:nodrops, desc: "deactivates doTileDrops", acl: gr_acl) { gamerule("doTileDrops", false) }
 
       # keepInventory
-      register_command(:keepinv, desc: "activates keepInventory", acl: :admin) { gamerule("keepInventory", true) }
-      register_command(:loseinv, desc: "deactivates keepInventory", acl: :admin) { gamerule("keepInventory", false) }
+      register_command(:keepinv, desc: "activates keepInventory", acl: gr_acl) { gamerule("keepInventory", true) }
+      register_command(:loseinv, desc: "deactivates keepInventory", acl: gr_acl) { gamerule("keepInventory", false) }
 
       # naturalRegeneration
-      register_command(:foodregen, desc: "activates naturalRegeneration", acl: :admin) { gamerule("naturalRegeneration", true) }
-      register_command(:nofoodregen, desc: "deactivates naturalRegeneration", acl: :admin) { gamerule("naturalRegeneration", false) }
+      register_command(:foodregen, desc: "activates naturalRegeneration", acl: gr_acl) { gamerule("naturalRegeneration", true) }
+      register_command(:nofoodregen, desc: "deactivates naturalRegeneration", acl: gr_acl) { gamerule("naturalRegeneration", false) }
 
       # doMobSpawning
-      register_command(:mobspawn, :mobspawning, :mobspawns, desc: "activates doMobSpawning", acl: :admin) { gamerule("doMobSpawning", true) }
-      register_command(:nomobspawn, :nomobspawning, :nomobspawns, desc: "deactivates doMobSpawning", acl: :admin) { gamerule("doMobSpawning", false) }
+      register_command(:mobspawn, :mobspawning, :mobspawns, desc: "activates doMobSpawning", acl: gr_acl) { gamerule("doMobSpawning", true) }
+      register_command(:nomobspawn, :nomobspawning, :nomobspawns, desc: "deactivates doMobSpawning", acl: gr_acl) { gamerule("doMobSpawning", false) }
 
       # showDeathMessages
-      register_command(:deathmsg, :deathmessages, desc: "activates showDeathMessages", acl: :admin) { gamerule("showDeathMessages", true) }
-      register_command(:nodeathmsg, :nodeathmessages, desc: "deactivates showDeathMessages", acl: :admin) { gamerule("showDeathMessages", false) }
+      register_command(:deathmsg, :deathmessages, desc: "activates showDeathMessages", acl: gr_acl) { gamerule("showDeathMessages", true) }
+      register_command(:nodeathmsg, :nodeathmessages, desc: "deactivates showDeathMessages", acl: gr_acl) { gamerule("showDeathMessages", false) }
 
       # reduceDebugInfo
-      register_command(:reducedebug, :nodebug, desc: "activates reduceDebugInfo", acl: :admin) { gamerule("reduceDebugInfo", true) }
-      register_command(:showdebug, :expanddebug, desc: "deactivates reduceDebugInfo", acl: :admin) { gamerule("reduceDebugInfo", false) }
+      register_command(:reducedebug, :nodebug, desc: "activates reduceDebugInfo", acl: gr_acl) { gamerule("reduceDebugInfo", true) }
+      register_command(:showdebug, :expanddebug, desc: "deactivates reduceDebugInfo", acl: gr_acl) { gamerule("reduceDebugInfo", false) }
 
       # tickspeed
-      register_command(:tickspeed, desc: "sets randomTickSpeed (MC default is 3)", acl: :admin) {|player, args| gamerule("randomTickSpeed", args[0].presence) }
+      register_command(:tickspeed, desc: "sets randomTickSpeed (MC default is 3)", acl: gr_acl) {|player, args| gamerule("randomTickSpeed", args[0].presence) }
     end
   end
 end
