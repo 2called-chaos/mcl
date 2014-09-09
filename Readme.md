@@ -113,6 +113,8 @@ MCL ships with a few buildin handlers which you may deactivate as described in t
 (permission level) but you may alter these as well. At the moment there are these buildin handlers:
 
   * **[Butcher](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/butcher.rb)** Kill entities with convenience.
+  * **[Cheats](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/cheats.rb)** Collection of cheaty things (although the rest isn't really better)
+  * **[Creative](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/creative.rb)** Shortcuts for creative people
   * **[Eval](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/__eval.rb)** Eval remote ruby code from pastebin.com **disabled by default**
   * **[Gamemode](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamemode.rb)** Shortcuts for gamemodes.
   * **[Gamerule](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamerule.rb)** Shortcuts for gamerules.
