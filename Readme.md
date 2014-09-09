@@ -59,6 +59,7 @@ MCLI=config_name mcld start
       * world backups (use of tar CLI utility)
       * autoupdate/snap2date (use of symlinks)
   * local minecraft server(s)
+    * **WARNING:** Some feature require the gamerule `logAdminCommands` to be set to true!
 
 
 ## Setup
@@ -95,12 +96,12 @@ If you want to deactivate buildin handlers (or 3rd party ones) just rename the f
 ## Core handlers
 There are some handlers which are considered core functionality and therefore are "hidden" inside the library folder. You should not deactivate these.
 Beside some regular parsers the core provides these commands with the permission level (ACL) accordingly:
-  * via _lib/mcl/handlers/acl.rb_
+  * via [_lib/mcl/handlers/acl.rb_](https://github.com/2called-chaos/mcl/blob/master/lib/mcl/handlers/acl.rb)
     * **!acl** (admin)
     * **!op** (admin)
     * **!deop** (admin)
     * **!uadmin** (guest _but may only work when you are listed in the config_)
-  * via _lib/mcl/handlers/core.rb_
+  * via [_lib/mcl/handlers/core.rb_](https://github.com/2called-chaos/mcl/blob/master/lib/mcl/handlers/core.rb)
     * **!danger** (admin)
     * **!help** (guest)
     * **!mclreboot** (admin)
