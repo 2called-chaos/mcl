@@ -10,7 +10,7 @@ module Mcl
       end
 
       # world
-      register_parser(/Preparing level "([a-z0-9_\-]+)"/i) do |res, r|
+      register_parser(/Preparing level "([a-z0-9_\-\/]+)"/i) do |res, r|
         $mcl.log.info "[CORE] Recognized minecraft world `#{r[1]}'"
         $mcl_server_world = $mcl.server.world = r[1]
       end

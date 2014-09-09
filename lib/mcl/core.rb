@@ -10,6 +10,7 @@ module Mcl
   require "digest/sha1"
   require "net/http"
   require "fileutils"
+  require "find"
   require "pry"
 
   # gems
