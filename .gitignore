@@ -1,3 +1,7 @@
+# ignore handlers but not the buildin ones
+!vendor/handlers/
+vendor/handlers/*
+!vendor/handlers/_buildin/
 /_server/
 /log
 /vendor/bundle
