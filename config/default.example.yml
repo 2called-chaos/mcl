@@ -23,6 +23,16 @@ root: /home/minecraft/my_minecraft_server
 # REMEMBER that MCL will start your server, you MUST NOT!
 launch_cmd: java -jar minecraft_server.jar
 
+# Path to store world backups in. Relative to the Minecraft server root, MUST end with a slash!
+# The directory will be created automatically shouldn't it already exist. Can be left blank to not
+# use any infix.
+backup_infix: backups/
+
+# Path to store Minecraft server jar files. MCL will keep all previous MC versions if you update ingame.
+# Relative to the Minecraft server root, MUST end with a slash! The directory will be created automatically
+# shouldn't it already exist. Can be left blank to not use any infix.
+mcv_infix: versions/
+
 # ============
 # = Database =
 # ============
