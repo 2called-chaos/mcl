@@ -17,8 +17,7 @@ module Mcl
     end
 
     def lvlname name
-      return val if name.is_a?(String)
-      @groups.key(name.to_s) || "guest"
+      @groups.key(name.to_i) || name
     end
 
     def lvlval val

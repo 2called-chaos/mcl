@@ -2,6 +2,7 @@ module Mcl
   # sublime indents bugs if there is no line here -.-
   class Player < ActiveRecord::Base
     def self.fseconds secs
+      secs = secs.to_i
       t_minute = 60
       t_hour = t_minute * 60
       t_day = t_hour * 24
@@ -27,7 +28,7 @@ module Mcl
           secs = secs % t_minute
         end
 
-        r << "#{secs}s"
+        r << "#{secs}s" unless r.include?("d")
       end.strip
     end
 
