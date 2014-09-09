@@ -21,7 +21,7 @@ module Mcl
       end
 
       def trawt player, tit, *msgs
-        r = [{text: "[#{tit}] ", color: "light_purple"}]
+        r = [{text: "[#{tit}] ", color: "light_purple"}, {text:"", color: "reset"}]
         msgs.each do |msg|
           r << (msg.is_a?(Hash) ? msg : {text: msg})
         end
