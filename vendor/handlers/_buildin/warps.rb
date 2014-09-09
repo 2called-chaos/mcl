@@ -7,64 +7,6 @@ module Mcl
   # !share  [-s] <name> [target]
   # !list   [-a|-s] [page|filter] [page]
   class HMclWarps < Handler
-    module Helper
-      # ACL for modifying server warps
-      def acl_srv
-        :admin
-      end
-
-      def memory p, &block
-        if block
-          prec(p).tap do |r|
-            r.data[:mcl_warps] ||= { __global: {} }
-            block.call(r.data[:mcl_warps])
-            r.save!
-          end
-        else
-          prec(p).data[:mcl_warps] ||= { __global: {} }
-        end
-      end
-
-      def tellm p, *msg
-        trawt(p, "Warp", *msg)
-      end
-
-      def warp player, warp
-        $mcl.server.invoke %{/tp #{player} #{warp.join(" ")}}
-      end
-
-      def find_warp player, name, fallback = true
-        pram, sram = memory(player), memory(:__server)
-        if name.start_with?("$")
-          [:__global, pram[:__global][name.to_s] || (fallback && sram[:__global][name.to_s])]
-        else
-          [$mcl.server.world, pram[$mcl.server.world].try(:[], name.to_s) || (fallback && sram[$mcl.server.world].try(:[], name.to_s))]
-        end
-      end
-
-      def set_warp player, name, pos
-        memory(player) do |pram|
-          if name.start_with?("$")
-            pram[:__global][name.to_s] = pos.map(&:to_i)
-          else
-            pram[$mcl.server.world] ||= {}
-            pram[$mcl.server.world][name.to_s] = pos.map(&:to_i)
-          end
-        end
-      end
-
-      def delete_warp player, name
-        memory(player) do |pram|
-          if name.start_with?("$")
-            pram[:__global].delete(name.to_s)
-          else
-            pram[$mcl.server.world].try(:delete, name.to_s)
-          end
-        end
-      end
-    end
-    include Helper
-
     def setup
       register_warp(:member)
     end
@@ -207,5 +149,63 @@ module Mcl
         tellm(player, {text: "No warps found for that filter/page!", color: "red"})
       end
     end
+
+    module Helper
+      # ACL for modifying server warps
+      def acl_srv
+        :admin
+      end
+
+      def memory p, &block
+        if block
+          prec(p).tap do |r|
+            r.data[:mcl_warps] ||= { __global: {} }
+            block.call(r.data[:mcl_warps])
+            r.save!
+          end
+        else
+          prec(p).data[:mcl_warps] ||= { __global: {} }
+        end
+      end
+
+      def tellm p, *msg
+        trawt(p, "Warp", *msg)
+      end
+
+      def warp player, warp
+        $mcl.server.invoke %{/tp #{player} #{warp.join(" ")}}
+      end
+
+      def find_warp player, name, fallback = true
+        pram, sram = memory(player), memory(:__server)
+        if name.start_with?("$")
+          [:__global, pram[:__global][name.to_s] || (fallback && sram[:__global][name.to_s])]
+        else
+          [$mcl.server.world, pram[$mcl.server.world].try(:[], name.to_s) || (fallback && sram[$mcl.server.world].try(:[], name.to_s))]
+        end
+      end
+
+      def set_warp player, name, pos
+        memory(player) do |pram|
+          if name.start_with?("$")
+            pram[:__global][name.to_s] = pos.map(&:to_i)
+          else
+            pram[$mcl.server.world] ||= {}
+            pram[$mcl.server.world][name.to_s] = pos.map(&:to_i)
+          end
+        end
+      end
+
+      def delete_warp player, name
+        memory(player) do |pram|
+          if name.start_with?("$")
+            pram[:__global].delete(name.to_s)
+          else
+            pram[$mcl.server.world].try(:delete, name.to_s)
+          end
+        end
+      end
+    end
+    include Helper
   end
 end

@@ -7,13 +7,6 @@ module Mcl
   # !cb [target]
   # !cbt [target]
   class HMclCreative < Handler
-    module Helper
-      def gm mode, target
-        $mcl.server.invoke "/gamemode #{mode} #{target}"
-      end
-    end
-    include Helper
-
     def setup
       register_skull(:member)
       register_head(:member)
@@ -59,5 +52,12 @@ module Mcl
         $mcl.server.invoke "/give #{target} diamond_sword"
       end
     end
+
+    module Helper
+      def gm mode, target
+        $mcl.server.invoke "/gamemode #{mode} #{target}"
+      end
+    end
+    include Helper
   end
 end

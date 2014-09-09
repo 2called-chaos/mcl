@@ -9,13 +9,6 @@ module Mcl
   # !longwaysdown [target]
   # !muuhhh [target]
   class HMclMisc < Handler
-    module Helper
-      def cow target, pos = "~ ~ ~"
-        $mcl.sync { $mcl.server.invoke "/execute #{target} ~ ~ ~ summon Cow #{pos}" } # {DropChances:[0F,0F,0F,0F,0F]}
-      end
-    end
-    include Helper
-
     def setup
       register_id(:guest)
       register_colors(:guest)
@@ -105,5 +98,12 @@ module Mcl
         end
       end
     end
+
+    module Helper
+      def cow target, pos = "~ ~ ~"
+        $mcl.sync { $mcl.server.invoke "/execute #{target} ~ ~ ~ summon Cow #{pos}" } # {DropChances:[0F,0F,0F,0F,0F]}
+      end
+    end
+    include Helper
   end
 end

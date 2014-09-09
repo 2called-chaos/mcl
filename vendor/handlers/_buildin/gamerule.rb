@@ -27,13 +27,6 @@ module Mcl
   # !diehard
   # !hardcore
   class HMclGamerule < Handler
-    module Helper
-      def gamerule rule, value
-        $mcl.server.invoke %{/gamerule #{rule} #{value}}
-      end
-    end
-    include Helper
-
     def setup
       register_commands :admin
       register_peace :admin
@@ -124,5 +117,12 @@ module Mcl
         $mcl.server.invoke "/gamerule keepInventory false"
       end
     end
+
+    module Helper
+      def gamerule rule, value
+        $mcl.server.invoke %{/gamerule #{rule} #{value}}
+      end
+    end
+    include Helper
   end
 end

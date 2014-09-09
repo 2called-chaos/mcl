@@ -34,32 +34,6 @@ module Mcl
   # !strength
   # !underwater
   class HMclPotionEffects < Handler
-    module Helper
-      def ph_acl
-        :mod
-      end
-
-      def ph names, effect, desc
-        register_command(*[*names], desc: desc, acl: ph_acl) {|player, args| player_effect(args.first || player, *[*effect]) }
-      end
-
-      def player_effect target, effect, seconds = nil, amplifier = nil, particles = false
-        cmd = "/effect #{target} #{effect}"
-        if seconds
-          cmd << " #{seconds}"
-          if amplifier
-            cmd << " #{amplifier} #{!particles}"
-          end
-        end
-        $mcl.server.invoke(cmd)
-      end
-
-      def replace_item target, slot, item
-        $mcl.server.invoke("/replaceitem entity #{target} slot.#{slot} #{item}")
-      end
-    end
-    include Helper
-
     def setup
       register_commands
     end
@@ -156,5 +130,31 @@ module Mcl
         replace_item  target, "armor.feet",  "diamond_boots 1 0      {ench:[{id:0,lvl:1337},{id:7,lvl:1337},{id:8,lvl:3}],Unbreakable:1}"
       end
     end
+
+    module Helper
+      def ph_acl
+        :mod
+      end
+
+      def ph names, effect, desc
+        register_command(*[*names], desc: desc, acl: ph_acl) {|player, args| player_effect(args.first || player, *[*effect]) }
+      end
+
+      def player_effect target, effect, seconds = nil, amplifier = nil, particles = false
+        cmd = "/effect #{target} #{effect}"
+        if seconds
+          cmd << " #{seconds}"
+          if amplifier
+            cmd << " #{amplifier} #{!particles}"
+          end
+        end
+        $mcl.server.invoke(cmd)
+      end
+
+      def replace_item target, slot, item
+        $mcl.server.invoke("/replaceitem entity #{target} slot.#{slot} #{item}")
+      end
+    end
+    include Helper
   end
 end

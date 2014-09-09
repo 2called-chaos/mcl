@@ -14,23 +14,6 @@ module Mcl
   # !butcher a/arrows [radius]
   # !butcher pr/projectiles [radius]
   class HMclButcher < Handler
-    module Helper
-      def tellm p, *msg
-        trawt(p, "Butcher", *msg)
-      end
-
-      def butch_e player, radius, which
-        which.each do |w|
-          $mcl.server.invoke %{/execute #{player} ~ ~ ~ kill @e[type=#{w}#{",r=#{radius}" if radius}]}
-        end
-      end
-
-      def butch_p player, radius
-        $mcl.server.invoke %{/execute #{player} ~ ~ ~ kill @p[name=!#{player}#{",r=#{radius}" if radius}]}
-      end
-    end
-    include Helper
-
     def setup
       register_butcher
     end
@@ -105,5 +88,22 @@ module Mcl
         end
       end
     end
+
+    module Helper
+      def tellm p, *msg
+        trawt(p, "Butcher", *msg)
+      end
+
+      def butch_e player, radius, which
+        which.each do |w|
+          $mcl.server.invoke %{/execute #{player} ~ ~ ~ kill @e[type=#{w}#{",r=#{radius}" if radius}]}
+        end
+      end
+
+      def butch_p player, radius
+        $mcl.server.invoke %{/execute #{player} ~ ~ ~ kill @p[name=!#{player}#{",r=#{radius}" if radius}]}
+      end
+    end
+    include Helper
   end
 end

@@ -4,13 +4,6 @@ module Mcl
   # !world(s) <name> [info|backup|delete]
   # !worldbook
   class HMclWorlds < Handler
-    module Helper
-      def valid_world? world
-        $mcl.server.known_worlds.include?(world.to_s)
-      end
-    end
-    include Helper
-
     def setup
       register_worlds(:admin)
       register_worldbook(:member)
@@ -105,5 +98,12 @@ module Mcl
         trawt(player, "MCLiverse", {text: "Not yet implemented!", color: "red"})
       end
     end
+
+    module Helper
+      def valid_world? world
+        $mcl.server.known_worlds.include?(world.to_s)
+      end
+    end
+    include Helper
   end
 end
