@@ -17,9 +17,16 @@ module Mcl
             case action
             when "info"
               if valid_world?(tworld)
+                backups = $mcl.server.backups(tworld, true)
                 trawt(player, "MCLiverse", {text: "#{tworld}", color: "aqua"})
-                trawt(player, "MCLiverse", {text: " size: ", color: "gold"}, { text: "#{$mcl.server.human_bytes $mcl.server.world_size(tworld)}", color: "yellow"})
-                trawt(player, "MCLiverse", {text: " last modified: ", color: "gold"}, { text: "#{File.mtime("#{$mcl.server.world_root}/level.dat")}", color: "yellow"})
+                trawt(player, "MCLiverse", {text: " size: ", color: "gold"}, { text: "#{world_size(tworld)}", color: "yellow"})
+                trawt(player, "MCLiverse", {text: " last modified: ", color: "gold"}, { text: "#{world_mtime(tworld)}", color: "yellow"})
+                if backups.count > 0
+                  trawt(player, "MCLiverse", {text: " backups: ", color: "gold"}, { text: "#{backups.count} (#{backups_size(backups)})", color: "yellow"})
+                  trawt(player, "MCLiverse", {text: " last backup: ", color: "gold"}, { text: "#{last_backup(backups)}", color: "yellow"})
+                else
+                  trawt(player, "MCLiverse", {text: " backups: ", color: "gold"}, { text: "none", color: "yellow", italic: true})
+                end
               else
                 trawt(player, "MCLiverse", {text: "Unknown world!", color: "red"})
               end
@@ -102,6 +109,23 @@ module Mcl
     module Helper
       def valid_world? world
         $mcl.server.known_worlds.include?(world.to_s)
+      end
+
+      def world_size world = nil
+        $mcl.server.human_bytes $mcl.server.world_size(world)
+      end
+
+      def world_mtime world = nil
+        mtime = File.mtime("#{$mcl.server.world_root(world)}/level.dat")
+        "#{mtime.strftime("%F %T")} (#{Player.fseconds((Time.current - mtime).to_i)})"
+      end
+
+      def backups_size backups
+        $mcl.server.human_bytes backups.map{|b| b[3] }.inject(:+)
+      end
+
+      def last_backup backups
+        "#{backups.first[2].strftime("%F %T")} (#{Player.fseconds((Time.current - backups.first[2]).to_i)})"
       end
     end
     include Helper

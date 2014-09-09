@@ -83,12 +83,12 @@ module Mcl
         "#{root}/#{world || @world}"
       end
 
-      def backups world = "*"
+      def backups world = "*", with_size = false
         Dir["#{root}/backup-#{fs_safe_name(world)}-????-??-??_??-??.tar"].map do |dir|
           fn = File.basename(dir)
           c = fn[0..-5].split("-")[-4..-1].join("-").split("_")
           date = Time.parse("#{c[0]} #{c[1].gsub("-", ":")}:00")
-          [dir, fn, date]
+          [dir, fn, date, with_size && File.size(dir)]
         end.sort_by{|i| i[3] }.reverse
       end
 

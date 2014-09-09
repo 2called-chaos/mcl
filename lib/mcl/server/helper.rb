@@ -29,6 +29,7 @@ module Mcl
       end
 
       def human_bytes bytes
+        return false unless bytes
         {
           'B'  => 1024,
           'KB' => 1024 * 1024,
