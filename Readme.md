@@ -39,6 +39,7 @@ the shipped handlers just ask your question in the issues.
   * **MCL does not modify minecraft** itself in any way! It's reading from and writing to the server console only.
   * MCL may download, create, symlink, backup, restore, delete or modify files and folders inside your server folder.
   * The buildin _!eval_ plugin is disabled by default because it's evil!
+  * When you see "ticks" somewhere it refers to the MCL loop. It has nothing to do with Minecraft ticks.
 
 
 ## Use MCL for multiple servers
@@ -80,13 +81,46 @@ MCLI=config_name mcld start
         cp config/default.example.yml config/default.yml
         nano config/default.yml</pre>
   6. Done! Run `mcld start` to start the MCL daemon. Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
+  7. Type `!uadmin` into chat to give yourself root permissions. This only works if your nickname or UUID is listed in the config directory.
 
 
 
 ## Deactivate handlers
 If you want to deactivate buildin handlers (or 3rd party ones) just rename the file to start with two underscores (e.g.: `__warps.rb`).
 
+## Core handlers
+There are some handlers which are considered core functionality and therefore are "hidden" inside the library folder. You should not deactivate these.
+Beside some regular parsers the core provides these commands with the permission level (ACL) accordingly:
+  * via _lib/mcl/handlers/acl.rb_
+    * **!acl** (admin)
+    * **!op** (admin)
+    * **!deop** (admin)
+    * **!uadmin** (guest _but may only work when you are listed in the config_)
+  * via _lib/mcl/handlers/core.rb_
+    * **!danger** (admin)
+    * **!help** (guest)
+    * **!mclreboot** (admin)
+    * **!mclreload** (admin)
+    * **!mclshell** (root)
+    * **!mclupdate** (root)
+    * **!raw** (admin)
+    * **!stop** (admin)
+    * **!stopmc** (root)
+    * **!version** (member)
 
+## Buildin handlers
+MCL ships with a few buildin handlers which you may deactivate as described in the previous paragraph. They use a somewhat reasonable ACL setting
+(permission level) but you may alter these as well. At the moment there are these buildin handlers:
+
+  * **[Butcher](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/butcher.rb)** Kill entities with convenience.
+  * **[Eval](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/__eval.rb)** Eval remote ruby code from pastebin.com **disabled by default**
+  * **[Gamemode](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamemode.rb)** Shortcuts for gamemodes.
+  * **[Gamerule](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamerule.rb)** Shortcuts for gamerules.
+  * **[Potion Effects](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/potion_effects.rb)** Shortcuts for (mostly overpowered) potion effects.
+  * **[Warps](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/warps.rb)** Save coordinates (per world or global/per player or all), share them or just teleport there.
+  * **[XXX](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/XXX.rb)**
+  * **[Weather and Time](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/weather_and_time.rb)** Shortcuts for weather and time commands/gamerules.
+  * **[Misc](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/misc.rb)** Miscellaneous commands
 
 ## Custom handlers
 If you want to add a custom handler (there is not much of documentation yet but feel free to ask if you can't figure it out) just place a ruby file inside `vendor/handlers`. As long as it doesn't start with two underscores it get's loaded. You can nest directories as much as you want as MCL traverses this directory recursively.
