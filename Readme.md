@@ -51,7 +51,7 @@ MCLI=config_name mcld start
 ```
 
 ## Requirements
-  * Ruby >= 1.9.3 (preferably >2) incl. RubyGems
+  * Ruby >= 1.9.3 (preferably >2) incl. RubyGems ([chruby](https://gist.github.com/2called-chaos/e06bf6322525d37a5bf7))
     * Bundler gem (`gem install bundler`)
   * git (`apt-get install git` / `brew install git`)
   * Unixoid OS (such as Ubuntu/Debian, OS X, maybe others)
