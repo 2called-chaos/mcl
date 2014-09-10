@@ -45,14 +45,14 @@ module Mcl
 
     def register_l30 acl_level
       register_command :l30, desc: "adds 30 levels to you or a target", acl: acl_level do |player, args|
-        $mcl.server.invoke "/xp 30L #{args.first || player}"
+        $mcl.server.invoke "/xp 30L #{args.first || player}"
       end
     end
 
     def register_l1337 acl_level
       register_command :l1337, desc: "sets your or target's level to 1337", acl: acl_level do |player, args|
-        $mcl.server.invoke "/xp -10000L #{args.first || player}"
-        $mcl.server.invoke "/xp 1337L #{args.first || player}"
+        $mcl.server.invoke "/xp -10000L #{args.first || player}"
+        $mcl.server.invoke "/xp 1337L #{args.first || player}"
       end
     end
 
