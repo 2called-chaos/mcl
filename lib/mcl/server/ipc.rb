@@ -41,6 +41,27 @@ module Mcl
           app.server.update_status :stopped unless alive?
         end
 
+        # bootstrap
+        if File.exist?("#{root}/bootstrap")
+          version = File.read("#{root}/bootstrap").strip
+          url = "https://s3.amazonaws.com/Minecraft.Download/versions/#{version}/minecraft_server.#{version}.jar"
+          vpath = "#{root}/#{app.config["mcv_infix"]}#{File.basename(url)}"
+          app.log.info "[IPC] bootstrapping Minecraft server version `#{version}'..."
+
+          # download
+          open(url, "rb") do |page|
+            File.open(vpath, "wb") do |file|
+              while chunk = page.read(1024)
+                file.write(chunk)
+              end
+            end
+          end
+
+          # link & remove bsfile
+          FileUtils.ln_s "#{vpath}", "#{root}/minecraft_server.jar", force: true
+          File.unlink("#{root}/bootstrap")
+        end
+
         if $_ipc_reattach
           app.log.info "[IPC] reattaching handle..."
           @_ipc_stdin, @_ipc_stdouterr, @_ipc_thread = $_ipc_reattach
