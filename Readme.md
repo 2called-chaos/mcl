@@ -128,6 +128,7 @@ MCL ships with a few buildin handlers which you may deactivate as described in t
   * **[Warps](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/warps.rb)** Save coordinates (per world or global/per player or all), share them or just teleport there.
   * **[Weather and Time](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/weather_and_time.rb)** Shortcuts for weather and time commands/gamerules.
   * **[Whois](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/whois.rb)** Gives you a book with information about a player.
+  * **[WorldEdit light](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/world_edit_light.rb)** selections, stacking and more (using 1.8 commands)
   * **[Worlds](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/worlds.rb)** Worldbook (switch between, create new, backup worlds)
   * **[Misc](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/misc.rb)** Miscellaneous commands
 
