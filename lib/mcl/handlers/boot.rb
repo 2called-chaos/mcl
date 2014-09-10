@@ -23,6 +23,14 @@ module Mcl
         $mcl.server.update_status :running
       end
 
+      # EULA
+      register_parser(/^You need to agree to the EULA in order to run the server/i) do |res, r|
+        $mcl.log.info "[CORE] Recognized EULA halt on tick #{$mcl.eman.tick}, patching..."
+        eula = File.read("#{$mcl.server.root}/eula.txt")
+        File.open("#{$mcl.server.root}/eula.txt", "wb") {|f| f.write(eula.gsub("eula=false", "eula=true")) }
+        $mcl.server.invoke("/stop")
+      end
+
       # shutdown
       register_parser(/\AStopping server\z/i) do |res, r|
         if res.thread == "server shutdown thread" && res.channel == "info"
