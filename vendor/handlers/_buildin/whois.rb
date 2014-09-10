@@ -3,6 +3,8 @@ module Mcl
   ## Whois (get player information)
   # !whois <player>
   class HMclWhois < Handler
+    MCBANS_APIKEY = "" # get one by registering at http://mcbans.com
+
     def setup
       register_whois(:mod)
     end
@@ -10,6 +12,7 @@ module Mcl
     def register_whois acl_level
       register_command :whois, desc: "shows you exclusive NSA data about a player", acl: acl_level do |player, args|
         target = args.first || player
+        trawt(player, "NSA", {text: "gathering d", color: "gold"}, {text: "a", color: "gold", obfuscated: true}, {text: "ta, h", color: "gold"}, {text: "a", color: "gold", obfuscated: true}, {text: "ng on t", color: "gold"}, {text: "a", color: "gold", obfuscated: true}, {text: "ght.", color: "gold"}, {text: "a", color: "gold", obfuscated: true}, {text: ".", color: "gold"})
         $mcl.server.invoke book(player, "Report for #{target}", nsa_report(target), author: "NSA")
       end
     end
@@ -30,6 +33,20 @@ module Mcl
             r << %Q{{text: "Yes", color: "dark_green"}}
           else
             r << %Q{{text: "No", color: "dark_red"}}
+          end
+
+          # MCBans status
+          tmp = %Q{, hoverEvent:{action:"show_text",value:"Click to open MCBans site"},clickEvent:{action:"open_url", value:"http://mcbans.com/player/#{tmem.nickname}"}}
+          r << %Q{{text: "\\nMCBans: ", color: "dark_blue"}}
+          if MCBANS_APIKEY.present?
+            mcbd = mcbans_data(tmem)
+            if mcbd[:status] == "n"
+              r << %Q{{text: "OK", color: "dark_green"#{tmp}}}
+            else
+              r << %Q{{text: "WARN", color: "dark_red"#{tmp}}}
+            end
+          else
+            r << %Q{{text: "No API key", color: "gray"#{tmp}}}
           end
 
           # permission
@@ -96,17 +113,31 @@ module Mcl
           # uuid
           r << %Q{{text: "UUID:\\n", color: "dark_blue"}}
           r << %Q{{text: "#{tmem.uuid || "???"}\\n\\n", color: "dark_aqua"}}
-          r << %Q{{text: "\\n» kill player\\n", color: "dark_purple", underlined: true, hoverEvent:{action:"show_text",value:"Click to kill player"},clickEvent:{action:"run_command", value:"!raw /kill #{tmem.nickname}"}}}
-          r << %Q{{text: "\\n» kick player\\n", color: "dark_purple", underlined: true, hoverEvent:{action:"show_text",value:"Click to kick player"},clickEvent:{action:"run_command", value:"!raw /kick #{tmem.nickname}"}}}
-          r << %Q{{text: "\\n» ban player\\n", color: "dark_red", underlined: true, hoverEvent:{action:"show_text",value:"Click to ban player"},clickEvent:{action:"run_command", value:"!raw /ban #{tmem.nickname}"}}}
+
+          # links
+          r << %Q{{text: "\\n» kill player", color: "dark_purple", underlined: true, hoverEvent:{action:"show_text",value:"Click to kill player"},clickEvent:{action:"run_command", value:"!raw /kill #{tmem.nickname}"}}}
+          r << %Q{{text: "\\n» kick player", color: "dark_purple", underlined: true, hoverEvent:{action:"show_text",value:"Click to kick player"},clickEvent:{action:"run_command", value:"!raw /kick #{tmem.nickname}"}}}
+          r << %Q{{text: "\\n\\n» ban player\\n", color: "dark_red", underlined: true, hoverEvent:{action:"show_text",value:"Click to ban player"},clickEvent:{action:"run_command", value:"!raw /ban #{tmem.nickname}"}}}
         end.join("\n")
       end
 
       def ip_data tmem
         return nil unless tmem.ip
-        # response = Net::HTTP.get_response("ipinfo.io","/#{tmem.ip}/json")
-        response = Net::HTTP.get_response("ipinfo.io","/78.94.159.28/json")
+        response = Net::HTTP.get_response("ipinfo.io","/#{tmem.ip}/json")
         JSON.parse(response.body)
+      rescue
+        return nil
+      end
+
+      def mcbans_data tmem
+        return nil unless tmem.ip
+        response = Net::HTTP.get_response("api.mcbans.com","/v3/#{MCBANS_APIKEY}/login/#{tmem.nickname}/#{tmem.ip}/mcl")
+        {}.tap do |r|
+          c = response.body.split(";")
+          [:status, :reason, :reputation, :alternate_accounts_count, :mcbans_mod].each do |v|
+            r[v] = c.shift
+          end
+        end
       rescue
         return nil
       end
