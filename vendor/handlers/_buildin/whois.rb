@@ -60,7 +60,7 @@ module Mcl
 
           # playtime
           r << %Q{{text: "\\nPlaytime: ", color: "dark_blue"}}
-          r << %Q{{text: "#{tmem.fplaytime}", color: "dark_aqua"}}
+          r << %Q{{text: "#{tmem.fplaytime(tmem.online)}", color: "dark_aqua"}}
 
           # first connect
           if tmem.first_connect
