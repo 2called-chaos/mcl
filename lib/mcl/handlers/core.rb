@@ -2,6 +2,7 @@ module Mcl
   Mcl.reloadable(:HMMclCore)
   class HMMclCore < Handler
     def setup
+      register_sprop(:root)
       register_danger(:admin)
       register_help(:guest)
       register_mclreboot(:admin)
@@ -18,6 +19,65 @@ module Mcl
       register_command :danger, desc: "enable danger mode for you to bypass security limits", acl: acl_level do |player, args|
         pmemo(player)[:danger_mode] = strbool(args.first) if args.any?
         trawm(player, {text: "Danger mode ", color: "gold"}, pmemo(player)[:danger_mode] ? {text: "ENABLED", color: "red"} : {text: "disabled", color: "green"})
+      end
+    end
+
+    def register_sprop acl_level
+      register_command :sprop, desc: "read/change server properties (more info with !sprop)", acl: acl_level do |player, args|
+        case args.count
+        when 0 # usage
+          trawt(player, "SPROP", {text: "Usage: ", color: "gold"}, {text: "!sprop book", color: "aqua"})
+          trawt(player, "SPROP", {text: "Usage: ", color: "gold"}, {text: "!sprop <property> [value] [force]", color: "aqua"})
+        when 1 # read / book
+          if args.first == "book"
+            book_data = [].tap do |b|
+              x, bs = 0, []
+              $mcl.server.properties.each_with_index do |(k, v), i|
+                next if v == :comment
+                x += k.to_s.length > 20 ? 2 : 1
+
+                val = v.blank? ? %Q{"-blank-", color: "gray", italic: true} : %Q{"#{v}"}
+                bs << %Q{{text: "#{k}\\n", color: "#{i % 2 == 0 ? :blue : :dark_blue}", hoverEvent:{action:"show_text",value:#{val}},clickEvent:{action:"run_command", value:"!sprop #{k}"}}}
+                if x >= 13
+                  b << bs.join("\n")
+                  x, bs = 0, []
+                end
+              end
+              b << bs.join("\n")
+            end
+            $mcl.server.invoke book(player, "Server properties", book_data)
+          else
+            if $mcl.server.properties.key?(args.first)
+              sval = $mcl.server.properties[args.first]
+              val = sval.blank? ? {text: "-blank-", color: "gray", italic: true} : {text: "#{sval}", color: "aqua"}
+              trawt(player, "SPROP", {text: "Value of property ", color: "gold"}, {text: "#{args.first}", color: "dark_aqua"}, {text: " is ", color: "gold"}, val)
+            else
+              trawt(player, "SPROP", {text: "Property ", color: "red"}, {text: "#{args.first}", color: "dark_aqua"}, {text: " does not exist.", color: "red"})
+            end
+          end
+        else # update
+          prop = args.shift
+          force = args.pop if args.last == "force"
+          val = args.join(" ")
+          pwas = $mcl.server.properties[prop]
+
+          if !pwas && !force
+            trawt(player, "SPROP", {text: "Property ", color: "red"}, {text: "#{prop}", color: "dark_aqua"}, {text: " does not exist.", color: "red"})
+            trawt(player, "SPROP", {text: "If you want to add this property use force!", color: "red"})
+          else
+            $mcl.server.update_property(prop, val)
+            if pwas
+              trawt(player, "SPROP",
+                {text: "Set property ", color: "gold"},
+                {text: "#{prop}", color: "dark_aqua"}, {text: " to ", color: "gold"}, {text: "#{val}", color: "aqua"},
+                {text: " (was ", color: "gold"}, {text: "#{pwas}", color: "aqua"}, {text: ")", color: "gold"}
+              )
+            else
+              trawt(player, "SPROP", {text: "Added new property ", color: "gold"}, {text: "#{prop}", color: "dark_aqua"}, {text: " with value ", color: "gold"}, {text: "#{val}", color: "aqua"} )
+            end
+            trawt(player, "SPROP", {text: "Changes require a server restart to take effect!", color: "yellow"})
+          end
+        end
       end
     end
 
