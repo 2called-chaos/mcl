@@ -44,12 +44,6 @@ the shipped handlers just ask your question in the issues.
   * When you see "ticks" somewhere it refers to the MCL loop. It has nothing to do with Minecraft ticks.
 
 
-## Use MCL for multiple servers
-MCL supports multiple instances. Create a new configuration and start/stop the instance like this:
-```
-MCLI=config_name mcld start
-```
-
 ## Requirements
   * Ruby >= 1.9.3 (preferably >2) incl. RubyGems ([chruby](https://gist.github.com/2called-chaos/e06bf6322525d37a5bf7))
     * Bundler gem (`gem install bundler`)
@@ -62,36 +56,19 @@ MCLI=config_name mcld start
     * **WARNING:** Some feature require the gamerule `logAdminCommands` to be set to true!
 
 
-## Setup
+## Installation
   **WARNING: MCL isn't released yet and might not work for you**
 
-  1. Do everything as the user which runs the servers except maybe the symlink in step 3.
-  2. Download or clone the whole thing to a convenient location:
-      <pre>
-        cd ~
-        git clone https://github.com/2called-chaos/mcl.git</pre>
-  3. Optional but recommended: Add the bin directory to your $PATH variable or create a symlink to the executable:
-      <pre>
-        echo 'export PATH="$HOME/mcl/bin:$PATH"' >> ~/.profile && source ~/.profile
-        OR
-        ln -s /home/minecraft_server/mcl/bin/mcld /usr/local/bin/mcld</pre>
-  4. Install the bundle
-      <pre>
-        cd ~/mcl && bundle install --without mysql --deployment</pre>
-     **NOTE:** If you want to use MySQL (not recommended) replace `mysql` with `sqlite`
-  5. Copy and edit the example configuration to fit your needs and server settings.
-     Please note that there is currently no user support which means all servers need to run under the same user as MCL does.
-      <pre>
-        cd ~/mcl
-        cp config/default.example.yml config/default.yml
-        nano config/default.yml</pre>
-  6. Done! Run `mcld start` to start the MCL daemon. Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
-  7. Type `!uadmin` into chat to give yourself root permissions. This only works if your nickname or UUID is listed in the config directory.
+  <big>**[» Installation instructions (Debian/Ubuntu/OS X)](https://github.com/2called-chaos/mcl/blob/master/doc/installation_nix.md)**</big><br>
+  **» Installation instructions (Windows)** _not yet available_
 
+  **[» FAQ](https://github.com/2called-chaos/mcl/wiki/FAQ)**<br>
+  **[» Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)**
 
 
 ## Deactivate handlers
 If you want to deactivate buildin handlers (or 3rd party ones) just rename the file to start with two underscores (e.g.: `__warps.rb`).
+
 
 ## Core handlers
 There are some handlers which are considered core functionality and therefore are "hidden" inside the library folder. You should not deactivate these.
@@ -113,8 +90,9 @@ Beside some regular parsers the core provides these commands with the permission
     * **!stopmc** (root)
     * **!version** (member)
 
+
 ## Buildin handlers
-MCL ships with a few buildin handlers which you may deactivate as described in the previous paragraph. They use a somewhat reasonable ACL setting
+MCL ships with a few buildin handlers which you may deactivate if you want. They use a somewhat reasonable ACL setting
 (permission level) but you may alter these as well. At the moment there are these buildin handlers:
 
   * **[Butcher](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/butcher.rb)** Kill entities with convenience.
@@ -132,9 +110,17 @@ MCL ships with a few buildin handlers which you may deactivate as described in t
   * **[Worlds](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/worlds.rb)** Worldbook (switch between, create new, backup worlds)
   * **[Misc](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/misc.rb)** Miscellaneous commands
 
+
 ## Custom handlers
 If you want to add a custom handler (there is not much of documentation yet but feel free to ask if you can't figure it out) just place a ruby file inside `vendor/handlers`. As long as it doesn't start with two underscores it get's loaded. You can nest directories as much as you want as MCL traverses this directory recursively.
 
+
+
+## Use MCL for multiple servers
+MCL supports multiple instances. Create a new configuration and start/stop the instance like this:
+```
+MCLI=config_name mcld start
+```
 
 
 ## Gotchas
