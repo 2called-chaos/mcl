@@ -76,7 +76,7 @@ module Mcl
           p.last_disconnect = Time.current
 
           # playtime
-          p.data[:playtime] += p.session_playtime
+          p.playtime += p.session_playtime
           app.log.info "[PMAN] lost player `#{player}' after #{p.fsession_playtime}"
         end
       end
@@ -87,7 +87,6 @@ module Mcl
         p.online = true
         p.ip = opts[:ip]
         p.data[:last_login_pos] = [opts[:x], y: opts[:y], z: opts[:z]]
-        p.data[:playtime] ||= 0
         p.data[:connects] ||= 0
         p.data[:connects] += 1
         p.last_connect = Time.current

@@ -50,7 +50,7 @@ module Mcl
     end
 
     def playtime incl_session = false
-      (data[:playtime]||0) + (incl_session ? session_playtime(Time.current) : 0)
+      self[:playtime] + (incl_session ? session_playtime(Time.current) : 0)
     end
 
     def fplaytime incl_session = false
