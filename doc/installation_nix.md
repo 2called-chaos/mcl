@@ -43,7 +43,7 @@ sudo gem install bundler
 
 ### 2. Installing MCL
 
-Switch to the user which will run the minecraft server (e.g. `su - minecraft_server`)
+1. Switch to the user which will run the minecraft server (e.g. `su - minecraft_server`)
 
 2. Download or clone the whole thing to a convenient location:
     <pre>
