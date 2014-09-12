@@ -1,8 +1,24 @@
-# Heatmon daemon wrapper
+# daemon wrapper
 require "daemons"
 require "fileutils"
 require "active_support/core_ext"
 PROJECT_ROOT = Pathname.new File.expand_path("../..", __FILE__)
+
+# Relaunch with elevated privileges on windows
+require "#{PROJECT_ROOT}/lib/mcl"
+if Mcl.windows?
+  require 'win32ole'
+  def running_in_admin_mode?
+    (`reg query HKU\\S-1-5-19 2>&1` =~ /ERROR/).nil?
+  end
+
+  if !running_in_admin_mode?
+    path = "bundle exec ruby #{__FILE__}"
+    shell = WIN32OLE.new('Shell.Application')
+    shell.ShellExecute(path, nil, nil, 'runas')
+    exit
+  end
+end
 
 # Instance
 MCL_INSTANCE = ENV["MCL_INSTANCE"].presence || ENV["MCLI"].presence || "default"
