@@ -5,6 +5,7 @@ module Mcl
   # !id [block_id]
   # !colors
   # !rec [rec] [pitch]
+  # !summon *args
   # !idea [target]
   # !strike [target]
   # !longwaysdown [target]
@@ -15,6 +16,7 @@ module Mcl
       register_id(:guest)
       register_colors(:guest)
       register_rec(:guest)
+      register_summon(:admin)
       register_idea(:member)
       register_strike(:mod)
       register_longwaydown(:builder)
@@ -44,6 +46,31 @@ module Mcl
 
         chunks.each do |cl|
           trawm(player, *cl.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (cl.count-1)).flatten.compact)
+        end
+      end
+    end
+
+    def register_summon acl_level
+      register_command :summon, desc: "improved /summon command", acl: acl_level do |player, args, handler, opt|
+        if args.count > 0
+          # options
+          amount = 1
+          target = player
+          opt.on("-c AMOUNT", Integer) {|v| amount = v }
+          opt.on("-t TARGET", String) {|v| target = v }
+          opt.parse!(args) #rescue nil
+
+          # etype
+          entity = args.shift
+          types = %w[MinecartChest EyeOfEnderSignal ItemFrame MinecartCommandBlock Item EntityHorse Fireball EnderDragon MinecartTNT Villager ThrownPotion Guardian SnowMan LeashKnot Arrow MushroomCow LavaSlime Zombie MinecartSpawner EnderCrystal Snowball Enderman CaveSpider MinecartHopper XPOrb ThrownExpBottle FireworksRocketEntity Chicken FallingSand Giant VillagerGolem PrimedTnt Endermite Creeper Rabbit ThrownEnderpearl Silverfish ArmorStand Squid Skeleton SmallFireball MinecartRideable Wolf Witch Ozelot Cow Slime Painting Pig MinecartFurnace Bat Blaze WitherBoss PigZombie Spider Ghast Sheep WitherSkull Boat LightningBolt]
+          etype = types.grep(/#{entity}/i).first || entity
+
+          if !(!pmemo(player)[:danger_mode] && amount > 500 && require_danger_mode(player, "Summoning >500 entities require danger mode to be enabled!"))
+            trawt(player, "summon", {text: "Summoned #{amount} entities of type #{etype}."})
+            amount.times { $mcl.server.invoke %{/execute #{target} ~ ~ ~ /summon #{etype} #{args.join(" ")}} }
+          end
+        else
+          trawt(player, "summon", {text: "Usage: ", color: "gold"}, {text: "!summon <entity> [-c amount] [x] [y] [z] [dataTag]", color: "aqua"})
         end
       end
     end

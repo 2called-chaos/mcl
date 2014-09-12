@@ -29,7 +29,7 @@ module Mcl
         if pmemo(p)[:danger_mode]
           return false
         else
-          tellm(p, {text: text, color: "red"}, {text: " (enable with '!danger on/off')", color: "yellow"})
+          trawm(p, {text: text, color: "red"}, {text: " (enable with '!danger on/off')", color: "yellow"})
           return true
         end
       end
