@@ -1,10 +1,15 @@
 # Heatmon daemon wrapper
 require "daemons"
+require "fileutils"
 require "active_support/core_ext"
 PROJECT_ROOT = Pathname.new File.expand_path("../..", __FILE__)
 
 # Instance
 MCL_INSTANCE = ENV["MCL_INSTANCE"].presence || ENV["MCLI"].presence || "default"
+
+# Ensure directories
+FileUtils.mkdir_p("#{PROJECT_ROOT}/tmp")
+FileUtils.mkdir_p("#{PROJECT_ROOT}/log")
 
 # Run daemon
 Daemons.run("#{PROJECT_ROOT}/lib/mcl/daemon.rb",
