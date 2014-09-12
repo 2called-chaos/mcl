@@ -11,9 +11,10 @@ module Mcl
   require "net/http"
   require "fileutils"
   require "find"
-  require "pry"
+  require "rbconfig"
 
   # gems
+  require "pry"
   require "active_record"
 
   # 3rd party

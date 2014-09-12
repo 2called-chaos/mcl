@@ -1,6 +1,10 @@
 module Mcl
   ROOT = File.expand_path("../..", __FILE__)
 
+  def self.windows?
+    (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
+  end
+
   # allow reloadable classes (dirty)
   def self.reloadable konst, parent = nil
     parent ||= Mcl
