@@ -2,11 +2,13 @@ module Mcl
   Mcl.reloadable(:HMclWhois)
   ## Whois (get player information)
   # !whois <player>
+  # !whereis <player>
   class HMclWhois < Handler
     MCBANS_APIKEY = "" # get one by registering at http://mcbans.com
 
     def setup
       register_whois(:mod)
+      register_whereis(:mod)
     end
 
     def register_whois acl_level
@@ -14,6 +16,26 @@ module Mcl
         target = args.first || player
         trawt(player, "NSA", {text: "gathering d", color: "gold"}, {text: "a", color: "gold", obfuscated: true}, {text: "ta, h", color: "gold"}, {text: "a", color: "gold", obfuscated: true}, {text: "ng on t", color: "gold"}, {text: "a", color: "gold", obfuscated: true}, {text: "ght.", color: "gold"}, {text: "a", color: "gold", obfuscated: true}, {text: ".", color: "gold"})
         $mcl.server.invoke book(player, "Report for #{target}", nsa_report(target), author: "NSA")
+      end
+    end
+
+    def register_whereis acl_level
+      register_command :whereis, desc: "shows you the position of a player", acl: acl_level do |player, args|
+        target = args.first || player
+
+        detect_player_position(target) do |pos|
+          if pos
+            trawt(player, "NSA",
+              {text: "Player ", color: "green"},
+              {text: target, color: "aqua", hoverEvent: {action: "show_text", value: "teleport to #{target}"}, clickEvent: {action: "run_command", value: "!tp #{target}"}},
+              {text: " is at ", color: "green"},
+              {text: pos.join(" "), color: "aqua", hoverEvent: {action: "show_text", value: "teleport to #{pos.join(" ")}"}, clickEvent: {action: "run_command", value: "!tp #{pos.join(" ")}"}},
+              {text: "!", color: "green"}
+            )
+          else
+            trawt(player, "NSA", {text: "Couldn't determine position of #{target} :/ Maybe the target is underwater.", color: "red"})
+          end
+        end
       end
     end
 
