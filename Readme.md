@@ -5,7 +5,8 @@ MCL is a ruby script which acts as a **wrapper** for your vanilla Minecraft serv
 It should be somewhat easy to write custom commands but there are some gotchas to it. If you can't figure it out from
 the shipped handlers just ask your question in the issues.
 
-
+## Help
+If you need help or have problems [open an issue](https://github.com/2called-chaos/mcl/issues/new) or [chat with me](http://webchat.esper.net/?channels=mcl).
 
 ## Features
   * Monitors itself and your minecraft server and restart on crash
@@ -32,7 +33,7 @@ the shipped handlers just ask your question in the issues.
 
 
 ## Facts
-  * MCL encourages you to always make backups. MCL is not to blame for any data loss.
+  * MCL encourages you to **always make backups**. MCL is not to blame for any data loss.
   * MCL may use features only available in snapshot versions but most parts should work for you.
   * MCL starts the minecraft server for you, essentially wrapping it. Therefore, if MCL dies, your minecraft server
     goes along with it. But MCL tries everything to prevent this from happening. It even restarts died servers.
