@@ -9,7 +9,7 @@ require "#{PROJECT_ROOT}/lib/mcl"
 if Mcl.windows?
   require 'win32ole'
   def running_in_admin_mode?
-    (`reg query HKU\\S-1-5-19 2>&1` =~ /ERROR/).nil?
+    (`reg query HKU\\S-1-5-19 2>&1` =~ /HKEY_USERS/).nil?
   end
 
   if !running_in_admin_mode?
