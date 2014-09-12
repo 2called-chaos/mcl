@@ -235,6 +235,7 @@ module Mcl
                   tellm("@a", {text: "Backup done!", color: "gold"})
                   $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(restarting)", color: "reset"}) }
                   sleep 1
+                  announce_server_restart
                   $mcl.sync { tellm("@a", {text: "SERVER IS ABOUT TO RESTART!", color: "red"}) }
                   sleep 5
                   $mcl.sync { $mcl_reboot = true }

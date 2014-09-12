@@ -77,6 +77,7 @@ module Mcl
                     end
                   end
 
+                  announce_server_restart
                   trawt("@a", "MCLiverse", {text: "SERVER IS ABOUT TO RESTART!", color: "red"})
                   async do
                     sleep 5

@@ -137,8 +137,9 @@ module Mcl
         system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
         traw("@a", "[MCL] git now: #{git_message}", color: "gold")
         if args[0].present?
+          announce_server_restart
           traw("@a", "[MCL] Restarting...", color: "red")
-          sleep 2
+          sleep 3
           $mcl.shutdown! "MCLupdate"
         else
           mcl_reload("@a")
@@ -153,11 +154,19 @@ module Mcl
     end
 
     def register_stop acl_level
-      register_command(:stop, desc: "stops MCL and with it the server (will restart when daemonized)", acl: acl_level) { $mcl.shutdown! "ingame" }
+      register_command(:stop, desc: "stops MCL and with it the server (will restart when daemonized)", acl: acl_level) do
+        announce_server_restart
+        sleep 3
+        $mcl.shutdown! "ingame"
+      end
     end
 
     def register_stopmc acl_level
-      register_command(:stopmc, desc: "sends /stop to server which will reboot MCL and MC", acl: acl_level) { $mcl.server.invoke "/stop" }
+      register_command(:stopmc, desc: "sends /stop to server which will reboot MCL and MC", acl: acl_level) do
+        announce_server_restart
+        sleep 3
+        $mcl.server.invoke "/stop"
+      end
     end
 
     def register_version acl_level
