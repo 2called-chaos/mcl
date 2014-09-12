@@ -17,7 +17,7 @@ module Mcl
       seed_db
       setup_checker
       FileUtils.mkdir_p(version_path)
-      register_snap2date(status: :member, check: :member, watch: :admin, unwatch: :admin, update: :admin, cron: :admin, uncron: :admin)
+      register_snap2date(:member, status: :member, check: :member, watch: :admin, unwatch: :admin, update: :admin, cron: :admin, uncron: :admin)
     end
 
     def seed_db
@@ -57,13 +57,15 @@ module Mcl
       end
     end
 
-    def register_snap2date acl_levels
-      register_command :snap2date, desc: "Automatic snapshot updating (more info with !snap2date)", acl: :guest do |player, args|
+    def register_snap2date acl_level, acl_levels
+      register_command :snap2date, desc: "Automatic snapshot updating (more info with !snap2date)", acl: acl_level do |player, args|
         case args[0]
         when "status"
+          acl_verify(player, acl_levels[:status])
           tellm(player, {text: "watched versions ", color: "gold"}, {text: watched_versions.join(" ").presence || "none", color: "reset"})
           tellm(player, {text: "watcher enabled? ", color: "gold"}, {text: cron.to_s, color: "reset"})
         when "check"
+          acl_verify(player, acl_levels[:check])
           async do
             vs = args[1] ? args[1..-1] : watched_versions
             vs.each do |ver|
@@ -88,6 +90,7 @@ module Mcl
             end
           end
         when "watch"
+          acl_verify(player, acl_levels[:watch])
           if args[1]
             args[1..-1].each do |v|
               ve = StringExpandRange.expand(v)
@@ -104,6 +107,7 @@ module Mcl
             tellm(player, {text: "Define a version to watch!", color: "red"})
           end
         when "unwatch"
+          acl_verify(player, acl_levels[:unwatch])
           case args[1]
             when nil then tellm(player, {text: "Define a version to unwatch!", color: "red"})
             when "all" then vel = watched_versions
@@ -122,13 +126,16 @@ module Mcl
             end
           end
         when "update"
+          acl_verify(player, acl_levels[:update])
           tellm(player, {text: "Attempting update...", color: "reset"})
           update(args[1].try(:downcase), args[2] == "force")
         when "cron"
+          acl_verify(player, acl_levels[:cron])
           Setting.set("snap2date.cron", "true")
           @cron = true
           tellm(player, {text: "Watcher enabled", color: "reset"})
         when "uncron", "decron", "nocron"
+          acl_verify(player, acl_levels[:uncron])
           Setting.set("snap2date.cron", "false")
           @cron = false
           tellm(player, {text: "Watcher disabled", color: "reset"})
