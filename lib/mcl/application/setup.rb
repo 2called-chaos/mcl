@@ -127,15 +127,15 @@ module Mcl
       def trap_signals
         Signal.trap("INT") {|sig| shutdown!("#{Signal.signame(sig)}") }
         Signal.trap("TERM") {|sig| shutdown!("#{Signal.signame(sig)}") }
-        Signal.trap("TSTP") {|sig| shutdown!("#{Signal.signame(sig)}") }
-        Signal.trap("USR1") {|sig| $debug_mode_changed = !debug? }
+        Signal.trap("TSTP") {|sig| shutdown!("#{Signal.signame(sig)}") } unless Mcl.windows?
+        Signal.trap("USR1") {|sig| $debug_mode_changed = !debug? } unless Mcl.windows?
 
         graceful do
           log.debug "[SHUTDOWN] Releasing signal traps..."
           Signal.trap("INT", "DEFAULT")
           Signal.trap("TERM", "DEFAULT")
-          Signal.trap("TSTP", "DEFAULT")
-          Signal.trap("USR1", "DEFAULT")
+          Signal.trap("TSTP", "DEFAULT") unless Mcl.windows?
+          Signal.trap("USR1", "DEFAULT") unless Mcl.windows?
         end
       end
 
