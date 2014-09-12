@@ -8,7 +8,7 @@ class << File
       #windows mklink syntax is reverse of unix ln -s
       #windows mklink is built into cmd.exe
       #vulnerable to command injection, but okay because this is a hack to make a cli tool work.
-      stdin, stdout, stderr, wait_thr = Open3.popen3('cmd.exe', "/c mklink #{new_name} #{old_name}")
+      stdin, stdout, stderr, wait_thr = Open3.popen3('cmd.exe', "/c mklink #{new_name.gsub("/", "\\")} #{old_name.gsub("/", "\\")}")
       wait_thr.value.exitstatus
     else
       self.old_symlink(old_name, new_name)
@@ -19,7 +19,7 @@ class << File
     #if on windows, call mklink, else self.symlink
     if RUBY_PLATFORM =~ /mswin32|cygwin|mingw|bccwin/
       #vulnerable to command injection because calling with cmd.exe with /c?
-      stdin, stdout, stderr, wait_thr = Open3.popen3("cmd.exe /c dir #{file_name} | find \"SYMLINK\"")
+      stdin, stdout, stderr, wait_thr = Open3.popen3("cmd.exe /c dir #{file_name.gsub("/", "\\")} | find \"SYMLINK\"")
       wait_thr.value.exitstatus
     else
       self.old_symlink?(file_name)
@@ -36,7 +36,7 @@ class << FileUtils
       #windows mklink syntax is reverse of unix ln -s
       #windows mklink is built into cmd.exe
       #vulnerable to command injection, but okay because this is a hack to make a cli tool work.
-      stdin, stdout, stderr, wait_thr = Open3.popen3('cmd.exe', "/c mklink #{new_name} #{old_name}")
+      stdin, stdout, stderr, wait_thr = Open3.popen3('cmd.exe', "/c mklink #{new_name.gsub("/", "\\")} #{old_name.gsub("/", "\\")}")
       wait_thr.value.exitstatus
     else
       self.old_symlink(old_name, new_name, opts)
