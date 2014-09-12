@@ -23,6 +23,7 @@ module Mcl
 
   # application
   "#{ROOT}/lib/mcl".tap do |lib|
+    require "#{lib}/windows_hacks" if Mcl.windows?
     require "#{lib}/id2mcn"
     require "#{lib}/multi_io"
     require "#{lib}/promise"
