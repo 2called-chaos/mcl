@@ -5,13 +5,30 @@ This guide helps you setting up MCL via command line on a *nix system.
 
 ### 1. Installing dependencies (Debian/Ubuntu)
 
-```shell
-sudo aptitude update
-sudo aptitude install ruby2.0 git
-sudo gem install bundler
-```
-If the ruby version cannot be found look for the most recent version with `sudo aptitude search ruby`.
+I recommend to install ruby via chruby. If you want to use rvm or system ruby adapt the steps accordingly.
+Do this first step as root.
 
+```
+# install packages (most are required to build ruby)
+aptitude update
+aptitude install curl git build-essential sqlite3 libsqlite3-dev autoconf bison libssl-dev libyaml-dev libreadline6 libreadline6-dev zlib1g zlib1g-dev
+
+# install chruby (this is a install script of mine)
+curl -O https://gist.githubusercontent.com/2called-chaos/e06bf6322525d37a5bf7/raw/_setup_chruby.sh
+chmod u+x _setup_chruby.sh
+./_setup_chruby.sh
+rm _setup_chruby.sh
+
+# install ruby
+ruby-build 2.0.0-p481 /opt/rubies/2.0.0-p481
+
+# use this ruby as default
+echo "chruby 2.0.0-p481" >> /etc/profile.d/chruby.sh
+source /etc/profile.d/chruby.sh
+
+# install bundler gem
+gem install bundler
+```
 
 
 ### 1. Installing dependencies (Mac OS X)
@@ -47,7 +64,7 @@ Switch to the user which will run the minecraft server (e.g. `su - minecraft_ser
       cd ~/mcl
       cp config/default.example.yml config/default.yml
       nano config/default.yml</pre>
-6. Done! Run `mcld start` to start the MCL daemon. Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
+6. Done! Run `mcld run` (to test) or `mcld start` to start the MCL daemon in the background. Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
 7. Type `!uadmin` into chat to give yourself root permissions. This only works if your nickname or UUID is listed in the config directory.
 
 ##### Hint: Bootstrap
@@ -57,3 +74,4 @@ mkdir my_server
 echo "1.8" > my_server/bootstrap
 mcld start
 ```
+If you are doing this on a fresh server installation remember that you need java (e.g.: `aptitude install openjdk-7-jre`).
