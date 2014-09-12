@@ -12,7 +12,7 @@ module Mcl
     attr_reader :cron, :watched_versions
 
     def setup
-      @snapurl = "https://s3.amazonaws.com/Minecraft.Download/versions/%VERSION%/minecraft_server.%VERSION%.jar"
+      @snapurl = "#{Mcl.windows? ? "http" : "https"}://s3.amazonaws.com/Minecraft.Download/versions/%VERSION%/minecraft_server.%VERSION%.jar"
       @announced = []
       seed_db
       setup_checker

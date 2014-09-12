@@ -44,7 +44,7 @@ module Mcl
         # bootstrap
         if File.exist?("#{root}/bootstrap")
           version = File.read("#{root}/bootstrap").strip
-          url = "https://s3.amazonaws.com/Minecraft.Download/versions/#{version}/minecraft_server.#{version}.jar"
+          url = "#{Mcl.windows? ? "http" : "https"}://s3.amazonaws.com/Minecraft.Download/versions/#{version}/minecraft_server.#{version}.jar"
           vpath = "#{root}/#{app.config["mcv_infix"]}#{File.basename(url)}"
           app.log.info "[IPC] bootstrapping Minecraft server version `#{version}'..."
 
