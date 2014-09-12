@@ -1,6 +1,7 @@
 module Mcl
   Mcl.reloadable(:HMclMisc)
   ## Miscellaneous commands
+  # !clear
   # !id [block_id]
   # !colors
   # !rec [rec] [pitch]
@@ -10,6 +11,7 @@ module Mcl
   # !muuhhh [target]
   class HMclMisc < Handler
     def setup
+      register_clear(:guest)
       register_id(:guest)
       register_colors(:guest)
       register_rec(:guest)
@@ -17,6 +19,12 @@ module Mcl
       register_strike(:mod)
       register_longwaydown(:builder)
       register_muuhhh(:mod)
+    end
+
+    def register_clear acl_level
+      register_command :clear, desc: "clears your inventory", acl: acl_level do |player, args|
+        $mcl.server.invoke %{/clear #{player}}
+      end
     end
 
     def register_id acl_level
