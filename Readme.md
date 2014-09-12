@@ -88,6 +88,7 @@ Beside some regular parsers the core provides these commands with the permission
     * **!raw** (admin)
     * **!stop** (admin)
     * **!stopmc** (root)
+    * **!sprop** (root)
     * **!version** (member)
 
 
@@ -115,15 +116,7 @@ MCL ships with a few buildin handlers which you may deactivate if you want. They
 If you want to add a custom handler (there is not much of documentation yet but feel free to ask if you can't figure it out) just place a ruby file inside `vendor/handlers`. As long as it doesn't start with two underscores it get's loaded. You can nest directories as much as you want as MCL traverses this directory recursively.
 
 
-
-## Use MCL for multiple servers
-MCL supports multiple instances. Create a new configuration and start/stop the instance like this:
-```
-MCLI=config_name mcld start
-```
-
-
-## Gotchas
+### Gotchas
   * Players fetched via player manager get cached. The cache get saved and cleared according to the player_cache_save_rate.
     If you fetch players via `Player` model class be sure to call `#clear_cache` on the player manager beforehand.
   * Always make sure to synchronize to the main loop if necessary (it is in a lot of cases) when working with async tasks.
@@ -131,6 +124,35 @@ MCLI=config_name mcld start
   * Don't block the main loop to long (this includes everything except async code which isn't synchronized to the main loop).
 
 
+## Use MCL for multiple servers
+MCL supports multiple instances. Create a new configuration and start/stop the instance like this:
+```
+MCLI=config_name mcld start
+```
+
+## ACL - what?
+ACL stands for Access Control List and it's not really that but think about it as permissions. Each player has a permission
+level which is a number starting from 0. Each command also has a permission level and if the player has equal or more points
+he can execute the command.
+
+Because numbers are confusing there is a mapping for several "groups" which resolve to a permission level like this:
+
+```
+root    => 13333337
+admin   => 1333337
+mod     => 133337
+builder => 13337
+member  => 1337
+guest   => 0
+```
+
+Note: `!help` only shows you commands you have the permission for.
+
+## Ideas
+- Ability to make some commands available through playtime
+- Bridges (e.g. Twitter, IRC)
+- Notifications (e.g. server overloaded, server restart, version update, etc.)
+- Games (Mr. X)
 
 ## Contributing
   Contributions are very welcome! Either report errors, bugs and propose features or directly submit code:
