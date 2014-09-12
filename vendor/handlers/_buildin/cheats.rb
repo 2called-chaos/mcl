@@ -4,6 +4,7 @@ module Mcl
   # !l0 [target]
   # !l30 [target]
   # !l1337 [target]
+  # !give [*args]
   # !balls [target]
   # !boat [target]
   # !minecart [target]
@@ -22,6 +23,7 @@ module Mcl
       register_l0(:guest)
       register_l30(:mod)
       register_l1337(:mod)
+      register_give(:admin)
       register_balls(:mod)
       register_boat(:mod)
       register_minecart(:mod)
@@ -53,6 +55,18 @@ module Mcl
       register_command :l1337, desc: "sets your or target's level to 1337", acl: acl_level do |player, args|
         $mcl.server.invoke "/xp -10000L #{args.first || player}"
         $mcl.server.invoke "/xp 1337L #{args.first || player}"
+      end
+    end
+
+    def register_give acl_level
+      register_command :give, desc: "alias for the /give command", acl: acl_level do |player, args|
+        if args.count == 0
+          trawt(player, "give", {text: "!give requires at least one argument!", color: "red"})
+        elsif args.count == 1
+          $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args.join(" ")}"
+        else
+          $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args.join(" ")}"
+        end
       end
     end
 
