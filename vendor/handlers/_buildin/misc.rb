@@ -5,7 +5,8 @@ module Mcl
   # !id [block_id]
   # !colors
   # !rec [rec] [pitch]
-  # !summon *args
+  # !summon <entity> [-c count] [-t target] [x] [y] [z] [dataTag]
+  # !setspawn [player] [x] [y] [z]
   # !idea [target]
   # !strike [target]
   # !longwaysdown [target]
@@ -17,6 +18,7 @@ module Mcl
       register_colors(:guest)
       register_rec(:guest)
       register_summon(:admin)
+      register_setspawn(:mod)
       register_idea(:member)
       register_strike(:mod)
       register_longwaydown(:builder)
@@ -70,8 +72,15 @@ module Mcl
             amount.times { $mcl.server.invoke %{/execute #{target} ~ ~ ~ /summon #{etype} #{args.join(" ")}} }
           end
         else
-          trawt(player, "summon", {text: "Usage: ", color: "gold"}, {text: "!summon <entity> [-c amount] [x] [y] [z] [dataTag]", color: "aqua"})
+          trawt(player, "summon", {text: "Usage: ", color: "gold"}, {text: "!summon <entity> [-c amount] [-t target] [x] [y] [z] [dataTag]", color: "aqua"})
         end
+      end
+    end
+
+    def register_setspawn acl_level
+      register_command :setspawn, desc: "sets your spawnpoint to current position", acl: acl_level do |player, args|
+        $mcl.server.invoke %{/execute #{player} ~ ~ ~ spawnpoint #{player} ~ ~ ~}
+        traw(player, "Your spawnpoint has been set!", color: "gold")
       end
     end
 
