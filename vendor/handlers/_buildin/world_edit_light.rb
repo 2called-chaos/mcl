@@ -8,7 +8,7 @@ module Mcl
   # !!hollow <block> [damage_value] [xargs]
   # !!fill <block> [damage_value] [xargs]
   # !!replace <IS:TileName> [IS:dataValue] > <SHOULD:TileName> [SHOULD:dataValue]
-  # !!insert <x> <y> <z>
+  # !!insert <x> <y> <z> [mode] [tilename]
   # !!stack <direction> [amount] [shift_selection] [masked|filtered <TileName>]
   # !!pos <x> <y> <z>
   # !!pos <x1> <y1> <z1> <x2> <y2> <z2>
@@ -228,21 +228,21 @@ module Mcl
         tellm(player, *a.zip([spacer] * (a.length-1)).flatten.compact)
       end
 
-      def sel_insert player, pos
+      def sel_insert player, pos, *args
         pram = memory(player)
-        $mcl.server.invoke %{/execute #{player} ~ ~ ~ clone #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{pos.join(" ")}}
+        $mcl.server.invoke %{/execute #{player} ~ ~ ~ clone #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{pos.join(" ")} #{args.join(" ")}}
       end
 
       def insert_selection player, args
         chunks = args.map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
         pram = memory(player)
 
-        if chunks.count == 3
+        if chunks.count >= 3 || (chunks.count == 1 && chunks.first == "~")
           unless require_selection(player)
-            sel_insert(player, chunks)
-            tellm(player, {text: "#{selection_size(player)} blocks involved", color: "gold"})
-            detect_relative_coordinate(player, chunks, [mode, "normal", tileid].compact) do |npos|
-              sel_insert(player, npos)
+            tileid = chunks.pop if chunks.count == 5
+            mode = chunks.pop if chunks.count == 4
+            detect_relative_coordinate(player, chunks) do |npos|
+              sel_insert(player, npos, [mode, "normal", tileid].compact)
               tellm(player, {text: "#{selection_size(player)} blocks involved", color: "gold"})
             end
           end
