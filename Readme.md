@@ -8,6 +8,7 @@ the shipped handlers just ask your question in the issues.
 ## Help
 If you need help or have problems [open an issue](https://github.com/2called-chaos/mcl/issues/new) or [chat with me](http://webchat.esper.net/?channels=mcl).
 
+
 ## Features
   * Monitors itself and your minecraft server and restart on crash
   * Reload handlers/commands without restarting
@@ -50,9 +51,7 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
     * Bundler gem (`gem install bundler`)
   * git (`apt-get install git` / `brew install git`)
   * Unixoid OS (such as Ubuntu/Debian, OS X, maybe others)
-    * Windows might work as well but I haven't tested it (some features will definitely not work):
-      * world backups (use of tar CLI utility)
-      * autoupdate/snap2date (use of symlinks)
+    * Windows support is in the work
   * local minecraft server(s)
     * **WARNING:** Some feature require the gamerule `logAdminCommands` to be set to true!
 
@@ -155,6 +154,19 @@ Note: `!help` only shows you commands you have the permission for.
 - Bridges (e.g. Twitter, IRC)
 - Notifications (e.g. server overloaded, server restart, version update, etc.)
 - Games (Mr. X)
+- Worldsettings (apply server properties / gamerules per world by using a text config)
+
+## Why is this useful?
+Normal modifications usually break on new releases and/or don't get updates for snapshot versions. Most other wrappers work by intercepting network data packets but this also tends to break sooner or later when things change. MCL on the other hand just parses console output and responds with commands. Unless the log output changes (which happened only once in Minecraft history as far as I know) or commands get removed MCL will continue to work. The drawback is obviously that MCL is much more limited.
+
+In addition, Ruby makes it really easy to communicate and work with external services and that's where I see it's strengths and uses. Things which require really fast ticking checks are overkill for MCLs model.
+
+## Legal
+* © 2014, Sven Pachnit (www.bmonkeys.net)
+* MCL is licensed under the MIT license.
+* MCL is **not** affiliated with Mojang.
+* If you use MCL you also agree to the [Minecraft EULA](https://account.mojang.com/documents/minecraft_eula).
+* "Minecraft" is a trademark of Notch Development AB/Mojang. All rights belong to their respective owners.
 
 ## Contributing
   Contributions are very welcome! Either report errors, bugs and propose features or directly submit code:
