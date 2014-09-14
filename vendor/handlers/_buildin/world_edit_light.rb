@@ -241,6 +241,10 @@ module Mcl
           unless require_selection(player)
             sel_insert(player, chunks)
             tellm(player, {text: "#{selection_size(player)} blocks involved", color: "gold"})
+            detect_relative_coordinate(player, chunks, [mode, "normal", tileid].compact) do |npos|
+              sel_insert(player, npos)
+              tellm(player, {text: "#{selection_size(player)} blocks involved", color: "gold"})
+            end
           end
         else
           tellm(player, {text: "!!insert <x> <y> <z>", color: "aqua"})
@@ -253,11 +257,22 @@ module Mcl
 
         if chunks.count == 0
           current_selection(player, num == 1 || num.nil?, num == 2 || num.nil?, false, false)
+        elsif chunks.count == 1 && chunks.first == "~"
+          detect_relative_coordinate(player, chunks) do |npos|
+            if num.nil?
+              pram[:pos1] = pram[:pos2] = npos
+            else
+              pram[:"pos#{num}"] = npos
+            end
+            current_selection(player)
+          end
         elsif chunks.count == 3
-          if num.nil?
-            pram[:pos1] = pram[:pos2] = chunks
-          else
-            pram[:"pos#{num}"] = chunks
+          detect_relative_coordinate(player, chunks) do |npos|
+            if num.nil?
+              pram[:pos1] = pram[:pos2] = npos
+            else
+              pram[:"pos#{num}"] = npos
+            end
           end
           current_selection(player)
         elsif chunks.count == 6 && num.nil?

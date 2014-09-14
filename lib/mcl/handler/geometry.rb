@@ -58,6 +58,32 @@ module Mcl
         end.each(&block)
       end
 
+      def relative_coordinate coord, rel
+        coord.map.with_index do |c, i|
+          r = rel[i] || "~"
+          if r.start_with? "~"
+            r = r[1..-1]
+            c.to_i + r.to_i
+          else
+            r.to_i
+          end
+        end
+      end
+
+      def detect_relative_coordinate player, rel, &block
+        if rel.any?{|s| s.include?("~") }
+          detect_player_position(player) do |pos|
+            if pos
+              block.call relative_coordinate(pos, rel)
+            else
+              tellm(player, {text: "Couldn't determine your position :/ Is your head in water?", color: "red"})
+            end
+          end
+        else
+          block.call relative_coordinate(pos, rel)
+        end
+      end
+
       def selection_vertices p1, p2
         corners = %w[xyz Xyz xYz XYz xyZ XyZ xYZ XYZ]
         x = [p1[0], p2[0]].sort
