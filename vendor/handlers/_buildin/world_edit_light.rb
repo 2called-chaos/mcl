@@ -273,8 +273,8 @@ module Mcl
             else
               pram[:"pos#{num}"] = npos
             end
+            current_selection(player)
           end
-          current_selection(player)
         elsif chunks.count == 6 && num.nil?
           pram[:pos1] = chunks[0..2]
           pram[:pos2] = chunks[3..5]

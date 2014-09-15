@@ -60,7 +60,7 @@ module Mcl
 
       def relative_coordinate coord, rel
         coord.map.with_index do |c, i|
-          r = rel[i] || "~"
+          r = rel[i].to_s || "~"
           if r.start_with? "~"
             r = r[1..-1]
             c.to_i + r.to_i
