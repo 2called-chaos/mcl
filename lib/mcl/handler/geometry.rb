@@ -80,7 +80,7 @@ module Mcl
             end
           end
         else
-          block.call relative_coordinate(pos, rel)
+          block.call rel.map(&:to_i)
         end
       end
 

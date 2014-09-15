@@ -103,6 +103,7 @@ MCL ships with a few buildin handlers which you may deactivate if you want. They
   * **[Gamemode](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamemode.rb)** Shortcuts for gamemodes.
   * **[Gamerule](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamerule.rb)** Shortcuts for gamerules.
   * **[Potion Effects](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/potion_effects.rb)** Shortcuts for (mostly overpowered) potion effects.
+  * **[Schematic Builder](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/schematic_builder.rb)** Sounds crazy? It is!
   * **[Snap2date](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/snap2date.rb)** Update to new snapshots automatically or just get notified.
   * **[Teleport](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/teleport.rb)** Handy !tp command and teleport book.
   * **[Warps](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/warps.rb)** Save coordinates (per world or global/per player or all), share them or just teleport there.
