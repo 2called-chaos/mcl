@@ -87,14 +87,14 @@ module Mcl
               end
             end
           else
-            trawt(player, "[MCLiverse]", {text: "only a-z 0-9 - / and _ are allowed", color: "red"})
+            trawt(player, "MCLiverse", {text: "only a-z 0-9 - / and _ are allowed", color: "red"})
           end
         else
-          trawt(player, "[MCLiverse]", {text: "!world <name> [info|backup|delete]", color: "yellow"})
-          trawt(player, "[MCLiverse]", {text: "!worldbook", color: "yellow"})
-          trawt(player, "[MCLiverse]", {text: "current world is: ", color: "gold"}, {text: "#{$mcl.server.world}", color: "aqua"})
+          trawt(player, "MCLiverse", {text: "!world <name> [info|backup|delete]", color: "yellow"})
+          trawt(player, "MCLiverse", {text: "!worldbook", color: "yellow"})
+          trawt(player, "MCLiverse", {text: "current world is: ", color: "gold"}, {text: "#{$mcl.server.world}", color: "aqua"})
           $mcl.server.known_worlds.in_groups_of(5, false).each do |worlds|
-            trawt(player, "[MCLiverse]", {text: "known worlds: ", color: "gold"}, {text: worlds.join(", "), color: "aqua"})
+            trawt(player, "MCLiverse", {text: "known worlds: ", color: "gold"}, {text: worlds.join(", "), color: "aqua"})
           end
         end
       end
