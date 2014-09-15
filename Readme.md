@@ -54,6 +54,7 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
     * Windows support is in the work
   * local minecraft server(s)
     * **WARNING:** Some feature require the gamerule `logAdminCommands` to be set to true!
+    * MCL heavily relies on server commands and implement snapshot features. If MCL features don't work your minecraft server version is probably outdated.
 
 
 ## Installation

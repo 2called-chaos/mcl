@@ -6,9 +6,16 @@ To open an elevated command prompt press your windows key, type in "cmd" and rig
 
 ## Bundled setup
 
-@todo
+1. [Download the bundled MCL installer]() and run it.
+2. Edit the configuration file at `C:\minecraft\mcl\config\default.yml` or use the bootstrapping feature of the setup script.
+2. Open an elevated command prompt and use `mcld start` to start MCL in the background or `mcld run` to run it in the foreground.
+3. Type `!uadmin` into chat to give yourself root permissions. This only works if your nickname or UUID is listed in the config directory.
 
-The bundled installer will, in the following order,
+Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
+
+---
+
+The bundled installer will
   - **install GnuTar** (archiving utility)
   - **install Git** (code versioning to get and update MCL)
   - **install Ruby** 2.0 incl. devkit (Ruby programming language)
@@ -22,9 +29,6 @@ The bundled installer will, in the following order,
 
 There is no uninstaller! To remove MCL just delete the folder (typically C:/minecraft/mcl). GnuTar, Ruby and git have their own individual uninstaller.
 
-To start MCL after installation open up an elevated command prompt and type "mcld start". This will start MCL in the background so that you can close the command prompt afterwards.
-
-Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)
 
 
 ## Manual installation
@@ -35,7 +39,7 @@ Doesn't work? [=> Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Tro
 
 2. [Download Git](http://git-scm.com/download/win) and install it (make sure to choose _"Use Git from the Windows Command Prompt"_)
 
-3. [Download GnuTar](http://gnuwin32.sourceforge.net/downlinks/tar-bin.php) and install it.
+3. [Download GnuTar](http://gnuwin32.sourceforge.net/downlinks/tar-bin.php) and install it. You will have to [manually add tar to your path](http://www.java.com/de/download/help/path.xml) variable!
 
 4. Open up a elevated CMD window (press win, enter "cmd", right click the entry and choose "run as administrator")
 
