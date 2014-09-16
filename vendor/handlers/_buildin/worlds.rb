@@ -81,7 +81,7 @@ module Mcl
                   trawt("@a", "MCLiverse", {text: "SERVER IS ABOUT TO RESTART!", color: "red"})
                   async do
                     sleep 5
-                    $mcl.sync { $mcl.server.ipc_restart }
+                    $mcl.sync { $mcl_reboot = true }
                   end
                 end
               end
