@@ -11,34 +11,11 @@ module Mcl
         end
       end
 
-      def ipc_spawn
-        app.graceful do
-          app.log.info "[SHUTDOWN] Stopping minecraft server..."
-          if @_ipc_thread
-            begin
-              app.server.update_status :stopping
-              Process.kill("TERM", @_ipc_thread.pid)
-
-              app.log.debug "[SHUTDOWN] waiting up to 30 seconds for the minecraft server to stop..."
-              c = 0
-              while alive? && c < 30
-                c += 1
-                sleep 1
-              end
-            rescue Errno::ESRCH
-              app.log.debug "[SHUTDOWN] #{$!.class.name}: #{$!.message}"
-            end
-
-            if alive?
-              app.log.debug "[SHUTDOWN] killing minecraft server..."
-              begin
-                Process.kill("KILL", @_ipc_thread.pid)
-              rescue Errno::ESRCH
-                app.log.debug "[SHUTDOWN] #{$!.class.name}: #{$!.message}"
-              end
-            end
+      def ipc_spawn graceful = true
+        if graceful
+          app.graceful do
+            ipc_shutdown
           end
-          app.server.update_status :stopped unless alive?
         end
 
         # bootstrap
@@ -92,7 +69,37 @@ module Mcl
       end
 
       def ipc_restart
+        ipc_shutdown
+        ipc_spawn(false)
+      end
 
+      def ipc_shutdown
+        app.log.info "[SHUTDOWN] Stopping minecraft server..."
+        if @_ipc_thread
+          begin
+            app.server.update_status :stopping
+            Process.kill("TERM", @_ipc_thread.pid)
+
+            app.log.debug "[SHUTDOWN] waiting up to 30 seconds for the minecraft server to stop..."
+            c = 0
+            while alive? && c < 30
+              c += 1
+              sleep 1
+            end
+          rescue Errno::ESRCH
+            app.log.debug "[SHUTDOWN] #{$!.class.name}: #{$!.message}"
+          end
+
+          if alive?
+            app.log.debug "[SHUTDOWN] killing minecraft server..."
+            begin
+              Process.kill("KILL", @_ipc_thread.pid)
+            rescue Errno::ESRCH
+              app.log.debug "[SHUTDOWN] #{$!.class.name}: #{$!.message}"
+            end
+          end
+        end
+        app.server.update_status :stopped unless alive?
       end
 
       def ipc_detach

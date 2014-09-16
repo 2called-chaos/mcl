@@ -238,7 +238,7 @@ module Mcl
                   announce_server_restart
                   $mcl.sync { tellm("@a", {text: "SERVER IS ABOUT TO RESTART!", color: "red"}) }
                   sleep 5
-                  $mcl.sync { $mcl_reboot = true }
+                  $mcl.server.ipc_restart
                 end
               else
                 $mcl.sync { tellm("@a", {text: "Updating failed (version outdated)... ", color: "red"}) }
