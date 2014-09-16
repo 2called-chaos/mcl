@@ -31,6 +31,13 @@ module Mcl
         $mcl.server.invoke("/stop")
       end
 
+      # Portfail
+      register_parser(/^\*\*\*\* FAILED TO BIND TO PORT!/i) do |res, r|
+        $mcl.log.info "[CORE] Recognized stalled server (FAILED TO BIND TO PORT #{$mcl.server.port}) on tick #{$mcl.eman.tick}, rebooting..."
+        $mcl.server.update_status :stalled
+        $mcl_reboot = true
+      end
+
       # shutdown
       register_parser(/\AStopping server\z/i) do |res, r|
         if res.thread == "server shutdown thread" && res.channel == "info"
