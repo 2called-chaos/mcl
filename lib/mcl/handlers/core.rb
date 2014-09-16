@@ -117,7 +117,12 @@ module Mcl
     def register_mclreboot acl_level
       register_command :mclreboot, desc: "reboots MCL (does not reload core!)", acl: acl_level do |player, args|
         traw(player, "[MCL] Rebooting MCL...", color: "red", underlined: true)
-        $mcl.server.ipc_detach if (args.empty? || strbool(args.first))
+        if (args.empty? || strbool(args.first))
+          $mcl.server.ipc_detach
+        else
+          announce_server_restart
+          sleep 3
+        end
         $mcl_reboot = true
       end
     end
