@@ -11,7 +11,7 @@ module Mcl
       register_mclupdate(:root)
       register_raw(:admin)
       register_stop(:admin)
-      register_stopmc(:root)
+      register_stopmc(:root)     # <---- root permissions because it will stall the server due to bug MC-63802
       register_version(:member)
     end
 
