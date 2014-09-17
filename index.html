@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="MCL : Bleeding edge Minecraft server wrapper (for snapshots, prereleases, etc.) providing at ton of features, mostly controlled via chat.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>MCL</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/2called-chaos/mcl">View on GitHub</a>
+
+          <h1 id="project_title">MCL</h1>
+          <h2 id="project_tagline">Bleeding edge Minecraft server wrapper (for snapshots, prereleases, etc.) providing at ton of features, mostly controlled via chat.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/2called-chaos/mcl/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/2called-chaos/mcl/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="mcl---minecraft-listener" class="anchor" href="#mcl---minecraft-listener"><span class="octicon octicon-link"></span></a>MCL - Minecraft Listener</h1>
+
+<p>MCL is a ruby script which acts as a <strong>wrapper</strong> for your vanilla Minecraft server. It's original use was to autoupdate snapshot servers but it now offers a lot more features which are mostly controlled via chat commands. You can compare MCL to an IRC bot.</p>
+
+<p>It should be somewhat easy to write custom commands but there are some gotchas to it. If you can't figure it out from
+the shipped handlers just ask your question in the issues.</p>
+
+<h2>
+<a name="help" class="anchor" href="#help"><span class="octicon octicon-link"></span></a>Help</h2>
+
+<p>If you need help or have problems <a href="https://github.com/2called-chaos/mcl/issues/new">open an issue</a> or <a href="http://webchat.esper.net/?channels=mcl">chat with me</a>.</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Monitors itself and your minecraft server and restart on crash</li>
+<li>Reload handlers/commands without restarting</li>
+<li>Simple <strong>ACL</strong> support (level based ACL)</li>
+<li>Snap2date - <strong>autoupdate minecraft server</strong>
+</li>
+<li>
+<strong>Shortcuts</strong>, shortcuts, shortcuts (potions effects, cheats, gamerules, ...)</li>
+<li>
+<strong>Warps</strong> - save and warp to coordinates</li>
+<li>
+<strong>WorldEdit light</strong> - selections, stacking and more (using 1.8 commands)</li>
+<li>
+<strong>Schematic Builder</strong> - paste schematics in vanilla (sort of)</li>
+<li>
+<strong>Butcher</strong> - kill entities like a pro</li>
+<li>
+<strong>Worldbook</strong> - switch between, backup and create new worlds (no, it's not multiverse)</li>
+<li>a lot more commands, shortcuts and awesome stuff...</li>
+</ul><h2>
+<a name="upcoming-features" class="anchor" href="#upcoming-features"><span class="octicon octicon-link"></span></a>Upcoming features</h2>
+
+<ul>
+<li>
+<strong>Backups</strong> - backup and restore your worlds (scheduled or when you need it)</li>
+<li>
+<strong>Flagbook</strong> - Easy access to flags</li>
+<li>
+<strong>Bannerbook</strong> - Easy access to banners</li>
+<li>generally, add <strong>more</strong> books. books are good!</li>
+<li><a href="https://github.com/2called-chaos/mcl/issues/new"><strong>» add something to the list</strong></a></li>
+</ul><h2>
+<a name="facts" class="anchor" href="#facts"><span class="octicon octicon-link"></span></a>Facts</h2>
+
+<ul>
+<li>MCL encourages you to <strong>always make backups</strong>. MCL is not to blame for any data loss.</li>
+<li>MCL may use features only available in snapshot versions but most parts should work for you.</li>
+<li>MCL starts the minecraft server for you, essentially wrapping it. Therefore, if MCL dies, your minecraft server
+goes along with it. But MCL tries everything to prevent this from happening. It even restarts died servers.</li>
+<li>MCL is limited to what the Minecraft server console outputs and accepts in form of commands.</li>
+<li>MCL does not take away the Minecraft server console unless you start the server with <code>nogui</code>.</li>
+<li>
+<strong>MCL does not modify minecraft</strong> itself in any way! It's reading from and writing to the server console only.</li>
+<li>MCL may download, create, symlink, backup, restore, delete or modify files and folders inside your server folder.</li>
+<li>The buildin <em>!eval</em> plugin is disabled by default because it's evil!</li>
+<li>When you see "ticks" somewhere it refers to the MCL loop. It has nothing to do with Minecraft ticks.</li>
+</ul><h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<ul>
+<li>Ruby &gt;= 1.9.3 (preferably &gt;2) incl. RubyGems (<a href="https://gist.github.com/2called-chaos/e06bf6322525d37a5bf7">chruby</a>)
+
+<ul>
+<li>Bundler gem (<code>gem install bundler</code>)</li>
+</ul>
+</li>
+<li>git (<code>apt-get install git</code> / <code>brew install git</code>)</li>
+<li>Unixoid OS (such as Ubuntu/Debian, OS X, maybe others)
+
+<ul>
+<li>Windows support is in the work</li>
+</ul>
+</li>
+<li>local minecraft server(s)
+
+<ul>
+<li>
+<strong>WARNING:</strong> Some feature require the gamerule <code>logAdminCommands</code> to be set to true!</li>
+<li>MCL heavily relies on server commands and implement snapshot features. If MCL features don't work your minecraft server version is probably outdated.</li>
+</ul>
+</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p><strong>WARNING: MCL isn't released yet and might not work for you</strong></p>
+
+<p><strong><a href="https://github.com/2called-chaos/mcl/blob/master/doc/installation_nix.md">» Installation instructions (Debian/Ubuntu/OS X)</a></strong><br><strong>» Installation instructions (Windows)</strong> <em>not yet available</em></p>
+
+<p><strong><a href="https://github.com/2called-chaos/mcl/wiki/FAQ">» FAQ</a></strong><br><strong><a href="https://github.com/2called-chaos/mcl/wiki/Troubleshooting">» Troubleshooting</a></strong></p>
+
+<h2>
+<a name="deactivate-handlers" class="anchor" href="#deactivate-handlers"><span class="octicon octicon-link"></span></a>Deactivate handlers</h2>
+
+<p>If you want to deactivate buildin handlers (or 3rd party ones) just rename the file to start with two underscores (e.g.: <code>__warps.rb</code>).</p>
+
+<h2>
+<a name="core-handlers" class="anchor" href="#core-handlers"><span class="octicon octicon-link"></span></a>Core handlers</h2>
+
+<p>There are some handlers which are considered core functionality and therefore are "hidden" inside the library folder. You should not deactivate these.
+Beside some regular parsers the core provides these commands with the permission level (ACL) accordingly:</p>
+
+<ul>
+<li>via <a href="https://github.com/2called-chaos/mcl/blob/master/lib/mcl/handlers/acl.rb"><em>lib/mcl/handlers/acl.rb</em></a>
+
+<ul>
+<li>
+<strong>!acl</strong> (admin)</li>
+<li>
+<strong>!op</strong> (admin)</li>
+<li>
+<strong>!deop</strong> (admin)</li>
+<li>
+<strong>!uadmin</strong> (guest <em>but may only work when you are listed in the config</em>)</li>
+</ul>
+</li>
+<li>via <a href="https://github.com/2called-chaos/mcl/blob/master/lib/mcl/handlers/core.rb"><em>lib/mcl/handlers/core.rb</em></a>
+
+<ul>
+<li>
+<strong>!danger</strong> (admin)</li>
+<li>
+<strong>!help</strong> (guest)</li>
+<li>
+<strong>!mclreboot</strong> (admin)</li>
+<li>
+<strong>!mclreload</strong> (admin)</li>
+<li>
+<strong>!mclshell</strong> (root)</li>
+<li>
+<strong>!mclupdate</strong> (root)</li>
+<li>
+<strong>!raw</strong> (admin)</li>
+<li>
+<strong>!stop</strong> (admin)</li>
+<li>
+<strong>!stopmc</strong> (root)</li>
+<li>
+<strong>!sprop</strong> (root)</li>
+<li>
+<strong>!version</strong> (member)</li>
+</ul>
+</li>
+</ul><h2>
+<a name="buildin-handlers" class="anchor" href="#buildin-handlers"><span class="octicon octicon-link"></span></a>Buildin handlers</h2>
+
+<p>MCL ships with a few buildin handlers which you may deactivate if you want. They use a somewhat reasonable ACL setting
+(permission level) but you may alter these as well. At the moment there are these buildin handlers:</p>
+
+<ul>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/butcher.rb">Butcher</a></strong> Kill entities with convenience.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/cheats.rb">Cheats</a></strong> Collection of cheaty things (although the rest isn't really better)</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/creative.rb">Creative</a></strong> Shortcuts for creative people</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/__eval.rb">Eval</a></strong> Eval remote ruby code from pastebin.com <strong>disabled by default</strong>
+</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamemode.rb">Gamemode</a></strong> Shortcuts for gamemodes.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamerule.rb">Gamerule</a></strong> Shortcuts for gamerules.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/lagtrack/lagtrack.rb">Lagtrack</a></strong> Keeps track of minecraft server lag and optionally announces it.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/potion_effects.rb">Potion Effects</a></strong> Shortcuts for (mostly overpowered) potion effects.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/schematic_builder.rb">Schematic Builder</a></strong> Sounds crazy? It is!</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/snap2date.rb">Snap2date</a></strong> Update to new snapshots automatically or just get notified.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/teleport.rb">Teleport</a></strong> Handy !tp command and teleport book.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/warps.rb">Warps</a></strong> Save coordinates (per world or global/per player or all), share them or just teleport there.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/weather_and_time.rb">Weather and Time</a></strong> Shortcuts for weather and time commands/gamerules.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/whois.rb">Whois</a></strong> Gives you a book with information about a player.</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/world_edit_light.rb">WorldEdit light</a></strong> selections, stacking and more (using 1.8 commands)</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/worlds.rb">Worlds</a></strong> Worldbook (switch between, create new, backup worlds)</li>
+<li>
+<strong><a href="https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/misc.rb">Misc</a></strong> Miscellaneous commands</li>
+</ul><h2>
+<a name="custom-handlers" class="anchor" href="#custom-handlers"><span class="octicon octicon-link"></span></a>Custom handlers</h2>
+
+<p>If you want to add a custom handler (there is not much of documentation yet but feel free to ask if you can't figure it out) just place a ruby file inside <code>vendor/handlers</code>. As long as it doesn't start with two underscores it get's loaded. You can nest directories as much as you want as MCL traverses this directory recursively.</p>
+
+<h3>
+<a name="gotchas" class="anchor" href="#gotchas"><span class="octicon octicon-link"></span></a>Gotchas</h3>
+
+<ul>
+<li>Players fetched via player manager get cached. The cache get saved and cleared according to the player_cache_save_rate.
+If you fetch players via <code>Player</code> model class be sure to call <code>#clear_cache</code> on the player manager beforehand.</li>
+<li>Always make sure to synchronize to the main loop if necessary (it is in a lot of cases) when working with async tasks.</li>
+<li>Promises are already synchronized to the main loop as they get called by it.</li>
+<li>Don't block the main loop to long (this includes everything except async code which isn't synchronized to the main loop).</li>
+</ul><h2>
+<a name="use-mcl-for-multiple-servers" class="anchor" href="#use-mcl-for-multiple-servers"><span class="octicon octicon-link"></span></a>Use MCL for multiple servers</h2>
+
+<p>MCL supports multiple instances. Create a new configuration and start/stop the instance like this:</p>
+
+<pre><code>MCLI=config_name mcld start
+</code></pre>
+
+<h2>
+<a name="acl---what" class="anchor" href="#acl---what"><span class="octicon octicon-link"></span></a>ACL - what?</h2>
+
+<p>ACL stands for Access Control List and it's not really that but think about it as permissions. Each player has a permission
+level which is a number starting from 0. Each command also has a permission level and if the player has equal or more points
+he can execute the command.</p>
+
+<p>Because numbers are confusing there is a mapping for several "groups" which resolve to a permission level like this:</p>
+
+<pre><code>root    =&gt; 13333337
+admin   =&gt; 1333337
+mod     =&gt; 133337
+builder =&gt; 13337
+member  =&gt; 1337
+guest   =&gt; 0
+</code></pre>
+
+<p>Note: <code>!help</code> only shows you commands you have the permission for.</p>
+
+<h2>
+<a name="ideas" class="anchor" href="#ideas"><span class="octicon octicon-link"></span></a>Ideas</h2>
+
+<ul>
+<li>Ability to make some commands available through playtime</li>
+<li>Bridges (e.g. Twitter, IRC)</li>
+<li>Notifications (e.g. server overloaded, server restart, version update, etc.)</li>
+<li>Games (Mr. X)</li>
+<li>Worldsettings (apply server properties / gamerules per world by using a text config)</li>
+</ul><h2>
+<a name="why-is-this-useful" class="anchor" href="#why-is-this-useful"><span class="octicon octicon-link"></span></a>Why is this useful?</h2>
+
+<p>Normal modifications usually break on new releases and/or don't get updates for snapshot versions. Most other wrappers work by intercepting network data packets but this also tends to break sooner or later when things change. MCL on the other hand just parses console output and responds with commands. Unless the log output changes (which happened only once in Minecraft history as far as I know) or commands get removed MCL will continue to work. The drawback is obviously that MCL is much more limited.</p>
+
+<p>In addition, Ruby makes it really easy to communicate and work with external services and that's where I see it's strengths and uses. Things which require really fast ticking checks are overkill for MCLs model.</p>
+
+<h2>
+<a name="legal" class="anchor" href="#legal"><span class="octicon octicon-link"></span></a>Legal</h2>
+
+<ul>
+<li>© 2014, Sven Pachnit (<a href="http://www.bmonkeys.net">www.bmonkeys.net</a>)</li>
+<li>MCL is licensed under the MIT license.</li>
+<li>MCL is <strong>not</strong> affiliated with Mojang.</li>
+<li>If you use MCL you also agree to the <a href="https://account.mojang.com/documents/minecraft_eula">Minecraft EULA</a>.</li>
+<li>"Minecraft" is a trademark of Notch Development AB/Mojang. All rights belong to their respective owners.</li>
+</ul><h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>Contributions are very welcome! Either report errors, bugs and propose features or directly submit code:</p>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Added some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">MCL maintained by <a href="https://github.com/2called-chaos">2called-chaos</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-44867485-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
