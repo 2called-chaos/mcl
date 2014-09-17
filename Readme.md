@@ -103,6 +103,7 @@ MCL ships with a few buildin handlers which you may deactivate if you want. They
   * **[Eval](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/__eval.rb)** Eval remote ruby code from pastebin.com **disabled by default**
   * **[Gamemode](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamemode.rb)** Shortcuts for gamemodes.
   * **[Gamerule](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/gamerule.rb)** Shortcuts for gamerules.
+  * **[Lagtrack](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/lagtrack/lagtrack.rb)** Keeps track of minecraft server lag and optionally announces it.
   * **[Potion Effects](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/potion_effects.rb)** Shortcuts for (mostly overpowered) potion effects.
   * **[Schematic Builder](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/schematic_builder.rb)** Sounds crazy? It is!
   * **[Snap2date](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/snap2date.rb)** Update to new snapshots automatically or just get notified.
