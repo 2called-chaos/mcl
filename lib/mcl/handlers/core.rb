@@ -177,14 +177,14 @@ module Mcl
     def register_version acl_level
       register_command :version, desc: "shows you the MC and MCL version", acl: acl_level do |player, args|
         trawm(player, title("MC", "gold"), {text: "#{$mcl.server.version || "unknown"}", color: "light_purple"}, {text: " (booted in #{($mcl.server.boottime||-1).round(2)}s)", color: "reset"})
-        trawm(player, title("MCL", "gold"), {text: "git: ", color: "light_purple"}, {text: "#{git_message}", color: "reset"})
+        trawm(player, title("MCL", "gold"), {text: "git: ", color: "light_purple"}, {text: "#{$mcl.booted_mcl_rev}", color: "reset"})
         trawm(player, title("RB", "gold"), {text: RUBY_DESCRIPTION, color: "reset"})
       end
     end
 
     module Helper
       def git_message
-        `cd "#{ROOT}" && git log -1 --pretty=%B HEAD`.strip
+        Mcl.git_message
       end
 
       def mcl_reload player

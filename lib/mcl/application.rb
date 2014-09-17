@@ -1,6 +1,6 @@
 module Mcl
   class Application
-    attr_reader :async, :command_acls, :command_names, :config, :delayed, :eman, :pman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises
+    attr_reader :async, :command_acls, :command_names, :config, :delayed, :eman, :pman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises, :booted_mcl_rev
 
     include Setup
 
@@ -13,6 +13,7 @@ module Mcl
       @exit_code = 0
       @async = []
       @ram = { exceptions: [], players: {}, tick: {} }
+      @booted_mcl_rev = Mcl.git_message
 
       begin
         ensure_directories

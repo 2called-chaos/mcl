@@ -1,6 +1,10 @@
 module Mcl
   ROOT = File.expand_path("../..", __FILE__)
 
+  def self.git_message
+    `cd "#{ROOT}" && git log -1 --pretty=%B HEAD`.strip
+  end
+
   def self.windows?
     (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
   end
