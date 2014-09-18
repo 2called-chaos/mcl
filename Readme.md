@@ -63,8 +63,8 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
   <big>**[» Installation instructions (Debian/Ubuntu/OS X)](https://github.com/2called-chaos/mcl/blob/master/doc/installation_nix.md)**</big><br>
   **» Installation instructions (Windows)** _not yet available_
 
-  **[» FAQ](https://github.com/2called-chaos/mcl/wiki/FAQ)**<br>
-  **[» Troubleshooting](https://github.com/2called-chaos/mcl/wiki/Troubleshooting)**
+  **[» FAQ](http://mcl.breitzeit.de/faq)**<br>
+  **[» Troubleshooting](http://mcl.breitzeit.de/troubleshooting)**
 
 
 ## Deactivate handlers
