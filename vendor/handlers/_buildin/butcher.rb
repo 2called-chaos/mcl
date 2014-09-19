@@ -3,7 +3,6 @@ module Mcl
   ## Butcher (kills entities)
   # !butcher [radius] / !butcher h/hostile [radius]
   # !butcher p/player/players [radius]
-  # !butcher h/hostile [radius]
   # !butcher m/mob/mobs [radius]
   # !butcher an/animal/animals [radius]
   # !butcher b/boat/boats [radius]

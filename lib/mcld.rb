@@ -38,12 +38,3 @@ Daemons.run("#{PROJECT_ROOT}/lib/mcl/daemon.rb",
   monitor: true,                   # restart app on crash
   force_kill_waittime: 90          # wait before killing
 )
-
-
-# tick
-  # - tail log file and add lines to spool (array with raw data)
-  # - parse spool to command spool (parse raw data to event, save it to database and spool it for tick)
-  # - tick command callbacks (call callbacks for registered event handlers)
-  # - short tick all handlers (call short tick callbacks for all handlers)
-  # - tick scheduled events (timers)
-  # - perform late tick events (reload configuration, etc.)
