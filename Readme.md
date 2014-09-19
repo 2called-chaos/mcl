@@ -5,6 +5,8 @@ MCL is a ruby script which acts as a **wrapper** for your vanilla Minecraft serv
 It should be somewhat easy to write custom commands but there are some gotchas to it. If you can't figure it out from
 the shipped handlers just ask your question in the issues.
 
+https://mcl.breitzeit.de
+
 ---
 
 ## Help
@@ -14,7 +16,7 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
 ## Features
   * Monitors itself and your minecraft server and restarts both when they crash
   * Simple **ACL** support (level based ACL)
-  * **[Awesome buildin handlers](https://mcl.breitzeit.de/handlers/buildin)** and you may [create your own](http://mcl.breitzeit.de/handlers/custom) as well!
+  * **[Awesome buildin handlers](https://mcl.breitzeit.de/handlers/buildin)** and you may [create your own](https://mcl.breitzeit.de/handlers/custom) as well!
     Just to name a few (or the coolest):
       * **[Butcher](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/butcher.rb)** Kill entities with convenience.
       * **[Lagtrack](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/lagtrack/lagtrack.rb)** Keeps track of minecraft server lag and optionally announces it.
@@ -50,11 +52,11 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
 ## Installation
   **WARNING: MCL isn't released yet and might not work for you**
 
-  <big>**[» Installation instructions (Debian/Ubuntu/OS X)](http://mcl.breitzeit.de/install_nix)**</big><br>
+  <big>**[» Installation instructions (Debian/Ubuntu/OS X)](https://mcl.breitzeit.de/install_nix)**</big><br>
   **» Installation instructions (Windows)** _not yet available_
 
-  **[» FAQ](http://mcl.breitzeit.de/faq)**<br>
-  **[» Troubleshooting](http://mcl.breitzeit.de/troubleshooting)**
+  **[» FAQ](https://mcl.breitzeit.de/faq)**<br>
+  **[» Troubleshooting](https://mcl.breitzeit.de/troubleshooting)**
 
 
 ## Deactivate handlers
