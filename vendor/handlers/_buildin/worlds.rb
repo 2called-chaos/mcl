@@ -101,7 +101,7 @@ module Mcl
     end
 
     def register_worldbook acl_level
-      register_command :worldbook, "gives you a worldbook to manage worlds", acl: acl_level do |player, args|
+      register_command :worldbook, desc: "gives you a worldbook to manage worlds", acl: acl_level do |player, args|
         # @todo implement worldbook
         trawt(player, "MCLiverse", {text: "Not yet implemented!", color: "red"})
       end

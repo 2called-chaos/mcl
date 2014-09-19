@@ -22,17 +22,17 @@ module Mcl
           $mcl.server.invoke com_book(player, *args[1..-1])
         else
           case args.count
-          when 3 then acl_verfiy(player, acl_levels[:others]) ; com_tp(player, args[0..2].join(" "))
+          when 3 then acl_verify(player, acl_levels[:others]) ; com_tp(player, args[0..2].join(" "))
           when 4 then com_tp(args[0], args[1..3].join(" "))
           when 1, 2
             dir = args[1] || ">"
             if dir == ">"
               com_tp(player, args[0])
             elsif dir == "<"
-              acl_verfiy(player, acl_levels[:others])
+              acl_verify(player, acl_levels[:others])
               com_tp(args[0], player)
             else
-              acl_verfiy(player, acl_levels[:others]) unless args[0] == player
+              acl_verify(player, acl_levels[:others]) unless args[0] == player
               com_tp(args[0], args[1])
             end
           else
