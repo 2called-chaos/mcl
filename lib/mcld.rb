@@ -4,19 +4,18 @@ require "fileutils"
 require "active_support/core_ext"
 PROJECT_ROOT = Pathname.new File.expand_path("../..", __FILE__)
 
-# Relaunch with elevated privileges on windows
+# Require elevated privileges on windows
 require "#{PROJECT_ROOT}/lib/mcl"
 if Mcl.windows?
-  require 'win32ole'
   def running_in_admin_mode?
-    (`reg query HKU\\S-1-5-19 2>&1` =~ /HKEY_USERS/).nil?
+    system("net session >nul 2>&1")
   end
 
   if !running_in_admin_mode?
-    path = "bundle exec ruby #{__FILE__}"
-    shell = WIN32OLE.new('Shell.Application')
-    shell.ShellExecute(path, nil, nil, 'runas')
-    exit
+    puts "========================================================"
+    puts "= MCL must be started from an elevated command prompt! ="
+    print "========================================================"
+    exit 1
   end
 end
 

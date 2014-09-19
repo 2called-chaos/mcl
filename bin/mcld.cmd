@@ -1,3 +1,3 @@
 @ECHO OFF
-cd %~dp0/..
+cd %~dp0..
 bundle exec ruby lib/mcld.rb %*
