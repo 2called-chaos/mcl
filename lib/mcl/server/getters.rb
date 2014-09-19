@@ -22,7 +22,7 @@ module Mcl
       end
 
       def root
-        app.config["root"]
+        app.config["root"].gsub("\\", "/")
       end
 
       def logfile_path
