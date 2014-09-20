@@ -6,6 +6,8 @@ module Mcl
   # !l1337 [target]
   # !give [*args]
   # !balls [target]
+  # !portal [target]
+  # !endportal [target]
   # !boat [target]
   # !minecart [target]
   # !pick [target]
@@ -25,6 +27,8 @@ module Mcl
       register_l1337(:mod)
       register_give(:admin)
       register_balls(:mod)
+      register_portal(:mod)
+      register_endportal(:mod)
       register_boat(:mod)
       register_minecart(:mod)
       register_pick(:mod)
@@ -73,6 +77,18 @@ module Mcl
     def register_balls acl_level
       register_command :balls, desc: "gives you or target 16 ender perls", acl: acl_level do |player, args|
         $mcl.server.invoke "/give #{args.first || player} ender_pearl 16"
+      end
+    end
+
+    def register_portal acl_level
+      register_command :portal, desc: "summons a nether portal at your/targets feet", acl: acl_level do |player, args|
+        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ setblock ~ ~ ~ portal"
+      end
+    end
+
+    def register_endportal acl_level
+      register_command :endportal, desc: "summons an end portal at your/targets feet", acl: acl_level do |player, args|
+        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ setblock ~ ~ ~ end_portal"
       end
     end
 
