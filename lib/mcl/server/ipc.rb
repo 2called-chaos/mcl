@@ -25,7 +25,7 @@ module Mcl
                 c += 1
                 sleep 1
               end
-            rescue Errno::ESRCH
+            rescue Errno::ESRCH, Errno::EINVAL, Errno::EPERM
               app.log.debug "[SHUTDOWN] #{$!.class.name}: #{$!.message}"
             end
 
@@ -33,7 +33,7 @@ module Mcl
               app.log.debug "[SHUTDOWN] killing minecraft server..."
               begin
                 Process.kill("KILL", @_ipc_thread.pid)
-              rescue Errno::ESRCH
+              rescue Errno::ESRCH, Errno::EINVAL, Errno::EPERM
                 app.log.debug "[SHUTDOWN] #{$!.class.name}: #{$!.message}"
               end
             end
