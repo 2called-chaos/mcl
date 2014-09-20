@@ -28,13 +28,32 @@ module Mcl
 
     def register_eval
       register_command :eval, desc: "evals MCL code from pastebin.com ID", acl: :root do |player, args|
-        begin
-          raise "eval is not enabled"
-          pasteid = args[0].to_s.strip
-          content = Net::HTTP.get(URI("http://pastebin.com/raw.php?i=#{pasteid}"))
-          eval content
-        rescue Exception
-          traw(player, "[eval] #{$!.message}", color: "red")
+        if args.any?
+          begin
+            raise "eval is not enabled"
+            pasteid = args[0].to_s.strip
+            async do
+              # fetch
+              begin
+                content = Net::HTTP.get(URI("http://pastebin.com/raw.php?i=#{pasteid}"))
+              rescue Exception
+                traw(player, "[eval] #{$!.message}", color: "red")
+              end
+
+              # eval
+              $mcl.sync do
+                begin
+                  eval content
+                rescue Exception
+                  traw(player, "[eval] #{$!.message}", color: "red")
+                end
+              end
+            end
+          rescue Exception
+            traw(player, "[eval] #{$!.message}", color: "red")
+          end
+        else
+          traw(player, "[eval] !eval <pastebin_id>", color: "red")
         end
       end
     end
