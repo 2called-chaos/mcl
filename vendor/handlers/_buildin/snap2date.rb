@@ -226,6 +226,7 @@ module Mcl
 
                 # symlink
                 $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(linking)", color: "reset"}) }
+                FileUtils.rm("#{$mcl.server.root}/minecraft_server.jar", force: true) rescue nil if Mcl.windows?
                 FileUtils.ln_s "#{version_path}#{File.basename(hit[:link])}", "#{$mcl.server.root}/minecraft_server.jar", force: true
 
                 # backup

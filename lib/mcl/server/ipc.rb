@@ -58,6 +58,7 @@ module Mcl
           end
 
           # link & remove bsfile
+          FileUtils.rm("#{root}/minecraft_server.jar", force: true) rescue nil if Mcl.windows?
           FileUtils.ln_s "#{vpath}", "#{root}/minecraft_server.jar", force: true
           File.unlink("#{root}/bootstrap")
         end
