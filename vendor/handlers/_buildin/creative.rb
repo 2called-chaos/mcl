@@ -4,13 +4,15 @@ module Mcl
   # !skull [skull owner]
   # !head [skull owner]
   # !airblock [target]
-  # !cb [target]
+  # !command_block [target] / !cb [target]
+  # !barrier [target]
   # !cbt [target]
   class HMclCreative < Handler
     def setup
       register_skull(:member)
       register_head(:member)
       register_airblock(:builder)
+      register_barrier(:builder)
       register_cb(:admin)
       register_cbt(:admin)
     end
@@ -34,8 +36,14 @@ module Mcl
     end
 
     def register_cb acl_level
-      register_command :cb, desc: "gives you or target a command block", acl: acl_level do |player, args|
+      register_command :cb, :command_block, :commandblock, desc: "gives you or target a command block", acl: acl_level do |player, args|
         $mcl.server.invoke "/give #{args.first || player} command_block"
+      end
+    end
+
+    def register_barrier acl_level
+      register_command :barrier, desc: "gives you or target a barrier block", acl: acl_level do |player, args|
+        $mcl.server.invoke "/give #{args.first || player} barrier"
       end
     end
 
