@@ -1,11 +1,11 @@
 module Mcl
   Mcl.reloadable(:HMclWarps)
   ## Warps / saved teleports
-  # !<name>
-  # !set    [-s] <name> [<x> <y> <z>]
-  # !delete [-s] <name>
-  # !share  [-s] <name> [target]
-  # !list   [-a|-s] [page|filter] [page]
+  # !warps <name>
+  # !warps set    [-s] <name> [<x> <y> <z>]
+  # !warps delete [-s] <name>
+  # !warps share  [-s] <name> [target]
+  # !warps list   [-a] [-s] [page|filter] [page]
   class HMclWarps < Handler
     def setup
       register_warp(:member)
@@ -35,7 +35,7 @@ module Mcl
             tellm(player, {text: "set <name> [<x> <y> <z>]", color: "gold"}, {text: " add/update warp to current or given position", color: "reset"})
             tellm(player, {text: "delete <name>", color: "gold"}, {text: " delete warp", color: "reset"})
             tellm(player, {text: "share <name> [target]", color: "gold"}, {text: " reveal warp to target (@a by default)", color: "reset"})
-            tellm(player, {text: "list [-a|-s] [page|filter] [page]", color: "gold"}, {text: " list/search warps", color: "reset"})
+            tellm(player, {text: "list [-a] [-s] [page|filter] [page]", color: "gold"}, {text: " list/search warps", color: "reset"})
           end
         end
       end
