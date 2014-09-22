@@ -221,8 +221,10 @@ module Mcl
             hit = ver.is_a?(Hash) ? ver : released?(ver)
             if hit
               if force || update?(hit)
-                # download
-                download(hit[:link])
+                if !File.exist?("#{version_path}#{File.basename(hit[:link])}") || force
+                  # download
+                  download(hit[:link])
+                end
 
                 # symlink
                 $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(linking)", color: "reset"}) }
