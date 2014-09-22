@@ -183,12 +183,12 @@ module Mcl
       # main loop
       def tick!
         # raise Application::Halt, "ticklimit of 500 reached" if @tick > 500
+        @tick += 1
+        events, jobs, diff = 0, 0, 0
+        processtime, shortticktime, delayedtime, schedulertime = nil
+
         app.sync do
           begin
-            @tick += 1
-            events, jobs = 0, 0
-            processtime, shortticktime, delayedtime, schedulertime = nil
-
             ticktime = Benchmark.realtime do
               # pretick
               detect_mcl_lag
@@ -219,12 +219,12 @@ module Mcl
             if ticktime
               diff = app.config["tick_rate"] - ticktime
               app.devlog "[T#{@tick}] #{events} events, #{jobs} jobs (RT: #{atime(ticktime)} P: #{atime(processtime)} ST: #{atime(shortticktime)} D: #{atime(delayedtime)} S: #{atime(schedulertime)} W: #{atime(diff)})"
-
-              Thread.pass # give other threads an explicit chance to do something
-              sleep diff if diff > 0 # sleep rest of tick rate if there is any left
             end
           end
         end
+
+        Thread.pass # give other threads an explicit chance to do something
+        sleep diff if diff > 0 # sleep rest of tick rate if there is any left
       end
     end
   end
