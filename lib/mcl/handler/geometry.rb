@@ -71,7 +71,7 @@ module Mcl
       end
 
       def detect_relative_coordinate player, rel, &block
-        if rel.any?{|s| s.include?("~") }
+        if rel.any?{|s| s.to_s.include?("~") }
           detect_player_position(player) do |pos|
             if pos
               block.call relative_coordinate(pos, rel)
