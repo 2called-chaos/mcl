@@ -22,7 +22,7 @@ module Mcl
   # !lootbrick [boost] [target]
   class HMclCheats < Handler
     def setup
-      register_l0(:guest)
+      register_l0(:guest, :mod)
       register_l30(:mod)
       register_l1337(:mod)
       register_give(:admin)
@@ -43,8 +43,9 @@ module Mcl
       register_lootbrick(:mod)
     end
 
-    def register_l0 acl_level
+    def register_l0 acl_level, acl_level_others
       register_command :l0, desc: "removes all levels from you or a target", acl: acl_level do |player, args|
+        acl_verify(player, acl_level_others) if args.first && args.first != player
         $mcl.server.invoke "/xp -10000L #{args.first || player}"
       end
     end
