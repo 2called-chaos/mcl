@@ -32,7 +32,7 @@ module Mcl
   # !slowmo !matrix
   # !starve
   # !strength
-  # !underwater
+  # !uwater
   class HMclPotionEffects < Handler
     def setup
       register_commands

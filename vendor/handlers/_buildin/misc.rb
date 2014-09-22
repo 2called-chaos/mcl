@@ -6,10 +6,11 @@ module Mcl
   # !colors
   # !rec [rec] [pitch]
   # !summon <entity> [-c count] [-t target] [x] [y] [z] [dataTag]
-  # !setspawn [player] [x] [y] [z]
+  # !setspawn
   # !idea [target]
   # !strike [target]
-  # !longwaysdown [target]
+  # !longwaydown [target]
+
   # !muuhhh [target]
   class HMclMisc < Handler
     def setup

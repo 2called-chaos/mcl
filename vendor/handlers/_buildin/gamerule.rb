@@ -21,7 +21,7 @@ module Mcl
   # !nodeathmsg !nodeathmessages
   # !reducedebug !nodebug
   # !showdebug !expanddebug
-  # !tickspeed
+  # !tickspeed [ticks]
   # !peace
   # !pussymode
   # !diehard
