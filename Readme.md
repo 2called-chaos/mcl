@@ -95,6 +95,7 @@ Note: `!help` only shows you commands you have the permission for.
 - Notifications (e.g. server overloaded, server restart, version update, etc.)
 - Games (Mr. X)
 - Worldsettings (apply server properties / gamerules per world by using a text config)
+- Roll the Dice
 
 
 
