@@ -197,6 +197,8 @@ module Mcl
             false
           end
         end
+      rescue
+        return false
       end
 
       def update? hit
