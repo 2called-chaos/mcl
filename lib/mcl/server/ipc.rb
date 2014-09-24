@@ -17,7 +17,12 @@ module Mcl
           if @_ipc_thread
             begin
               app.server.update_status :stopping
-              Process.kill("TERM", @_ipc_thread.pid)
+              if Mcl.windows?
+                # KILL is mapped but no other signal...
+                `taskkill /PID #{@_ipc_thread.pid}`
+              else
+                Process.kill("TERM", @_ipc_thread.pid)
+              end
 
               app.log.debug "[SHUTDOWN] waiting up to 30 seconds for the minecraft server to stop..."
               c = 0
