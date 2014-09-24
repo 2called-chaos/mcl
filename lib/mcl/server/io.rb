@@ -40,7 +40,7 @@ module Mcl
               $mcl.sync { $mcl.server.invoke %{/save-all} }
               sleep 3 # wait for server to save data
             end
-            `cd "#{root}" && mkdir#{" -p" unless Mcl.windows?} "#{app.config["backup_infix"]}" && tar -cf #{app.config["backup_infix"]}backup-#{fs_safe_name(world)}-$(date +"%Y-%m-%d_%H-%M").tar #{world}`
+            `cd "#{root}" && mkdir#{" -p" unless Mcl.windows?} "#{app.config["backup_infix"]}" && tar -cf #{app.config["backup_infix"]}backup-#{fs_safe_name(world)}-#{Time.now.strftime("%Y-%m-%d_%H-%M")}.tar #{world}`
           ensure
             $mcl.sync { $mcl.server.invoke %{/save-on} } if @world == world
           end
