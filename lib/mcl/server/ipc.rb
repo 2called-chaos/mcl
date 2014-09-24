@@ -19,7 +19,7 @@ module Mcl
               app.server.update_status :stopping
               if Mcl.windows?
                 # KILL is mapped but no other signal...
-                `taskkill /PID #{@_ipc_thread.pid}`
+                `taskkill /PID #{@_ipc_thread.pid} >nul 2>&1`
               else
                 Process.kill("TERM", @_ipc_thread.pid)
               end
