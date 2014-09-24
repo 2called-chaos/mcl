@@ -376,12 +376,12 @@ module Mcl
 
       def load_schematic_as_bo2s name
         file = "#{$mcl.server.root}/schematics/#{name}.schematic"
-        SchematicBo2sConverter.convert(File.open(file))
+        SchematicBo2sConverter.convert(File.open(file, "rb"))
       end
 
       def load_schematic name
         file = "#{$mcl.server.root}/schematics/#{name}.schematic"
-        SchematicBo2sConverter.open(File.open(file))
+        SchematicBo2sConverter.open(File.open(file, "rb"))
       end
 
       def build_reset schem, building
@@ -435,7 +435,3 @@ module Mcl
     include Helper
   end
 end
-
-__END__
-
-r = SchematicBo2sConverter.convert(File.open("/Users/chaos/Downloads/town-hall.schematic"))

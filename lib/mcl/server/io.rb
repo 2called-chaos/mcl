@@ -65,7 +65,7 @@ module Mcl
         end
         File.unlink("#{properties_path}.backup") if File.exist?("#{properties_path}.backup")
         FileUtils.cp(properties_path, "#{properties_path}.backup")
-        File.open(properties_path, "w") {|f| f.puts *out }
+        File.open(properties_path, "wb") {|f| f.puts *out }
 
         # reload properties
         properties(true)
