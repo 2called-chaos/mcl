@@ -402,11 +402,10 @@ module Mcl
       def indicate_selection player, args
         pram = memory(player)
         unless require_selection(player)
-          if args[1] == "outline"
-            # sel_outline_explode(player)
-            tellm(player, {text: "Not yet implemented, sorry", color: "red"})
-          else
-            sel_explode_selection(player).values.uniq.each{|coord| indicate_coord(player, coord, args[0]) }
+          case args[1]
+            when "o", "outline" then tellm(player, {text: "sorry, not yet implemented :(", color: "red"})
+            when "m", "minmax" then indicate_coord(player, memory(player)[:pos1], args[0]) ; indicate_coord(player, memory(player)[:pos2], args[0])
+            else sel_explode_selection(player).values.uniq.each{|coord| indicate_coord(p, coord, args[0]) }
           end
         end
       end
