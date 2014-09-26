@@ -41,8 +41,7 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
   * Ruby >= 1.9.3 (preferably >2) incl. RubyGems ([chruby](https://gist.github.com/2called-chaos/e06bf6322525d37a5bf7))
     * Bundler gem (`gem install bundler`)
   * git (`apt-get install git` / `brew install git`)
-  * Unixoid OS (such as Ubuntu/Debian, OS X, maybe others)
-    * Windows support is in the work
+  * Unixoid OS (such as Ubuntu/Debian, OS X, maybe others) or Windows 7/8 (not recommended)
   * local minecraft server(s)
     * **WARNING:** Some feature require the gamerule `logAdminCommands` to be set to true!
     * MCL heavily relies on server commands and implement snapshot features. If things don't work your minecraft server version is probably outdated.
