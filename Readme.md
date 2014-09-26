@@ -5,7 +5,7 @@ MCL is a ruby script which acts as a **wrapper** for your vanilla Minecraft serv
 It should be somewhat easy to write custom commands but there are some gotchas to it. If you can't figure it out from
 the shipped handlers just ask your question in the issues.
 
-https://mcl.breitzeit.de
+### [» https://mcl.breitzeit.de <small>(read this with TOC / documentation)</small>](https://mcl.breitzeit.de)
 
 ---
 
@@ -18,13 +18,13 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
   * Simple **ACL** support (level based ACL)
   * **[Awesome buildin handlers](https://mcl.breitzeit.de/handlers/buildin)** and you may [create your own](https://mcl.breitzeit.de/handlers/custom) as well!
     Just to name a few (or the coolest):
-      * **[Butcher](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/butcher.rb)** Kill entities with convenience.
-      * **[Lagtrack](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/lagtrack/lagtrack.rb)** Keeps track of minecraft server lag and optionally announces it.
-      * **[Schematic Builder](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/schematic_builder.rb)** Sounds crazy? It is!
-      * **[Snap2date](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/snap2date.rb)** Update to new snapshots automatically or just get notified.
-      * **[Warps](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/warps.rb)** Save coordinates (per world or global/per player or all), share them or just teleport there.
-      * **[WorldEdit light](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/world_edit_light.rb)** selections, stacking and more (using 1.8 commands)
-      * **[Worlds](https://github.com/2called-chaos/mcl/blob/master/vendor/handlers/_buildin/worlds.rb)** Worldbook (switch between, create new, backup worlds)
+      * **[Butcher](https://mcl.breitzeit.de/handlers/buildin/butcher)** Kill entities with convenience.
+      * **[Lagtrack](https://mcl.breitzeit.de/handlers/buildin/lagtrack)** Keeps track of (and optionally notifies players about) minecraft server lag.
+      * **[Schematic Builder](https://mcl.breitzeit.de/handlers/buildin/schematic_builder)** Sounds crazy? It is!
+      * **[Snap2date](https://mcl.breitzeit.de/handlers/buildin/snap2date)** Update to new snapshots automatically or just get notified.
+      * **[Warps](https://mcl.breitzeit.de/handlers/buildin/warps)** Save coordinates (per world or global/per player or all), share them or just teleport there.
+      * **[WorldEdit light](https://mcl.breitzeit.de/handlers/buildin/world_edit_light)** selections, stacking and more (using 1.8 commands)
+      * **[Worlds](https://mcl.breitzeit.de/handlers/buildin/worlds)** Worldbook (switch between, create new, backup worlds)
 
 
 
@@ -50,10 +50,10 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
 
 
 ## Installation
-  **WARNING: MCL isn't released yet and might not work for you**
+  **NOTE: MCL is currently in BETA stage!**
 
   <big>**[» Installation instructions (Debian/Ubuntu/OS X)](https://mcl.breitzeit.de/install_nix)**</big><br>
-  **» Installation instructions (Windows)** _not yet available_
+  <big>**[» Installation instructions (Windows)](https://mcl.breitzeit.de/install_windows)**</big><br>
 
   **[» FAQ](https://mcl.breitzeit.de/faq)**<br>
   **[» Troubleshooting](https://mcl.breitzeit.de/troubleshooting)**
