@@ -85,7 +85,8 @@ module Mcl
     end
 
     def devlog *a
-      log.debug(*a) if @config["dev"]
+      opts = a.extract_options!.reverse_merge(scope: "main")
+      log.debug(*a) if @config["dev"] && @config["devchannels"].include?(opts[:scope])
     end
 
     # define point where application or unsafe can safely exit when term signal is received
