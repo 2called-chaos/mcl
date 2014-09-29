@@ -113,7 +113,9 @@ module Mcl
         @command_names = {}
         if load_files
           files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/vendor/handlers/**/*.rb"]
-          files.reject{|f| File.basename(f).start_with?("__") }.each{|f| load f }
+          files.reject do |file|
+            file.gsub("#{ROOT}/vendor/handlers/", "").split("/").any?{|fp| fp.start_with?("__") }
+          end.each{|f| load f }
         end
 
         Mcl::Handler.descendants.uniq.each do |klass|
