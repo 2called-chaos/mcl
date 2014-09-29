@@ -64,7 +64,7 @@ module Mcl
 
       def setup_database
         log.debug "[SETUP] Establishing database connection (#{@config["database"]["adapter"]})..."
-        ActiveRecord::Base.logger = @config["dev"] && @config["attach_ar_logger"] ? @logger : nil
+        ActiveRecord::Base.logger = @config["dev"] && @config["devchannels"].include?("active_record") ? @logger : nil
         ActiveRecord::Base.establish_connection(@config["database"])
         log.debug "[SETUP] Running migrations..."
         define_database_schema
@@ -129,10 +129,14 @@ module Mcl
         end
 
         Mcl::Handler.descendants.uniq.each do |klass|
+          devlog "[SETUP] Setting up handler `#{klass.name}'", scope: "plugin_load"
           @handlers << klass.new(self)
         end
 
-        @handlers.each(&:init)
+        @handlers.each do |handler|
+          devlog "[SETUP] Initializing handler `#{handler.class.name}'", scope: "plugin_load"
+          handler.init
+        end
         log.debug "[SETUP] #{@command_names.count} commands registered..."
       end
 

@@ -158,6 +158,7 @@ module Mcl
 
             begin
               # parse event
+              app.devlog "[EVENT] #{val.chomp}", scope: "event"
               evd = parser.classify(val.chomp)
             rescue Exception
               app.handle_exception($!) do |ex|
@@ -218,7 +219,7 @@ module Mcl
             Thread.current[:last_tick] = Time.current
             if ticktime
               diff = app.config["tick_rate"] - ticktime
-              app.devlog "[T#{@tick}] #{events} events, #{jobs} jobs (RT: #{atime(ticktime)} P: #{atime(processtime)} ST: #{atime(shortticktime)} D: #{atime(delayedtime)} S: #{atime(schedulertime)} W: #{atime(diff)})"
+              app.devlog "[T#{@tick}] #{events} events, #{jobs} jobs (RT: #{atime(ticktime)} P: #{atime(processtime)} ST: #{atime(shortticktime)} D: #{atime(delayedtime)} S: #{atime(schedulertime)} W: #{atime(diff)})", scope: "tick"
             end
           end
         end
