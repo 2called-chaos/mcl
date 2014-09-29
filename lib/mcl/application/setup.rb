@@ -27,6 +27,7 @@ module Mcl
       end
 
       def load_config
+        current_cfg_version = 2
         @config_file = "#{ROOT}/config/#{@instance}.yml"
 
         if FileTest.exist?(@config_file)
@@ -34,6 +35,15 @@ module Mcl
           begin
             @config = YAML.load_file(@config_file)
             raise unless @config
+
+            # config version
+            if @config["version"]
+              if @config["version"] < current_cfg_version
+                raise "config outdated (#{@config["version"]} < #{current_cfg_version}), please migrate from the updated `config/default.example.yml'"
+              end
+            else
+              raise "no config version specified, please migrate from the updated `config/default.example.yml'"
+            end
 
             # fix paths
             if @config["database"]["adapter"] == "sqlite3"

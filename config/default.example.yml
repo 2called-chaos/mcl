@@ -1,3 +1,6 @@
+# Config version (MCL will refuse to start if your config requires an update)
+version: 2
+
 # Define usernames or uuid of ultra admins (you need at least one to setup MCL ingame).
 # These admins may, at any time, op themself with either the server or MCL itself!
 admins:
