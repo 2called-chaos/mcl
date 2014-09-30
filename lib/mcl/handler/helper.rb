@@ -3,6 +3,7 @@ module Mcl
     module Helper
       def detect_player_position p, opts = {}, &block
         opts = opts.reverse_merge(pos: "~ ~1 ~", block: "minecraft:air")
+        pmemo(p).delete(:detected_pos)
         $mcl.server.invoke %{/execute #{p} ~ ~ ~ testforblock #{opts[:pos]} #{opts[:block]}}
         promise do |pr|
           pr.condition { pmemo(p)[:detected_pos] }
