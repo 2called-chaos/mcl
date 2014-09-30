@@ -56,6 +56,12 @@ module Mcl
       true
     end
 
+    def acl_permitted p, level = :admin
+      level = lvlval(level)
+      perm = acl[p] || 0
+      !(level - perm > 0)
+    end
+
     def prec player
       @cache[player] ||= Player.where(nickname: player).first_or_initialize
     end

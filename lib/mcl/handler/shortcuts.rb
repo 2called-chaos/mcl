@@ -26,6 +26,10 @@ module Mcl
         $mcl.pman.acl_verify(p, level)
       end
 
+      def acl_permitted p, level = 13337
+        $mcl.pman.acl_permitted(p, level)
+      end
+
       def promise opts = {}, &block
         Promise.new(app, opts, &block).tap{|p| app.promises << p }
       end
