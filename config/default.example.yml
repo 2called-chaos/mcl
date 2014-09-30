@@ -1,3 +1,6 @@
+# Config version (MCL will refuse to start if your config requires an update)
+version: 2
+
 # Define usernames or uuid of ultra admins (you need at least one to setup MCL ingame).
 # These admins may, at any time, op themself with either the server or MCL itself!
 admins:
@@ -67,8 +70,14 @@ debug: no
 # so you may use it for debugging only.
 dev: no
 
-# Define if MCL should attach ActiveRecord's logger in dev mode or not.
-attach_ar_logger: yes
+# What to show if developer mode is enabled
+devchannels:
+  - main # default
+  # - tick # show stat for each tick
+  - event # show raw events
+  - plugin_load # show loaded plugins
+  # - command_register # show command registrations
+  - active_record # attach ActiveRecord's logger
 
 # MCL tick rate. Should be between 0 and 1 (default is 0.25).
 # The lower the value the higher the resource load caused by MCL.

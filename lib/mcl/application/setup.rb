@@ -27,6 +27,7 @@ module Mcl
       end
 
       def load_config
+        current_cfg_version = 2
         @config_file = "#{ROOT}/config/#{@instance}.yml"
 
         if FileTest.exist?(@config_file)
@@ -34,6 +35,15 @@ module Mcl
           begin
             @config = YAML.load_file(@config_file)
             raise unless @config
+
+            # config version
+            if @config["version"]
+              if @config["version"] < current_cfg_version
+                raise "config outdated (#{@config["version"]} < #{current_cfg_version}), please migrate from the updated `config/default.example.yml'"
+              end
+            else
+              raise "no config version specified, please migrate from the updated `config/default.example.yml'"
+            end
 
             # fix paths
             if @config["database"]["adapter"] == "sqlite3"
@@ -54,7 +64,7 @@ module Mcl
 
       def setup_database
         log.debug "[SETUP] Establishing database connection (#{@config["database"]["adapter"]})..."
-        ActiveRecord::Base.logger = @config["dev"] && @config["attach_ar_logger"] ? @logger : nil
+        ActiveRecord::Base.logger = @config["dev"] && @config["devchannels"].include?("active_record") ? @logger : nil
         ActiveRecord::Base.establish_connection(@config["database"])
         log.debug "[SETUP] Running migrations..."
         define_database_schema
@@ -119,10 +129,14 @@ module Mcl
         end
 
         Mcl::Handler.descendants.uniq.each do |klass|
+          devlog "[SETUP] Setting up handler `#{klass.name}'", scope: "plugin_load"
           @handlers << klass.new(self)
         end
 
-        @handlers.each(&:init)
+        @handlers.each do |handler|
+          devlog "[SETUP] Initializing handler `#{handler.class.name}'", scope: "plugin_load"
+          handler.init
+        end
         log.debug "[SETUP] #{@command_names.count} commands registered..."
       end
 

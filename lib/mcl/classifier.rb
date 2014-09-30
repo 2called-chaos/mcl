@@ -39,6 +39,7 @@ module Mcl
       # register handler
       cmds.each do |cmd|
         cmd = cmd.to_s
+        app.devlog "[SETUP]   Registering command `#{cmd}'", scope: "command_register"
         register(/<([^>]+)> \!(.+)/i) do |res, r|
           if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
             catch(:handler_exit) do
