@@ -18,7 +18,7 @@ admins:
 #            - World directories
 #          MCL might update your server and by that overwrite your current server jar. Be sure to always
 #          make backups of everything.
-root: /home/minecraft/my_minecraft_server
+root: /home/minecraft_server/my_server
 
 # Define the full command to start your minecraft server. The command will be executed within the root
 # directory you've specified so there is no need to `cd` into it.
