@@ -1,6 +1,7 @@
 # daemon wrapper
 require "daemons"
 require "fileutils"
+require "active_support"
 require "active_support/core_ext"
 PROJECT_ROOT = Pathname.new File.expand_path("../..", __FILE__)
 
