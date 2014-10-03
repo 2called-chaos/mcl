@@ -8,7 +8,7 @@ module Mcl
   # !!hollow <block> [damage_value] [xargs]
   # !!fill <block> [damage_value] [xargs]
   # !!replace <IS:TileName> [IS:dataValue] > <SHOULD:TileName> [SHOULD:dataValue]
-  # !!insert <x> <y> <z> [mode] [tilename]
+  # !!insert [-f] <x> <y> <z> [mode] [tilename]
   # !!stack <direction> [amount] [shift_selection] [masked|filtered <TileName>]
   # !!pos <x> <y> <z>
   # !!pos <x1> <y1> <z1> <x2> <y2> <z2>
@@ -235,6 +235,7 @@ module Mcl
 
       def insert_selection player, args
         chunks = args.map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
+        force = chunks.delete("-f") ? "force" : "normal"
         pram = memory(player)
 
         if chunks.count >= 3 || (chunks.count == 1 && chunks.first == "~")
@@ -242,12 +243,12 @@ module Mcl
             tileid = chunks.pop if chunks.count == 5
             mode = chunks.pop if chunks.count == 4
             detect_relative_coordinate(player, chunks) do |npos|
-              sel_insert(player, npos, [mode, "normal", tileid].compact)
+              sel_insert(player, npos, [mode || "replace", force, tileid].compact)
               tellm(player, {text: "#{selection_size(player)} blocks involved", color: "gold"})
             end
           end
         else
-          tellm(player, {text: "!!insert <x> <y> <z>", color: "aqua"})
+          tellm(player, {text: "!!insert [-f] <x> <y> <z> [mode] [tile]", color: "aqua"})
         end
       end
 
