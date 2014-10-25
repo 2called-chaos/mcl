@@ -1,6 +1,6 @@
 module Mcl
   class Application
-    attr_reader :async, :command_acls, :command_names, :config, :delayed, :eman, :pman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises, :booted_mcl_rev
+    attr_reader :async, :command_acls, :command_names, :config, :delayed, :eman, :pman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises, :booted_mcl_rev, :event_backlog
 
     include Setup
 
@@ -9,6 +9,7 @@ module Mcl
       @instance = instance
       @graceful = []
       @promises = []
+      @event_backlog = []
       @delayed = []
       @exit_code = 0
       @async = []
@@ -88,6 +89,10 @@ module Mcl
       end
     end
 
+    def logger_filename
+      "#{ROOT}/log/console_#{@instance}.log"
+    end
+
     def devlog *a
       opts = a.extract_options!.reverse_merge(scope: "main")
       log.debug(*a) if @config["dev"] && @config["devchannels"].include?(opts[:scope])
@@ -130,6 +135,15 @@ module Mcl
         t.abort_on_exception = true if $mcl.config["dev"]
         async << t
       end
+    end
+
+    def spool_event ev
+      @event_backlog << ev
+      @event_backlog = @event_backlog.last(@config["event_backlog"] || 100)
+    end
+
+    def log_backlog lines = 100
+      File.readlines(logger_filename)[(lines * -1)..-1].map(&:chomp)
     end
 
     def delay &block

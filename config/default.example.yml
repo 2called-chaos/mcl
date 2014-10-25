@@ -90,6 +90,9 @@ devchannels:
 # The higher the value the slower MCL responds.
 tick_rate: 0.25
 
+# Limit how many items will be kept in the backlog
+event_backlog: 100
+
 # Must be integer values, relates to tick rate.
 gc_rate: 1234
 async_scrub_rate: 100

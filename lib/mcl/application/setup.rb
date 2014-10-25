@@ -15,7 +15,7 @@ module Mcl
       def setup_logger
         @logger = Logger.new(STDOUT)
         @logger.instance_variable_set(:"@mcl_uncloseable", true)
-        @logfile = Logger.new("#{ROOT}/log/console_#{@instance}.log", 10, 1024000)
+        @logfile = Logger.new(logger_filename, 10, 1024000)
         @logfile.progname = "mcld_#{@instance}"
         @log = MultiIO.new(@logger, @logfile)
         graceful do

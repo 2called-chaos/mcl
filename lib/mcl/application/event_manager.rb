@@ -158,6 +158,7 @@ module Mcl
 
             begin
               # parse event
+              app.spool_event(val.chomp)
               app.devlog "[EVENT] #{val.chomp}", scope: "event"
               evd = parser.classify(val.chomp)
             rescue Exception
