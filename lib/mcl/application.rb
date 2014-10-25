@@ -13,11 +13,15 @@ module Mcl
       @exit_code = 0
       @async = []
       @ram = { exceptions: [], players: {}, tick: {} }
-      @booted_mcl_rev = Mcl.git_message
 
       begin
         ensure_directories
         setup_logger
+
+        # save booted version
+        @booted_mcl_rev = Mcl.git_message
+        log.warn "[SETUP] You use an old git version, commit messages will appear as %B but updating will work fine!" if @booted_mcl_rev == "%B"
+
         load_config
         trap_signals
         setup_database

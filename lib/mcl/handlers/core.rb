@@ -139,15 +139,18 @@ module Mcl
       register_command :mclupdate, desc: "updates and reloads MCL via git", acl: acl_level do |player, args|
         traw("@a", "[MCL] Updating MCL...", color: "gold")
         traw("@a", "[MCL] git was: #{git_message}", color: "gold")
-        system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
-        traw("@a", "[MCL] git now: #{git_message}", color: "gold")
-        if args[0].present?
-          announce_server_restart
-          traw("@a", "[MCL] Restarting...", color: "red")
-          sleep 3
-          $mcl.shutdown! "MCLupdate"
+        if system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
+          traw("@a", "[MCL] git now: #{git_message}", color: "gold")
+          if args[0].present?
+            announce_server_restart
+            traw("@a", "[MCL] Restarting...", color: "red")
+            sleep 3
+            $mcl.shutdown! "MCLupdate"
+          else
+            mcl_reload("@a")
+          end
         else
-          mcl_reload("@a")
+          traw("@a", "[MCL] Update failed (manual update required)...", color: "red")
         end
       end
     end
