@@ -11,12 +11,16 @@ module Mcl
       @app = app
       @parser = []
       @preparser = []
+      case app.config["mc_log_format"]
+        when "short" then @pattern = /\[(#{R_TIME}) ()([^\]]+)\]: (.*)/
+        else @pattern = /\[(#{R_TIME})\] \[([^\/]+)\/([^\]]+)\]: (.*)/
+      end
     end
 
     # ---------
 
     def r_splitline line
-      line.match(/\[(#{R_TIME})\] \[([^\/]+)\/([^\]]+)\]: (.*)/)
+      line.match(@pattern)
     end
 
     def register pattern, &block

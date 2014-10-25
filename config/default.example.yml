@@ -62,6 +62,12 @@ database:
 # = YOU PROBABLY WONT NEED TO EDIT ANYTHING BELOW HERE! =
 # =======================================================
 
+# If you don't run a vanilla minecraft server you might need to change the format here.
+# If your format isn't listed here create an issue on Github but keep in mind that only vanilla is officially supported.
+#     vanilla      [11:38:55] [Server thread/INFO]: message
+#     short        [11:38:55 INFO]: message
+mc_log_format: vanilla
+
 # Define if MCL should start in debug mode or not.
 # You can toggle it later (either ingame or via USR1 signal).
 debug: no
