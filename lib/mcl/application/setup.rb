@@ -1,6 +1,7 @@
 module Mcl
   class Application
     module Setup
+      CURRENT_CFG_VERSION = 2
       include DbSchema
 
       def ensure_directories
@@ -27,39 +28,48 @@ module Mcl
       end
 
       def load_config
-        current_cfg_version = 2
         @config_file = "#{ROOT}/config/#{@instance}.yml"
 
         if FileTest.exist?(@config_file)
           log.info "[SETUP] Using #{@config_file}"
-          begin
-            @config = YAML.load_file(@config_file)
-            raise unless @config
+          @config = _load_config(@config_file)
 
-            # config version
-            if @config["version"]
-              if @config["version"] < current_cfg_version
-                raise "config outdated (#{@config["version"]} < #{current_cfg_version}), please migrate from the updated `config/default.example.yml'"
-              end
-            else
-              raise "no config version specified, please migrate from the updated `config/default.example.yml'"
-            end
-
-            # fix paths
-            if @config["database"]["adapter"] == "sqlite3"
-              dbfile = @config["database"]["database"].presence || "vendor/data/#{@instance}.sqlite"
-              @config["database"]["database"] = Pathname.new(ROOT).join(dbfile).to_s
-            end
-
-            # apply debug
-            toggle_debug @config["debug"], false
-          rescue
-            raise "Failed to load config, is the syntax correct? (#{$!.message}"
-          end
+          # apply debug
+          toggle_debug @config["debug"], false
         else
           log.fatal "[SETUP] Instance `#{ARGV[0]}' has no corresponding config file `#{@config_file}'"
           exit 1
         end
+      end
+
+      def _load_config config_file
+        config = YAML.load_file(config_file)
+        raise unless config
+
+        # config version
+        if config["version"]
+          if config["version"] < CURRENT_CFG_VERSION
+            raise "config outdated (#{config["version"]} < #{CURRENT_CFG_VERSION}), please migrate from the updated `config/default.example.yml'"
+          end
+        else
+          raise "no config version specified, please migrate from the updated `config/default.example.yml'"
+        end
+
+        # fix paths
+        if config["database"]["adapter"] == "sqlite3"
+          dbfile = config["database"]["database"].presence || "vendor/data/#{@instance}.sqlite"
+          config["database"]["database"] = Pathname.new(ROOT).join(dbfile).to_s
+        end
+
+        config
+      rescue
+        raise "Failed to load config, is the syntax correct? (#{$!.message}"
+      end
+
+      def reload_config
+        config = _load_config(@config_file)
+        toggle_debug config["debug"], false
+        @config = config
       end
 
       def setup_database

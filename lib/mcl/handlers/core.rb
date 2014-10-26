@@ -7,6 +7,7 @@ module Mcl
       register_help(:guest)
       register_mclreboot(:admin)
       register_mclreload(:admin)
+      register_mclreloadcfg(:root)
       register_mclshell(:root)
       register_mclupdate(:root)
       register_raw(:admin)
@@ -129,6 +130,17 @@ module Mcl
 
     def register_mclreload acl_level
       register_command(:mclreload, desc: "reloads handlers and commands", acl: acl_level) {|player| mcl_reload(player) }
+    end
+
+    def register_mclreloadcfg acl_level
+      register_command(:mclreloadcfg, desc: "reloads instance's yml config", acl: acl_level) do |player|
+        begin
+          $mcl.reload_config
+          traw("@a", "[MCL] CFG reloaded!", color: "green")
+        rescue
+          traw("@a", "[MCL] CFG reload failed: #{$!.message}", color: "red")
+        end
+      end
     end
 
     def register_mclshell acl_level
