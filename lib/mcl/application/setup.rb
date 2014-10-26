@@ -109,7 +109,7 @@ module Mcl
       def setup_player_manager
         graceful do
           log.info "[SHUTDOWN] Saving players..."
-          Player.online.each{|p| pman.logout_user(p.nickname) }
+          Player.online.each{|p| pman.logout_user(p.nickname) } unless $_ipc_reattach
           pman.clear_cache
         end
 
