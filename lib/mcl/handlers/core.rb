@@ -138,7 +138,7 @@ module Mcl
           $mcl.reload_config
           traw("@a", "[MCL] CFG reloaded!", color: "green")
         rescue
-          traw("@a", "[MCL] CFG reload failed: #{$!.message}", color: "red")
+          traw("@a", "[MCL] #{$!.message}", color: "red")
         end
       end
     end
