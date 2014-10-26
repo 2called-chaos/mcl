@@ -73,7 +73,7 @@ module Mcl
           @_ipc_stdin, @_ipc_stdouterr, @_ipc_thread = $_ipc_reattach
           $_ipc_reattach = nil
           app.log.debug "[IPC] server running with pid #{@_ipc_thread.pid}"
-          traw("@a", "[MCL] is back (first event will be ignored)", color: "green")
+          traw("@a", "[MCL] is back!", color: "green")
         else
           app.log.info "[IPC] starting minecraft server..."
           # @_ipc_stdin, @_ipc_stdouterr, @_ipc_thread = Open3.popen2e(%{cd "#{app.server.root}" && exec #{app.config["launch_cmd"]}})

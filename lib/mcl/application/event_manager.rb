@@ -22,6 +22,11 @@ module Mcl
 
       # collector is a separate thread which just tails the log file and puts the stuff in a queue.
       def spawn_collector
+        app.graceful do
+          app.log.debug "[SHUTDOWN] killing collector..."
+          $mcl.eman.collector.try(:kill)
+        end
+
         @collector = Thread.new do
           Thread.current.abort_on_exception = true
           sleep 1 until ready? # wait for system to boot up
@@ -31,7 +36,8 @@ module Mcl
           loop do
             begin
               app.server.ipc_read {|line| @spool << line }
-            rescue Exception
+            rescue Exception => e
+              app.devlog "[Collector] #{e.class}: #{e.message}"
               sleep 1
             end
           end
