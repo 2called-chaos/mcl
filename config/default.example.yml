@@ -7,9 +7,11 @@ admins:
   - 2called_chaos # creator of MCL
   - 93cc6d87-776e-459f-b40a-530a5670c07c # UUID of 2called_chaos
 
+
 # =============
 # = Minecraft =
 # =============
+
 # Define the location in which your minecraft server is installed in (where the server.properties file is).
 # WARNING: MCL contains components which alter the contents of the folder you specify!
 #          MCL may download, create, symlink, backup, restore, delete or modify files and folders such as:
@@ -25,6 +27,12 @@ root: /home/minecraft_server/my_server
 # If you plan to use automatic server updates use `minecraft_server.jar` (MCL uses symlinks).
 # REMEMBER that MCL will start your server, you MUST NOT!
 launch_cmd: java -jar minecraft_server.jar
+
+
+
+# =====================
+# = Advanced settings =
+# =====================
 
 # Path to store world backups in. Relative to the Minecraft server root, MUST end with a slash!
 # The directory will be created automatically shouldn't it already exist. Can be left blank to not
@@ -67,6 +75,15 @@ database:
 #     vanilla      [11:38:55] [Server thread/INFO]: message
 #     short        [11:38:55 INFO]: message
 mc_log_format: vanilla
+
+# Console socket type to use. will be tried from the left to the right (separated by ||).
+#   none              don't create console socket (console will not be usable)
+#   unix              use UNIX file socket (best)
+#   tcp:1234          bind to given port
+#   tcp[port-expr]    bind to the first available TCP port from the expression
+#                       => https://mcl.breitzeit.de/list_expressions
+console_socket: |
+  unix || tcp:1234 || tcp[13701-13710,43181-43190] || none
 
 # Define if MCL should start in debug mode or not.
 # You can toggle it later (either ingame or via USR1 signal).
