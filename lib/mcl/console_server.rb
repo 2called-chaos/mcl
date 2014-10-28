@@ -6,7 +6,7 @@ module Mcl
       @app = app
       @sessions = []
       @halting = false
-      @providers = @app.config["console_socket"].split("||").map(&:strip).map do |prov|
+      @providers = (@app.config["console_socket"] || "none").split("||").map(&:strip).map do |prov|
         prov.start_with?("tcp") ? StringExpandRange.expand(prov.gsub(/(?<!:)\[/, ":[")) : prov
       end.flatten
     end
