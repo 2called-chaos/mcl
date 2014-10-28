@@ -8,6 +8,7 @@ module Mcl
       @mutex = Monitor.new
       @instance = instance
       @graceful = []
+      @ipc_earlies = []
       @promises = []
       @event_backlog = []
       @delayed = []
@@ -64,6 +65,22 @@ module Mcl
     def graceful_shutdown
       log.info "Performing graceful shutdown"
       @graceful.each do |task|
+        begin
+          task.call
+        rescue
+          warn $!.message
+          $!.backtrace.each{|l| warn(l) }
+        end
+      end
+    end
+
+    def ipc_early &block
+      @ipc_earlies.unshift block
+    end
+
+    def ipc_early_hooks
+      log.debug "Running early hooks..."
+      @ipc_earlies.each do |task|
         begin
           task.call
         rescue

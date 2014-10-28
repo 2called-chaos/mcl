@@ -13,6 +13,7 @@ module Mcl
 
       def ipc_spawn
         app.graceful do
+          app.ipc_early_hooks
           app.log.info "[SHUTDOWN] Stopping minecraft server..."
           if @_ipc_thread
             begin
