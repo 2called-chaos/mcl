@@ -20,6 +20,14 @@ module Mcl
         session.cprint(*a)
       end
 
+      def critical &block
+        session.critical(&block)
+      end
+
+      def sync &block
+        session.lock.synchronize(&block)
+      end
+
       def input str
         if str.strip == "exit"
           session.terminate("client quit")
