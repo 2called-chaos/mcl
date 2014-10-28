@@ -1,13 +1,16 @@
 module Mcl
   class ConsoleServer
     class Session
-      attr_reader :server, :thread, :socket, :shell
+      attr_reader :server, :thread, :socket, :shell, :critical, :lock, :halting
 
       def initialize(server, thread, socket)
         @server = server
         @thread = thread
         @socket = socket
         @shell = Shell.new(self)
+        @critial = false
+        @lock = Monitor.new
+        @halting = false
       end
 
       def cputs *msg
@@ -33,7 +36,24 @@ module Mcl
         "#{peer.join(":")}"
       end
 
+      def max_wait
+        @server.app.config["console_maxwait"].presence || 30
+      end
+
+      def critical &block
+        sync { @critical = true }
+        block.call
+      ensure
+        sync { @critical = false }
+      end
+
+      def sync &block
+        @lock.synchronize(&block)
+      end
+
       def terminate ex = nil, silent = false
+        @halting = true
+        Timeout::timeout(max_wait) { sleep 0.25 while sync{@critical} } rescue nil
         unless silent
           reason = ""
           reason << ex if ex.is_a?(String)

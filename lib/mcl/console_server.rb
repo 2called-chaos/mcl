@@ -1,6 +1,6 @@
 module Mcl
   class ConsoleServer
-    attr_reader :app, :server, :socket, :sessions
+    attr_reader :app, :server, :socket, :sessions, :halting
 
     def initialize app
       @app = app

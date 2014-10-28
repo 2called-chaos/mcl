@@ -110,6 +110,9 @@ tick_rate: 0.25
 # Limit how many items will be kept in the backlog
 event_backlog: 100
 
+# Define how long terminal clients may block the shutdown process in seconds.
+console_maxwait: 30
+
 # Must be integer values, relates to tick rate.
 gc_rate: 1234
 async_scrub_rate: 100
