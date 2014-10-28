@@ -43,8 +43,16 @@ module Mcl
       end
     end
 
+    def sock_info_path
+      "#{ROOT}/tmp/#{@app.instance}.sockinfo"
+    end
+
+    def socket_path
+      "#{ROOT}/tmp/#{@app.instance}-console.socket"
+    end
+
     def save_socket_info sockinfo
-      File.open("#{ROOT}/tmp/#{@app.instance}.sockinfo", "w") {|f| f.puts sockinfo }
+      File.open(sock_info_path, "w") {|f| f.puts sockinfo }
     end
 
     def shutdown!
@@ -58,7 +66,8 @@ module Mcl
         end
         @server.kill
         @socket.close
-        File.unlink("#{ROOT}/tmp/#{@app.instance}.sockinfo")
+        File.unlink(sock_info_path)
+        File.unlink(socket_path) if @socket.is_a?(UNIXSocket) && File.exist?(socket_path) && File.socket?(socket_path)
       end
     end
 
@@ -66,8 +75,7 @@ module Mcl
       if Mcl.windows?
         @app.log.debug "[ConsoleServer] skipped unix socket (not supported on windows)"
       else
-        raise "no unix"
-        socket_path = "#{ROOT}/tmp/#{@app.instance}-console.socket"
+        @socket = UNIXServer.new(socket_path)
         save_socket_info("unix:#{socket_path}")
         @app.log.info "[ConsoleServer] opened socket in `#{socket_path}'"
       end
