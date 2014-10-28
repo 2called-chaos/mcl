@@ -46,6 +46,12 @@ module Mcl
           app.server.update_status :stopped unless alive?
         end
 
+        # early console server shutdown
+        app.graceful do
+          app.log.debug "[SHUTDOWN] Stopping console socket server..."
+          app.console_server.shutdown!
+        end
+
         # bootstrap
         if File.exist?("#{root}/bootstrap")
           version = File.read("#{root}/bootstrap").strip
