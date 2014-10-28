@@ -150,6 +150,17 @@ module Mcl
         log.debug "[SETUP] #{@command_names.count} commands registered..."
       end
 
+      def setup_console
+        graceful do
+          log.debug "[SHUTDOWN] Stopping console socket server..."
+          @console_server.shutdown!
+        end
+
+        log.debug "[SETUP] Starting console socket server..."
+        @console_server = ConsoleServer.new(self)
+        @console_server.spawn
+      end
+
       def trap_signals
         Signal.trap("INT") {|sig| shutdown!("#{Signal.signame(sig)}") }
         Signal.trap("TERM") {|sig| shutdown!("#{Signal.signame(sig)}") }
@@ -166,6 +177,7 @@ module Mcl
       end
 
       def prepare_loop
+        setup_console       # socket server for console clients
         setup_event_manager # controller (ticking)
         setup_scheduler     # scheduled tasks
         setup_server        # setup server communication
