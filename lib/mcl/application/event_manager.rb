@@ -189,7 +189,7 @@ module Mcl
       include MainTick
 
       # main loop
-      def tick!
+      def tick! in_loop = true
         # raise Application::Halt, "ticklimit of 500 reached" if @tick > 500
         @tick += 1
         events, jobs, diff = 0, 0, 0
@@ -199,11 +199,11 @@ module Mcl
           begin
             ticktime = Benchmark.realtime do
               # pretick
-              detect_mcl_lag
-              detect_died_minecraft_server
-              detect_reboot_request
-              scrub_async_threads
-              scrub_promises
+              detect_mcl_lag if in_loop
+              detect_died_minecraft_server if in_loop
+              detect_reboot_request if in_loop
+              scrub_async_threads if in_loop
+              scrub_promises if in_loop
               clear_player_cache
               garbage_collect
 
