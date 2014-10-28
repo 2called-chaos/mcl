@@ -28,7 +28,7 @@ module Mcl
       $mcl = app = Thread.main[:app] = Application.new(instance)
       app.loop!
     rescue Application::Reboot
-      puts "/// Rebooting MCL in 5 seconds (#{$!.message})"
+      puts "/// Rebooting MCL in 5 seconds (#{$!.message}) - #{Thread.list.length} threads remain"
       sleep 5
 
       # Remove all references to the application instance and run GC.
@@ -39,7 +39,7 @@ module Mcl
 
       retry
     rescue Application::Halt, SystemExit
-      puts "/// MCL halted (#{$!.message})"
+      puts "/// MCL halted (#{$!.message}) - #{Thread.list.length} threads remain"
       exit 0
     end
   end
