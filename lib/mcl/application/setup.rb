@@ -152,8 +152,10 @@ module Mcl
 
       def setup_console
         graceful do
-          log.debug "[SHUTDOWN] Stopping console socket server..."
-          @console_server.shutdown!
+          unless @console_server.halting
+            log.debug "[SHUTDOWN] Stopping console socket server..."
+            @console_server.shutdown!
+          end
         end
 
         log.debug "[SETUP] Starting console socket server..."
