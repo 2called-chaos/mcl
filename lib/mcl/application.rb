@@ -68,8 +68,8 @@ module Mcl
         begin
           task.call
         rescue
-          warn $!.message
-          $!.backtrace.each{|l| warn(l) }
+          warn "#{$!.class}: #{$!.message}"
+          $@.each{|l| warn(l) }
         end
       end
     end
@@ -84,8 +84,8 @@ module Mcl
         begin
           task.call
         rescue
-          warn $!.message
-          $!.backtrace.each{|l| warn(l) }
+          warn "#{$!.class}: #{$!.message}"
+          $@.each{|l| warn(l) }
         end
       end
     end
