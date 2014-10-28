@@ -83,7 +83,7 @@ mc_log_format: vanilla
 #   tcp[port-expr]    bind to the first available TCP port from the expression
 #                       => https://mcl.breitzeit.de/list_expressions
 console_socket: |
-  unix || tcp:1234 || tcp[13701-13710,43181-43190] || none
+  unix || tcp:13700 || tcp[13701-13710,43181-43190] || none
 
 # Define if MCL should start in debug mode or not.
 # You can toggle it later (either ingame or via USR1 signal).
