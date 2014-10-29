@@ -44,11 +44,16 @@ module Mcl
       cmds.each do |cmd|
         cmd = cmd.to_s
         app.devlog "[SETUP]   Registering command `#{cmd}'", scope: "command_register"
-        register(/<([^>]+)> \!(.+)/i) do |res, r|
-          if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
-            catch(:handler_exit) do
-              handler.acl_verify(r[1], acl_lvl) if opts[:acl]
-              b[r[1], r[2].split(" ")[1..-1], handler, OptionParser.new]
+        [
+          /<([^>]+)> \!(.+)/i,
+          /(.+) issued server command: \/\!(.+)/i,
+        ].each do |pat|
+          register(pat) do |res, r|
+            if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
+              catch(:handler_exit) do
+                handler.acl_verify(r[1], acl_lvl) if opts[:acl]
+                b[r[1], r[2].split(" ")[1..-1], handler, OptionParser.new]
+              end
             end
           end
         end
