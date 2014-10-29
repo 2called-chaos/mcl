@@ -79,7 +79,7 @@ module Mcl
           app.log.info "[IPC] starting minecraft server..."
           # @_ipc_stdin, @_ipc_stdouterr, @_ipc_thread = Open3.popen2e(%{cd "#{app.server.root}" && exec #{app.config["launch_cmd"]}})
           Dir.chdir("#{app.server.root}")
-          @_ipc_stdin, @_ipc_stdouterr, @_ipc_thread = Open3.popen2e(%{#{app.config["launch_cmd"]}})
+          @_ipc_stdin, @_ipc_stdouterr, @_ipc_thread = Open3.popen2e(%{#{app.config["launch_cmd"]}}, pgroup: true)
           app.log.debug "[IPC] server running with pid #{@_ipc_thread.pid}"
         end
       end
