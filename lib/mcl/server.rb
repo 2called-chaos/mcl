@@ -29,7 +29,8 @@ module Mcl
     end
 
     def invoke cmd
-      ipc_invoke(cmd)
+      cmd = cmd.to_s
+      ipc_invoke(cmd[0] == "/" ? cmd[1..-1] : cmd)
     end
   end
 end
