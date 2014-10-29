@@ -9,7 +9,7 @@ module Mcl
 
       # connect
       # [19:15:29] [Server thread/INFO]: toastyyyx[/84.62.171.204:49797] logged in with entity id 4390588 at (-120.69999998807907, 46.0, 239.23091316042147)
-      register_parser(/([^\s]+)\[\/(#{Classifier::R_IPV4}):(\d+)\] logged in with entity id (\d+) at \(#{Classifier::R_FLOAT}, #{Classifier::R_FLOAT}, #{Classifier::R_FLOAT}\)/i) do |res, r|
+      register_parser(/([^\s]+)\[\/(#{Classifier::R_IPV4}):(\d+)\] logged in with entity id (\d+) at \((?:\[[^\]]+\]\s)?#{Classifier::R_FLOAT}, #{Classifier::R_FLOAT}, #{Classifier::R_FLOAT}\)/i) do |res, r|
         $mcl.pman.login_user r[1], ip: r[2], x: r[5].to_f, y: r[6].to_f, z: r[7].to_f
       end
 
