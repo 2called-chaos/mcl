@@ -89,8 +89,8 @@ console_socket: |
 # You can toggle it later (either ingame or via USR1 signal).
 debug: no
 
-# The developer mode is very verbose (dozens and hundreds of messages per second)
-# so you may use it for debugging only.
+# The developer mode is very verbose (dozens and hundreds of messages per second) so
+# you may use it for debugging only. You can ignore certain channels in the next setting.
 dev: no
 
 # What to show if developer mode is enabled
@@ -100,6 +100,7 @@ devchannels:
   - event # show raw events
   - plugin_load # show loaded plugins
   # - command_register # show command registrations
+  # - console_server # verbose console sessions
   - active_record # attach ActiveRecord's logger
 
 # MCL tick rate. Should be between 0 and 1 (default is 0.25).

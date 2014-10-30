@@ -1,7 +1,7 @@
 module Mcl
   class ConsoleServer
     class Session
-      attr_reader :server, :thread, :socket, :shell, :critical, :lock, :halting
+      attr_reader :server, :thread, :socket, :shell, :critical, :lock, :halting, :nick
 
       def initialize(server, thread, socket)
         @server = server
@@ -33,7 +33,7 @@ module Mcl
       end
 
       def client_id
-        "#{peer.join(":")}"
+        "#{peer.join(":")}#{"[#{nick}]" if nick.present?}"
       end
 
       def max_wait

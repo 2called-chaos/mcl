@@ -44,6 +44,8 @@ module Mcl
     require "#{lib}/models/setting"
     require "#{lib}/models/task"
     require "#{lib}/classifier"
+    require "#{lib}/console_server/colorize"
+    require "#{lib}/console_server/commands"
     require "#{lib}/console_server/shell"
     require "#{lib}/console_server/session"
     require "#{lib}/console_server"

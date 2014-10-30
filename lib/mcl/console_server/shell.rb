@@ -1,48 +1,17 @@
 module Mcl
   class ConsoleServer
     class Shell
-      # exit / quit        get out of here
-      # help               show a list of commands
-      # !<mcl command>     invoke a MCL command
-      # /<mc command>      invoke a command on the server console
-      # .<msg>             shortcut for /say
-      #
-      # # all of these work for `mlog` as well which is for MCL output
-      # log                same as `log 20`
-      # log <N>            shows last N lines of output (shortcut for -n)
-      # log <on/off>       turn live logging on or off (when turning on you can combine -f -t -g)
-      # ------
-      # log -h             shows this help
-      # log -n N           shows last N lines of output (if available)
-      # log -g regex       grep/search backlog with regular expression (can be combined with -n which is 1000 by default)
-      # log -a regex       add a regular expression filter for events, matches will NOT be shown
-      # log -f             apply filters (to use like `log 100 -f`)
-      # log -l             list all filters
-      # log -d <filter>    delete filter (you can use filter or the index from -l or * to remove all)
-      #
-      # # these only work for log (not for mlog)
-      # log -t <type>      only show of type (e.g.: log 100 -t join,chat)
-      #                       chat     chat messages
-      #                       join     player connects
-      #                       leave    player disconnects
-      #                       state    join + leave
-      #
-      # # sessions
-      # sessions           shows a list of open console sessions
-      # msg <sid> <msg>    send a message to given session
-      # broadcast <msg>    send a message to all sessions
-      # nick <name>        name your session
-      #
-      # # protocol
-      # env                shows your current environment
-      # set_env <data>     apply settings from client (filters, etc.)
-      # set_client <data>  set session client id
       attr_reader :session, :server, :app
+      attr_accessor :colorize
+      include Colorize
+      include Commands
+      PROTOCOL_VERSION = "1"
 
       def initialize(session)
         @session = session
         @server = @session.server
         @app = @server.app
+        @colorize = true
       end
 
       alias_method :oputs, :puts
@@ -56,6 +25,10 @@ module Mcl
         session.cprint(*a)
       end
 
+      def protocol msg
+        puts "\0@PROTOCOL@#{PROTOCOL_VERSION}##{msg}"
+      end
+
       def critical &block
         session.critical(&block)
       end
@@ -64,32 +37,68 @@ module Mcl
         session.lock.synchronize(&block)
       end
 
+      def commands
+        methods.grep(/^_cmd/).map(&:to_s).map{|s| s.gsub(/^_cmd_/, '') }
+      end
+
+      # handle user input message
       def input str
-        if str.strip == "exit"
-          session.terminate("client quit")
-        else
-          critical do
-            if str.strip == "moep"
-              15.times {|n| `say #{n}` ; sleep 0.5 ; break if session.halting }
+        str = str.chomp
+        app.devlog "[ConsoleServer] #{session.client_id} invoked `#{str}'", scope: "console_server"
+
+        if str.start_with?("\0") # Protocol
+          _handle_protocol(str)
+        elsif str.start_with?("!") # MCL command
+          _invoke_mcl(str)
+        elsif str.start_with?("/") # MC command
+          _invoke_mc(str)
+        elsif str.start_with?(".") # say shortcut
+          _cmd_say(str)
+        else # lookup command
+          chunks = str.split(" ")
+          if respond_to?("_cmd_#{chunks[0]}")
+            var = catch(:terminate_session) do
+              critical{ send("_cmd_#{chunks[0]}", str, chunks[1..-1]) }
+              nil
             end
-            oputs ": #{str}"
-            session.cputs ": #{str}"
+            session.terminate(var) if var
+          else
+            puts c("! Unknown command `#{chunks[0]}', type `commands' to get a list.", :red)
           end
         end
+      rescue
+        puts c("#{$!.class}: #{$!.message}", :red)
+        puts c("#{$@.first}", :red)
+        app.log.warn "[ConsoleServer] #{session.client_id} - failed to handle `#{str}' (#{$!.class}: #{$!.message})"
+      end
+
+      def banner
+        puts c("##############################################################", :cyan)
+        puts c("#                                                            #", :cyan)
+        puts c("#  ", :cyan) << c(%q%,--.   ,--. ,-----.,--.     %, :yellow) << c(session.client_id.rjust(28, " "), :magenta)     << c("  #", :cyan)
+        puts c("#  ", :cyan) << c(%q%|   `.'   |'  .--./|  |     %, :yellow) << c(%q%                      .     %, :red) << c("  #", :cyan)
+        puts c("#  ", :cyan) << c(%q%|  |'.'|  ||  |    |  |     %, :yellow) << c(%q%  ,-. ,-. ,-. ,-. ,-. |  ,-.%, :red) << c("  #", :cyan)
+        puts c("#  ", :cyan) << c(%q%|  |   |  |'  '--'\|  '--.  %, :yellow) << c(%q%  |   | | | | `-. | | |  |-'%, :red) << c("  #", :cyan)
+        puts c("#  ", :cyan) << c(%q%`--'   `--' `-----'`-----'  %, :yellow) << c(%q%  `-' `-' ' ' `-' `-' `' `-'%, :red) << c("  #", :cyan)
+        puts c("#                                                            #", :cyan)
+        puts c("#  ", :cyan) << c("type ") << c("commands", :magenta) << c(" or ") << c("help", :magenta) << c(" to get started, type ") << c("exit", :magenta) << c(" to quit.") << c("  #", :cyan)
+        puts c("#                                                            #", :cyan)
+        puts c("##############################################################", :cyan)
       end
 
       # =======
       # = API =
       # =======
       def hello
-        puts "Welcome!"
+        banner
+        protocol "srv_req_env_from_client=#{@app.instance}"
       end
 
       def goodbye reason = "no apparent reason"
-        puts "!!!!!!!!!!!!!!...."
-        puts "!!! ConsoleServer says bye, bye..."
-        puts "!!! Reason: #{reason}"
-        puts "!!!!!!!!!!!!!!...."
+        puts c("!!!!!!!!!!!!!!....", :red)
+        puts c("!!! ConsoleServer says bye, bye...", :red)
+        puts c("!!! Reason: #{reason}", :red)
+        puts c("!!!!!!!!!!!!!!....", :red)
       end
     end
   end
