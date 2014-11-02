@@ -22,7 +22,6 @@ module Mcl
 end
 
 
-# exit / quit        get out of here
 # help               show a list of commands
 # !<mcl command>     invoke a MCL command
 # /<mc command>      invoke a command on the server console
@@ -58,3 +57,10 @@ end
 # env                shows your current environment
 # set_env <data>     apply settings from client (filters, etc.)
 # set_client <data>  set session client id
+
+
+
+
+
+
+# exit / quit        get out of here

@@ -11,8 +11,13 @@ MCL_INSTANCE = ENV["MCL_INSTANCE"].presence || ENV["MCLI"].presence || "default"
 if ARGV[0] == "console" || ARGV[0] == "c"
   STDOUT.sync = true
   ["mcl", "mcl/core"].each{|l| require "#{PROJECT_ROOT}/lib/#{l}" }
-  raise "moep"
-  Mcl::ConsoleClient.new.dispatch(MCL_INSTANCE)
+  Mcl::ConsoleClient.dispatch(MCL_INSTANCE, ARGV[1..-1]) do |client|
+    client.use "Discovery"
+    client.use "Protocol"
+    client.use "Terminal"
+    client.use "Transport"
+    client.use "ConsoleServer::Colorize"
+  end
 else
   # Require elevated privileges on windows
   require "#{PROJECT_ROOT}/lib/mcl"

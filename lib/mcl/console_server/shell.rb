@@ -72,6 +72,8 @@ module Mcl
         puts c("#{$!.class}: #{$!.message}", :red)
         puts c("#{$@.first}", :red)
         app.log.warn "[ConsoleServer] #{session.client_id} - failed to handle `#{str}' (#{$!.class}: #{$!.message})"
+      ensure
+        protocol "ack/input:#{str}"
       end
 
       def banner
