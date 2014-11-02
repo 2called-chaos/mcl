@@ -107,10 +107,21 @@ module Mcl
 
           loop do
             Thread.start(@socket.accept) do |sock|
-              session = new_session(self, Thread.current, sock)
-              @sessions << session
-              session.helo!
-              session.loop!
+              begin
+                begin
+                  session = new_session(self, Thread.current, sock)
+                  @sessions << session
+                  session.helo!
+                rescue
+                  client_id = session.client_id rescue nil
+                  app.log.warn("[ConsoleServer] session `#{client_id || "unknown"}' prematurely terminated: #{$!.class.name}: #{$!.message}")
+                  raise
+                end
+                session.loop!
+              ensure
+                session.socket.close rescue nil
+                vanish(session)
+              end
             end
           end
         end
