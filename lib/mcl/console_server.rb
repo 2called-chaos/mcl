@@ -76,7 +76,7 @@ module Mcl
         @app.log.debug "[ConsoleServer] skipped unix socket (not supported on windows)"
       else
         @socket = UNIXServer.new(socket_path)
-        save_socket_info("unix:#{socket_path}")
+        save_socket_info("unix=#{socket_path}")
         @app.log.info "[ConsoleServer] opened socket in `#{socket_path}'"
       end
     end
@@ -84,7 +84,7 @@ module Mcl
     def spawn_tcp prov
       port = prov.split(":").last
       @socket = TCPServer.new(bind_ip, port)
-      save_socket_info("tcp:#{port}")
+      save_socket_info("tcp=#{bind_ip}:#{port}")
       @app.log.info "[ConsoleServer] is listening on #{bind_ip}:#{port}"
     end
 
