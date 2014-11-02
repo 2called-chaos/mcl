@@ -48,6 +48,8 @@ module Mcl
 
         if str.start_with?("\0") # Protocol
           _handle_protocol(str)
+        elsif str.strip.empty?
+          # no input => discard
         elsif str.start_with?("!") # MCL command
           _invoke_mcl(str)
         elsif str.start_with?("/") # MC command
