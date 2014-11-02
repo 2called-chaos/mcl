@@ -60,9 +60,16 @@ module Mcl
         @halting = true
         @sessions.each{|s| Thread.new{s.terminate "server is shutting down"} }
         sleep 0.25
-        until @sessions.empty?
-          sleep 1
-          @app.log.debug "[ConsoleServer] Waiting for #{@sessions.length} sessions to exit..."
+        max_wait = app.config["console_maxwait"].presence || 30
+        begin
+          Timeout::timeout(max_wait * 2) do
+            until @sessions.empty?
+              sleep 1
+              @app.log.debug "[ConsoleServer] Waiting for #{@sessions.length} sessions to exit..."
+            end
+          end
+        rescue
+          @app.log.debug "[ConsoleServer-FAILSAFE] something went wrong in the session termination process, killed!"
         end
         @server.kill
         @socket.close
