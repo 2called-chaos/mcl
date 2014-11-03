@@ -1,5 +1,5 @@
 module Mcl
-  class ConsoleClient
+  class ConsoleServer
     module Protocol
       PROTOCOL_VERSION = "1"
 
@@ -7,10 +7,7 @@ module Mcl
         "\0@PROTOCOL@#{PROTOCOL_VERSION}##{msg}"
       end
 
-      def _handle_protocol msg, &block
-        if @opts[:snoop]
-          block.try(:call, c("[SNOOP] #{msg}", :black))
-        end
+      def _handle_protocol msg
         zbyte, prot, payload = msg.split("@")
         raise "ProtNoZeroByte" unless zbyte == "\0"
         version, action_data = payload.split("#")
@@ -25,18 +22,13 @@ module Mcl
               send("_pt_#{action}_#{data}", msg, data)
             end
           else
-            print_line c("Protocol version mismatch (#{version} != #{PROTOCOL_VERSION})!", :red)
-            print_line c("Try restarting the console if you just updated MCL.", :red)
+            app.devlog "[ConsoleServer] #{session.client_id} FAILED to handle protocol message `#{msg}' (protocol version mismatch (#{version} != #{PROTOCOL_VERSION}))!", scope: "console_server"
           end
         else
-          print_line c("Unknown protocol instruction: #{action}", :red)
+          app.devlog "[ConsoleServer] #{session.client_id} FAILED to handle protocol message `#{msg}' (unknown protocol instruction: #{action})!", scope: "console_server"
         end
       rescue StandardError => e
-        sync do
-          _print_line c("Malformed protocol instruction: #{msg}", :red)
-          _print_line "#{e.backtrace[0]}: #{e.message} (#{e.class})"
-          e.backtrace[1..-1].each{|m| _print_line "        from #{m}" }
-        end
+        app.devlog "[ConsoleServer] #{session.client_id} FAILED to handle protocol message `#{msg}' (malformed protocol instruction: #{msg})!", scope: "console_server"
       end
 
       def _pt_ack_input_exit *a

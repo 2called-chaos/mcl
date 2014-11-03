@@ -10,17 +10,15 @@ module Mcl
               while msg = transport_read
                 @spool << msg.chomp if msg.present?
               end
-            rescue Errno::ECONNRESET => e
-              transport_reconnect(e)
-            rescue IOError => e
-              unless e.message =~ /stream closed/i
-                puts "[Tfetcher] #{e.backtrace[0]}: #{e.message} (#{e.class})"
-                e.backtrace[1..-1].each{|m| puts "[Tfetcher]\tfrom #{m}" }
-                Thread.current.kill
+            rescue StandardError => e
+              if e.is_a?(Errno::ECONNRESET) || e.message =~ /stream closed/i || e.message =~ /closed stream/i
+                transport_reconnect(e)
+              else
+                sync do
+                  _print_line "[Tfetcher] #{e.backtrace[0]}: #{e.message} (#{e.class})"
+                  e.backtrace[1..-1].each{|m| _print_line "[Tfetcher]        from #{m}" }
+                end
               end
-            rescue
-              puts "[Tfetcher] #{e.backtrace[0]}: #{e.message} (#{e.class})"
-              e.backtrace[1..-1].each{|m| puts "[Tfetcher]\tfrom #{m}" }
             end
             sleep 1
           end
@@ -28,6 +26,7 @@ module Mcl
       end
 
       def transport_reconnect ex = nil
+        return if $cc_client_exiting
         return if $cc_client_reconnecting
         $cc_client_reconnecting = true
         $cc_client_critical = true
@@ -55,8 +54,10 @@ module Mcl
       end
 
       def transport_disconnect
-        @socket.close if @socket
-        debug "Closed socket (#{@socket.class})"
+        if @socket
+          @socket.close rescue IOError
+          debug "Closed socket (#{@socket.class})"
+        end
       # rescue
       end
 
@@ -87,13 +88,3 @@ module Mcl
     end
   end
 end
-
-# hostname = 'localhost'
-# port = 2000
-
-# s =
-
-# while line = s.gets   # Read lines from the socket
-#   puts line.chop      # And print with platform line terminator
-# end
-# s.close               # Close the socket when done

@@ -45,8 +45,10 @@ module Mcl
               handle_protocol(msg) {|m| print_line m if m }
             rescue Exception => e
               raise if e.is_a?(SystemExit)
-              print_line "[Tfetcher] #{e.backtrace[0]}: #{e.message} (#{e.class})"
-              e.backtrace[1..-1].each{|m| print_line "[Tfetcher]\tfrom #{m}" }
+              sync do
+                _print_line "[oProc] #{e.backtrace[0]}: #{e.message} (#{e.class})"
+                e.backtrace[1..-1].each{|m| _print_line "[oProc]        from #{m}" }
+              end
             end
           end
         end
@@ -56,7 +58,7 @@ module Mcl
         clear_buffer
         while !@spool.empty?
           val = @spool.shift rescue nil
-          handle_protocol(msg) {|m| puts val if val }
+          handle_protocol(val) {|m| puts val if val }
         end
         refresh_line
       end
@@ -109,11 +111,14 @@ module Mcl
         str = str.chomp
 
         case str
-        when "pry" then binding.pry
-        when "moep"
+        when "?pry" then binding.pry
+        when "?moep"
           # print_line "local here", refresh: false
           # sleep 3
           # print_line "local here", refresh: false
+        when "exit", "quit" # prevent reconnect
+          $cc_client_exiting = true
+          transport_write "#{str}\r\n"
         else
           transport_write "#{str}\r\n"
         end

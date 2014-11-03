@@ -86,14 +86,7 @@ module Mcl
         block.try(:call, msg)
         return msg
       end
-      _protocol_handle(msg, &block)
-    end
-
-    def _protocol_handle msg, &block
-      if @opts[:snoop]
-        block.try(:call, c("[SNOOP] #{msg}", :black))
-      end
-      Thread.main.exit if msg == "\0@PROTOCOL@1#ack/input:exit"
+      _handle_protocol(msg, &block)
     end
 
     def trap_signals

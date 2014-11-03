@@ -5,7 +5,7 @@ module Mcl
       attr_accessor :colorize
       include Colorize
       include Commands
-      PROTOCOL_VERSION = "1"
+      include Protocol
 
       def initialize(session)
         @session = session
@@ -26,7 +26,7 @@ module Mcl
       end
 
       def protocol msg
-        puts "\0@PROTOCOL@#{PROTOCOL_VERSION}##{msg}"
+        puts _protocol_message(msg)
       end
 
       def critical &block
@@ -103,6 +103,7 @@ module Mcl
         puts c("!!! ConsoleServer says bye, bye...", :red)
         puts c("!!! Reason: #{reason}", :red)
         puts c("!!!!!!!!!!!!!!....", :red)
+        protocol "net/socket:close"
       end
     end
   end
