@@ -4,18 +4,24 @@ module Mcl
   class ConsoleClient
     module Terminal
       def terminal_init
-        @prompt = "> "
+        @prompt = c("> ", :red)
         @spool = Queue.new
       end
 
       def terminal_run
         transport_connect
+        output_proc
         loop do
           receive
+          sync { spool_down}
           $cc_client_shutdown = false
         end
       ensure
         terminal_close
+      end
+
+      def debug msg = nil
+        print_line(c("[DEBUG] ", :cyan) << "#{msg}") if @opts[:debug]
       end
 
       def terminal_close
@@ -30,11 +36,27 @@ module Mcl
         end
       end
 
+      def output_proc
+        @output_proc = Thread.new do
+          loop do
+            begin
+              sleep 0.5 if @spool.empty?
+              msg = @spool.shift
+              handle_protocol(msg) {|m| print_line m if m }
+            rescue Exception => e
+              raise if e.is_a?(SystemExit)
+              print_line "[Tfetcher] #{e.backtrace[0]}: #{e.message} (#{e.class})"
+              e.backtrace[1..-1].each{|m| print_line "[Tfetcher]\tfrom #{m}" }
+            end
+          end
+        end
+      end
+
       def spool_down
         clear_buffer
         while !@spool.empty?
           val = @spool.shift rescue nil
-          puts val if val
+          handle_protocol(msg) {|m| puts val if val }
         end
         refresh_line
       end
@@ -70,6 +92,7 @@ module Mcl
 
       def receive
         $cc_client_receiving = true
+        clear_buffer
         buf = Readline.readline(@prompt, true)
         $cc_client_receiving = false
         $cc_client_critical = true
@@ -88,9 +111,9 @@ module Mcl
         case str
         when "pry" then binding.pry
         when "moep"
-          puts "local here"
-          sleep 3
-          puts "local here"
+          # print_line "local here", refresh: false
+          # sleep 3
+          # print_line "local here", refresh: false
         else
           transport_write "#{str}\r\n"
         end
