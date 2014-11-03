@@ -9,7 +9,6 @@ module Mcl
     # placed at the end to allow the block to override methods
     def initialize instance, argv, &block
       @instance = instance
-      @colorize = true
       @argv = argv
       @opts = { debug: false, dispatch: :terminal, reconnect: true, snoop: false, colorize: true }
       @opt = OptionParser.new
@@ -18,6 +17,7 @@ module Mcl
       init_params
       begin
         @opt.parse!(argv)
+        @colorize = @opts[:colorize]
 
         # patch colorize
         unless @opts[:colorize]
@@ -79,6 +79,12 @@ module Mcl
       extend eval(comp)
     end
 
+    def strbool v
+      v = true if ["true", "t", "1", "y", "yes", "on"].include?(v)
+      v = false if ["false", "f", "0", "n", "no", "off"].include?(v)
+      v
+    end
+
     def handle_protocol msg, &block
       return nil if msg.nil?
       return false unless msg.is_a?(String)
@@ -93,6 +99,7 @@ module Mcl
       Signal.trap("INT") do
         if $cc_client_critical
           if $cc_client_shutdown
+            $cc_client_exiting = true
             warn "\n!> Prematurely exiting!"
             exit
           end
@@ -100,6 +107,7 @@ module Mcl
           puts "\ni> Shell is working, press Ctrl-C again to kill it."
           $cc_client_shutdown = true
         else
+          $cc_client_exiting = true
           puts "Interrupted..."
           exit
         end

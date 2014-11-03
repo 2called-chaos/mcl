@@ -3,25 +3,31 @@ require "readline"
 module Mcl
   class ConsoleClient
     module Terminal
+      include History
+      include Commands
+
+      # Prefix to use for terminal commands (will not be forwared to the remote)
+      TCOM_PREF = "?"
+
       def terminal_init
-        @prompt = c("> ", :red)
+        @prompt = ->(_){ "%{green}%{ps1}%{red}> " }
+        @ps1 = ->(_){ "%{instance_nd}" }
         @spool = Queue.new
+        debug "TCOM_PREF is `#{TCOM_PREF}'"
       end
 
       def terminal_run
+        load_history
         transport_connect
         output_proc
         loop do
           receive
           sync { spool_down}
+          @cprompt = nil
           $cc_client_shutdown = false
         end
       ensure
         terminal_close
-      end
-
-      def debug msg = nil
-        print_line(c("[DEBUG] ", :cyan) << "#{msg}") if @opts[:debug]
       end
 
       def terminal_close
@@ -31,9 +37,44 @@ module Mcl
           begin
             spool_down
           ensure
-            clear_buffer
+            begin
+              save_history
+            ensure
+              clear_buffer
+            end
           end
         end
+      end
+
+      def debug msg = nil
+        print_line(c("[DEBUG] ", :cyan) << "#{msg}") if @opts[:debug]
+      end
+
+      def cprompt
+        sync do
+          @cprompt ||= begin
+            ucp = instance_eval(&@prompt).dup.tap do |prompt|
+              ps1 = instance_eval(&@ps1).dup
+              ps1.gsub!("%{instance}", @instance)
+              ps1.gsub!("%{instance_nd}", @instance) unless @instance == "default"
+
+              prompt.gsub!("%{ps1}", ps1)
+            end
+            _color_cprompt("#{ucp}%{reset}")
+          end
+        end
+      end
+
+      def _color_cprompt str
+        str.gsub("%{black}",   @colorize ? "\e[30m" : "")
+           .gsub("%{red}",     @colorize ? "\e[31m" : "")
+           .gsub("%{green}",   @colorize ? "\e[32m" : "")
+           .gsub("%{yellow}",  @colorize ? "\e[33m" : "")
+           .gsub("%{blue}",    @colorize ? "\e[34m" : "")
+           .gsub("%{magenta}", @colorize ? "\e[35m" : "")
+           .gsub("%{cyan}",    @colorize ? "\e[36m" : "")
+           .gsub("%{white}",   @colorize ? "\e[37m" : "")
+           .gsub("%{reset}",   @colorize ? "\e[0m" : "")
       end
 
       def output_proc
@@ -72,7 +113,7 @@ module Mcl
       end
 
       def clear_buffer
-        max = line_buffer.to_s.length + @prompt.length
+        max = line_buffer.to_s.length + cprompt.length
         print "\r"
         max.times { print " " }
         print "\r"
@@ -85,7 +126,7 @@ module Mcl
 
       def _print_line msg, opts = {}
         opts = opts.reverse_merge(refresh: true)
-        max = line_buffer.to_s.length + @prompt.length
+        max = line_buffer.to_s.length + cprompt.length
         print "\r#{msg}"
         (max - msg.length).times { print " " }
         print "\n"
@@ -95,7 +136,8 @@ module Mcl
       def receive
         $cc_client_receiving = true
         clear_buffer
-        buf = Readline.readline(@prompt, true)
+        buf = Readline.readline(cprompt, true)
+        history_reject(buf)
         $cc_client_receiving = false
         $cc_client_critical = true
         handle_line(buf)
@@ -106,20 +148,21 @@ module Mcl
       def handle_line str
         if str.nil?
           str = "exit"
-          print_line "#{@prompt}#{str}"
+          print_line "#{cprompt}#{str}"
         end
         str = str.chomp
 
-        case str
-        when "?pry" then binding.pry
-        when "?moep"
-          # print_line "local here", refresh: false
-          # sleep 3
-          # print_line "local here", refresh: false
-        when "exit", "quit" # prevent reconnect
-          $cc_client_exiting = true
-          transport_write "#{str}\r\n"
+        if str.start_with?(TCOM_PREF)
+          # terminal command
+          str << "help" if str == TCOM_PREF
+          fw = str[1..-1].split(" ").first
+          if respond_to?("_tc_#{fw}")
+            send("_tc_#{fw}", str[1..-1].split(" ")[1..-1], str)
+          else
+            print_line c("Unknown terminal command `#{TCOM_PREF+fw}`, try `#{TCOM_PREF}help`...", :red), refresh: false
+          end
         else
+          $cc_client_exiting = true if ["exit", "quit"].include?(str)
           transport_write "#{str}\r\n"
         end
       end
