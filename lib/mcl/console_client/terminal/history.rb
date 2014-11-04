@@ -2,6 +2,8 @@ module Mcl
   class ConsoleClient
     module Terminal
       module History
+        HIST_KEEP = 10_000
+
         def load_history
           if File.exist?(history_file)
             File.open(history_file).readlines.map(&:strip).each {|c| Readline::HISTORY << c }
@@ -12,10 +14,15 @@ module Mcl
         end
 
         def save_history
-          File.open(history_file, "w") do |f|
-            f.write Readline::HISTORY.to_a.join("\n")
+          if Readline::HISTORY.length == 0
+            debug "skipped saving empty history to #{history_file}"
+          else
+            File.open(history_file, "w") do |f|
+              f.write Readline::HISTORY.to_a.last(HIST_KEEP).join("\n")
+            end
+            diff = Readline::HISTORY.length - HIST_KEEP
+            debug "saved #{[Readline::HISTORY.length, HIST_KEEP].min} commands from history to #{history_file}" << (diff > 0 ? " (truncated first #{diff})" : "")
           end
-          debug "saved #{Readline::HISTORY.length} commands from history to #{history_file}"
         end
 
         def history_file
