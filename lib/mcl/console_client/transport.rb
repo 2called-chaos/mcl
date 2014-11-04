@@ -3,6 +3,7 @@ module Mcl
     module Transport
       def transport_connect
         send *discover_transport
+        protocol "handshake/identify:#{CLIENT_NAME}"
 
         @fetcher = Thread.new do
           loop do

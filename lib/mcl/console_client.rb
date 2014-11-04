@@ -1,5 +1,7 @@
 module Mcl
   class ConsoleClient
+    CLIENT_NAME = "official-v1"
+
     def self.dispatch *a, &block
       new(*a, &block).dispatch
     end

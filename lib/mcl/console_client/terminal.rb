@@ -133,6 +133,10 @@ module Mcl
         Readline.refresh_line if opts[:refresh] && $cc_client_receiving #&& !line_buffer.nil?
       end
 
+      def protocol msg
+        transport_write _protocol_message(msg) + "\r\n"
+      end
+
       def receive
         $cc_client_receiving = true
         clear_buffer
