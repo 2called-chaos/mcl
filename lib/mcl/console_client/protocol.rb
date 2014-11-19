@@ -61,6 +61,7 @@ module Mcl
       def _pt_ack_input_exit *a
         Thread.main.exit
       end
+      alias_method :_pt_ack_input_quit, :_pt_ack_input_exit
 
       def _pt_net_socket_close *a
         @socket.try(:close) rescue IOError

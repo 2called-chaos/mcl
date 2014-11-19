@@ -29,6 +29,7 @@ module Mcl
         return if $cc_client_exiting
         return if $cc_client_reconnecting
         $cc_client_reconnecting = true
+        $cc_acknowledged = _protocol_message "session/identify:#{CLIENT_NAME}"
         $cc_client_critical = true
         begin
           if @opts[:reconnect]
@@ -69,7 +70,7 @@ module Mcl
         _t_socket_stats[:msend].succ!
         @socket << msg
         @socket.flush
-      rescue Errno::EPIPE
+      rescue Errno::EPIPE, IOError
         transport_reconnect($!)
       end
 
