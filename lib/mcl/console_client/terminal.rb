@@ -101,7 +101,7 @@ module Mcl
         clear_buffer
         while !@spool.empty?
           val = @spool.shift rescue nil
-          handle_protocol(val) {|m| puts val if val }
+          handle_protocol(val) {}
         end
         refresh_line
       end
