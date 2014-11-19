@@ -17,7 +17,7 @@ module Mcl
           if Readline::HISTORY.length == 0
             debug "skipped saving empty history to #{history_file}"
           else
-            File.open(history_file, "w") do |f|
+            File.open(history_file(true), "w") do |f|
               f.write Readline::HISTORY.to_a.last(HIST_KEEP).join("\n")
             end
             diff = Readline::HISTORY.length - HIST_KEEP
@@ -25,8 +25,11 @@ module Mcl
           end
         end
 
-        def history_file
-          File.realpath(File.expand_path("~")) << "/.mcl-#{@instance}.hist"
+        def history_file ensure_dir = false
+          home = File.realpath(File.expand_path("~"))
+          "#{home}/.mcl/hist/#{@instance}.hist".tap do |path|
+            FileUtils.mkdir_p(File.dirname(path)) if ensure_dir
+          end
         end
 
         def history_reject(buf)

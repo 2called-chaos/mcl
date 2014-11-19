@@ -4,6 +4,7 @@ module Mcl
   class ConsoleClient
     module Terminal
       include History
+      include Environment
       include Commands
 
       # Prefix to use for terminal commands (will not be forwared to the remote)
@@ -22,7 +23,7 @@ module Mcl
         output_proc
         loop do
           receive
-          sync { spool_down}
+          sync { spool_down }
           @cprompt = nil
           $cc_client_shutdown = false
         end
@@ -134,19 +135,26 @@ module Mcl
       end
 
       def protocol msg
+        if @opts[:snoop]
+          print_line c("[SNOOP] > #{msg}", :black)
+        end
         transport_write _protocol_message(msg) + "\r\n"
       end
 
       def receive
-        $cc_client_receiving = true
-        clear_buffer
+        sync do
+          $cc_client_receiving = true
+          clear_buffer
+        end
         buf = Readline.readline(cprompt, true)
-        history_reject(buf)
-        $cc_client_receiving = false
-        $cc_client_critical = true
+        sync do
+          history_reject(buf)
+          $cc_client_receiving = false
+          $cc_client_critical = true
+        end
         handle_line(buf)
       ensure
-        $cc_client_critical = false
+        sync { $cc_client_critical = false }
       end
 
       def handle_line str

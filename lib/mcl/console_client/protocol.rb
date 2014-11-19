@@ -1,6 +1,7 @@
 module Mcl
   class ConsoleClient
     module Protocol
+      extend ActiveSupport::Concern
       PROTOCOL_VERSION = "1"
 
       def _protocol_message msg
@@ -19,10 +20,10 @@ module Mcl
 
         if respond_to?("_pt_#{action}") || respond_to?("_pt_#{action}_#{data}")
           if version == PROTOCOL_VERSION
-            if respond_to?("_pt_#{action}")
-              send("_pt_#{action}", msg, data)
-            else
+            if respond_to?("_pt_#{action}_#{data}")
               send("_pt_#{action}_#{data}", msg, data)
+            else
+              send("_pt_#{action}", msg, data)
             end
           else
             print_line c("Protocol version mismatch (#{version} != #{PROTOCOL_VERSION})!", :red)
@@ -39,12 +40,35 @@ module Mcl
         end
       end
 
+      def self.discard *meths
+        [*meths].each do |meth|
+          define_method("_pt_#{meth}"){|*a|}
+        end
+      end
+
+      # ============
+      # = Protocol =
+      # ============
+      discard :ack_input
+
+      def _pt_session_state_ready msg, data
+        protocol "session/identify:#{CLIENT_NAME}"
+      end
+
       def _pt_ack_input_exit *a
         Thread.main.exit
       end
 
       def _pt_net_socket_close *a
         @socket.try(:close)
+      end
+
+      def _pt_session_env_push msg, data
+        save_env @instance, data
+      end
+
+      def _pt_srv_req_env_from_client msg, data
+        protocol "session/env_push:#{load_env(@instance)}"
       end
     end
   end

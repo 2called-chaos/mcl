@@ -1,7 +1,8 @@
 module Mcl
   class ConsoleServer
     class Session
-      attr_reader :server, :thread, :socket, :shell, :critical, :lock, :halting, :nick
+      attr_reader :server, :thread, :socket, :shell, :critical, :lock, :halting
+      attr_accessor :client_app, :nick
 
       def initialize(server, thread, socket)
         @server = server
@@ -11,6 +12,8 @@ module Mcl
         @critial = false
         @lock = Monitor.new
         @halting = false
+        @nick = nil
+        @client_app = "raw_client"
       end
 
       def cputs *msg

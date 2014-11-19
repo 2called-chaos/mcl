@@ -3,7 +3,6 @@ module Mcl
     module Transport
       def transport_connect
         send *discover_transport
-        protocol "handshake/identify:#{CLIENT_NAME}"
 
         @fetcher = Thread.new do
           loop do
@@ -63,23 +62,34 @@ module Mcl
       end
 
       def transport_read
-        @socket.gets
+        @socket.gets.tap { _t_socket_stats[:mreceived].succ! }
       end
 
       def transport_write msg
+        _t_socket_stats[:msend].succ!
         @socket << msg
         @socket.flush
       rescue Errno::EPIPE
         transport_reconnect($!)
       end
 
+      def _t_socket_stats socket = nil
+        if socket
+          socket.instance_variable_set(:"@xiostats", { msend: "0", mreceived: "0", connected: Time.current })
+        else
+          @socket.instance_variable_get(:"@xiostats")
+        end
+      end
+
       def _t_connect_unix path
         @socket = UNIXSocket.new(path)
+        _t_socket_stats(@socket)
         debug "Opened UNIX socket connection to `#{path}'"
       end
 
       def _t_connect_tcp hostname_with_port
         @socket = TCPSocket.open(*hostname_with_port.split(":"))
+        _t_socket_stats(@socket)
         debug "Opened TCP socket connection to `#{hostname_with_port}'"
       end
 

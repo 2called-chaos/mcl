@@ -54,6 +54,7 @@ module Mcl
     require "#{lib}/console_client/transport"
     require "#{lib}/console_client/protocol"
     require "#{lib}/console_client/terminal/history"
+    require "#{lib}/console_client/terminal/environment"
     require "#{lib}/console_client/terminal/commands"
     require "#{lib}/console_client/terminal"
     require "#{lib}/console_client"

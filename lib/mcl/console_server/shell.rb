@@ -2,7 +2,7 @@ module Mcl
   class ConsoleServer
     class Shell
       attr_reader :session, :server, :app
-      attr_accessor :colorize
+      attr_accessor :colorize, :env
       include Colorize
       include Commands
       include Protocol
@@ -12,21 +12,31 @@ module Mcl
         @server = @session.server
         @app = @server.app
         @colorize = true
+        @protocol = false
+        @env = {}
+      end
+
+      def encode_env data
+        JSON.generate(data)
+      end
+
+      def decode_env data
+        JSON.parse(data)
       end
 
       alias_method :oputs, :puts
       def puts *a
-        session.cputs(*a)
+        sync { session.cputs(*a) }
       end
       alias_method :echo, :puts
 
       alias_method :oprint, :print
       def print *a
-        session.cprint(*a)
+        sync { session.cprint(*a) }
       end
 
-      def protocol msg
-        puts _protocol_message(msg)
+      def protocol msg, force = false
+        puts _protocol_message(msg) if force || @protocol
       end
 
       def critical &block
@@ -47,6 +57,7 @@ module Mcl
         app.devlog "[ConsoleServer] #{session.client_id} invoked `#{str}'", scope: "console_server"
 
         if str.start_with?("\0") # Protocol
+          @protocol = true
           _handle_protocol(str)
         elsif str.strip.empty?
           # no input => discard
@@ -95,7 +106,7 @@ module Mcl
       # =======
       def hello
         banner
-        protocol "srv_req_env_from_client=#{@app.instance}"
+        protocol "session/state:ready", true
       end
 
       def goodbye reason = "no apparent reason"

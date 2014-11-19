@@ -16,10 +16,10 @@ module Mcl
 
         if respond_to?("_pt_#{action}") || respond_to?("_pt_#{action}_#{data}")
           if version == PROTOCOL_VERSION
-            if respond_to?("_pt_#{action}")
-              send("_pt_#{action}", msg, data)
-            else
+            if respond_to?("_pt_#{action}_#{data}")
               send("_pt_#{action}_#{data}", msg, data)
+            else
+              send("_pt_#{action}", msg, data)
             end
           else
             app.devlog "[ConsoleServer] #{session.client_id} FAILED to handle protocol message `#{msg}' (protocol version mismatch (#{version} != #{PROTOCOL_VERSION}))!", scope: "console_server"
@@ -29,14 +29,16 @@ module Mcl
         end
       rescue StandardError => e
         app.devlog "[ConsoleServer] #{session.client_id} FAILED to handle protocol message `#{msg}' (malformed protocol instruction: #{msg})!", scope: "console_server"
+        app.devlog "                #{e.message}", scope: "console_server"
       end
 
-      def _pt_ack_input_exit *a
-        Thread.main.exit
+      def _pt_session_identify msg, data
+        session.client_app = data
+        protocol "srv_req_env_from_client:#{@app.instance}", true
       end
 
-      def _pt_net_socket_close *a
-        @socket.try(:close)
+      def _pt_session_env_push msg, data
+        @env = decode_env(data)
       end
     end
   end

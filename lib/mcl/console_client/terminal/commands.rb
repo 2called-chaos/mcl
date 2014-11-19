@@ -2,6 +2,21 @@ module Mcl
   class ConsoleClient
     module Terminal
       module Commands
+        def _tc_help args, str
+          sync do
+            _print_line c("The following terminal commands are available:", :magenta)
+            _print_line c("  #{TCOM_PREF}help                        ", :cyan) << c("shows this help", :yellow)
+            _print_line c("  #{TCOM_PREF}snoop [on/off]              ", :cyan) << c("shows or controls protocol snoop", :yellow)
+            _print_line c("  #{TCOM_PREF}debug [on/off]              ", :cyan) << c("shows or controls debug output", :yellow)
+            _print_line c("  #{TCOM_PREF}ps1 [help|ps1-expr]         ", :cyan) << c("shows or updates your ps1", :yellow)
+            _print_line c("  #{TCOM_PREF}prompt [help|prompt-expr]   ", :cyan) << c("shows or updates your prompt", :yellow)
+            _print_line c("  #{TCOM_PREF}screen_size                 ", :cyan) << c("shows your current screen size", :yellow)
+            _print_line c("  #{TCOM_PREF}transport                   ", :cyan) << c("shows you transport details", :yellow)
+            _print_line c("  #{TCOM_PREF}mode                        ", :cyan) << c("shows or changes terminal editing mode", :yellow)
+            _print_line c("  #{TCOM_PREF}pry                         ", :cyan) << c("opens a pry session (locally, may fuck up readline/history)", :yellow)
+          end
+        end
+
         def _tc_pry args, str
           _hist_was = Readline::HISTORY.to_a
           Readline::HISTORY.pop until Readline::HISTORY.empty?
@@ -79,10 +94,35 @@ module Mcl
           print_line c("Your current screen size is ", :yellow) << c(Readline.get_screen_size.join("x"), :green) << c(" characters", :yellow)
         end
 
-        # when "?mode"
-        # when "?transport"
-        # when "?keepalive"
-        # when "?colors"
+        def _tc_transport args, str
+          sync do
+            _print_line c("          Transport: ", :yellow) << c("#{@socket.class} (#{@socket.peeraddr.try(:join, " – ")})", :cyan)
+            _print_line c("          Connected: ", :yellow) << c("#{_t_socket_stats[:connected]}", :cyan)
+            _print_line c("      Messages send: ", :yellow) << c("#{_t_socket_stats[:msend]}", :cyan)
+            _print_line c("  Messages received: ", :yellow) << c("#{_t_socket_stats[:mreceived]}", :cyan)
+          end
+        end
+
+        def _tc_mode args, str
+          if args[0].try(:downcase) == "vi"
+            Readline.vi_editing_mode
+            print_line c("Terminal is now in VI editing mode!", :green)
+          elsif args[0].try(:downcase) == "emacs"
+            Readline.emacs_editing_mode
+            print_line c("(i) ", :cyan) << c("Terminal is now in emacs editing mode!", :green)
+          else
+            vi_status = Readline.vi_editing_mode? rescue "unsupported"
+            emacs_status = Readline.emacs_editing_mode? rescue "unsupported"
+            vi = vi_status && vi_status != "unsupported"
+            emacs = emacs_status && emacs_status != "unsupported"
+            s, u = c("SUPPORTED", :green), c("UNSUPPORTED", :red)
+            print_line c(" Current mode: #{c(vi ? "VI" : emacs ? "emacs" : "raw", :cyan)}")
+            print_line c("   VI support: #{vi_status == "unsupported" ? u : s}")
+            print_line c("emacs support: #{emacs_status == "unsupported" ? u : s}")
+            print_line c("-----")
+            print_line c("Switch between modes with ") << c("#{TCOM_PREF}mode [vi|emacs]")
+          end
+        end
 
         protected
 
