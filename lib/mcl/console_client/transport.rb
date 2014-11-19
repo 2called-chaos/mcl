@@ -34,15 +34,15 @@ module Mcl
         begin
           if @opts[:reconnect]
             print_line "Connection to socket lost (#{ex.try(:message) || "generic"})! Reconnecting...", refresh: false
-            sleep 3
+            sleep 5
             begin
               send *discover_transport(true)
               print_line "Connected!", refresh: false
               $cc_client_critical = false
             rescue
               $cc_client_critical = false
-              print_line "Connection failed! Retrying in 3 seconds...", refresh: false
-              sleep 3
+              print_line "#{Time.current} Connection failed! Retrying in 5 seconds...", refresh: false
+              sleep 5
               retry
             end
           else
