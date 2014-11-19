@@ -68,7 +68,7 @@ module Mcl
     end
 
     def debug msg = nil
-      puts "[DEBUG] #{msg}" if @opts[:debug]
+      sync { puts "[DEBUG] #{msg}" } if @opts[:debug]
     end
 
     def abort msg, exit_code = 1
