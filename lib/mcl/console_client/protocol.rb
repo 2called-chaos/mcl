@@ -12,10 +12,10 @@ module Mcl
         if @opts[:snoop]
           block.try(:call, c("[SNOOP] #{msg}", :black))
         end
-        zbyte, prot, payload = msg.split("@")
+        zbyte, prot, *payload = msg.split("@")
         raise "ProtNoZeroByte" unless zbyte == "\0"
-        version, action_data = payload.split("#")
-        action_data_chunks = action_data.split(":")
+        version, *action_data = payload.join("@").split("#")
+        action_data_chunks = action_data.join("#").split(":")
         action, data = action_data_chunks.shift.gsub("/", "_"), action_data_chunks.join(":")
 
         if respond_to?("_pt_#{action}") || respond_to?("_pt_#{action}_#{data}")
@@ -49,10 +49,13 @@ module Mcl
       # ============
       # = Protocol =
       # ============
-      discard :ack_input
-
       def _pt_session_state_ready msg, data
+        protocol "session/colorize:disable" unless @colorize
         protocol "session/identify:#{CLIENT_NAME}"
+      end
+
+      def _pt_ack_input msg, data
+        $cc_acknowledged = nil if $cc_acknowledged == data
       end
 
       def _pt_ack_input_exit *a
@@ -60,7 +63,7 @@ module Mcl
       end
 
       def _pt_net_socket_close *a
-        @socket.try(:close)
+        @socket.try(:close) rescue IOError
       end
 
       def _pt_session_env_push msg, data

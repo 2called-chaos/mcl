@@ -38,7 +38,15 @@ module Mcl
       end
 
       def _pt_session_env_push msg, data
-        @env = decode_env(data)
+        apply_env(decode_env(data))
+      end
+
+      def _pt_session_colorize_disable msg, data
+        @colorize = false
+      end
+
+      def _pt_session_colorize_enable msg, data
+        @colorize = true
       end
     end
   end

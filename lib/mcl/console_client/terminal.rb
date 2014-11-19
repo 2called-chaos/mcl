@@ -15,6 +15,7 @@ module Mcl
         @ps1 = ->(_){ "%{instance_nd}" }
         @spool = Queue.new
         debug "TCOM_PREF is `#{TCOM_PREF}'"
+        $cc_acknowledged = _protocol_message "session/identify:#{CLIENT_NAME}"
       end
 
       def terminal_run
@@ -143,6 +144,13 @@ module Mcl
 
       def receive
         sync do
+          $cc_client_critical = true
+          clear_buffer
+        end
+        sleep 0.05 while $cc_acknowledged
+
+        sync do
+          $cc_client_critical = false
           $cc_client_receiving = true
           clear_buffer
         end
@@ -152,6 +160,7 @@ module Mcl
           $cc_client_receiving = false
           $cc_client_critical = true
         end
+        $cc_acknowledged = "#{buf}".chomp
         handle_line(buf)
       ensure
         sync { $cc_client_critical = false }

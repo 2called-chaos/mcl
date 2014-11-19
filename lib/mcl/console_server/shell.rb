@@ -24,6 +24,17 @@ module Mcl
         JSON.parse(data)
       end
 
+      def apply_env data
+        @env = data
+        session.nick = @env["nick"]
+      end
+
+      def push_env merge = {}
+        @env = @env.merge(merge)
+        protocol "session/env_push:#{encode_env(@env)}"
+        apply_env(@env)
+      end
+
       alias_method :oputs, :puts
       def puts *a
         sync { session.cputs(*a) }
@@ -74,7 +85,10 @@ module Mcl
               critical{ send("_cmd_#{chunks[0]}", str, chunks[1..-1]) }
               nil
             end
-            session.terminate(var) if var
+            if var
+              protocol "ack/input:#{str}"
+              session.terminate(var)
+            end
           else
             puts c("! Unknown command `#{chunks[0]}', type `commands' to get a list.", :red)
           end
@@ -99,6 +113,34 @@ module Mcl
         puts c("#  ", :cyan) << c("type ") << c("commands", :magenta) << c(" or ") << c("help", :magenta) << c(" to get started, type ") << c("exit", :magenta) << c(" to quit.") << c("  #", :cyan)
         puts c("#                                                            #", :cyan)
         puts c("##############################################################", :cyan)
+      end
+
+      def render_table table, headers = []
+        [].tap do |r|
+          col_sizes = table.map{|col| col.map(&:to_s).map(&:length).max }
+          headers.map(&:length).each_with_index do |length, header|
+            col_sizes[header] = [col_sizes[header], length].max
+          end
+
+          # header
+          if headers.any?
+            r << [].tap do |line|
+              col_sizes.count.times do |col|
+                line << headers[col].ljust(col_sizes[col])
+              end
+            end.join(" | ")
+            r << "".ljust(col_sizes.inject(&:+) + ((col_sizes.count - 1) * 3), "-")
+          end
+
+          # records
+          table[0].count.times do |row|
+            r << [].tap do |line|
+              col_sizes.count.times do |col|
+                line << "#{table[col][row]}".ljust(col_sizes[col])
+              end
+            end.join(" | ")
+          end
+        end
       end
 
       # =======
