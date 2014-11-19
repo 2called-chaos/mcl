@@ -10,6 +10,10 @@ module Mcl
           args.each {|a| @server.push_mlog(a) }
         end
       end
+
+      def close
+        # sure
+      end
     end
   end
 end
