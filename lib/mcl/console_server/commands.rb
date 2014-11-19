@@ -50,7 +50,7 @@ module Mcl
         if args.any? && args[0] =~ /\A\d+\z/
           sess = server.sessions[args.shift.to_i]
           if sess
-            puts c("[#{sess.client_id}] ", :magenta) << c("#{args.join(" ")}")
+            sess.shell.puts c("[#{sess.client_id}] ", :magenta) << c("#{args.join(" ")}")
           else
             puts c("Invalid session id provided", :red)
           end
