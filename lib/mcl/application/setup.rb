@@ -161,6 +161,7 @@ module Mcl
         log.debug "[SETUP] Starting console socket server..."
         @console_server = ConsoleServer.new(self)
         @console_server.spawn
+        @log.add_target @console_server.log
       end
 
       def trap_signals

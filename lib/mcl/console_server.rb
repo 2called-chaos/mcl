@@ -1,9 +1,10 @@
 module Mcl
   class ConsoleServer
-    attr_reader :app, :server, :socket, :sessions, :halting
+    attr_reader :app, :server, :socket, :sessions, :halting, :log
 
     def initialize app
       @app = app
+      @log = Log.new(self)
       @sessions = []
       @halting = false
       @providers = (@app.config["console_socket"] || "none").split("||").map(&:strip).map do |prov|
@@ -53,6 +54,14 @@ module Mcl
 
     def save_socket_info sockinfo
       File.open(sock_info_path, "w") {|f| f.puts sockinfo }
+    end
+
+    def push_log msg
+      @sessions.each{|s| s.shell.push_log msg }
+    end
+
+    def push_mlog msg
+      @sessions.each{|s| s.shell.push_mlog msg }
     end
 
     def shutdown!

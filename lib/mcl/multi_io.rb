@@ -7,7 +7,7 @@ module Mcl
       @closed = false
     end
 
-    def add target
+    def add_target target
       @targets << target
     end
 

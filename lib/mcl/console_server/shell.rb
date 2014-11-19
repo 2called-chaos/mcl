@@ -62,6 +62,14 @@ module Mcl
         methods.grep(/^_cmd/).map(&:to_s).map{|s| s.gsub(/^_cmd_/, '') }
       end
 
+      def push_log msg
+        puts "#{msg}".chomp unless @env[:livelog] == false
+      end
+
+      def push_mlog msg
+        puts "#{msg}".chomp unless @env[:livemlog] == false
+      end
+
       # handle user input message
       def input str
         str = str.chomp
