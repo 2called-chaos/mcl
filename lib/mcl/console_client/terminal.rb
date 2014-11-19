@@ -160,8 +160,14 @@ module Mcl
           $cc_client_receiving = false
           $cc_client_critical = true
         end
-        $cc_acknowledged = "#{buf}".chomp
-        handle_line(buf)
+
+        if $cc_acknowledged
+          debug "Ignored stale request #{buf}".chomp
+          $cc_acknowledged = nil
+        else
+          $cc_acknowledged = "#{buf}".chomp
+          handle_line(buf)
+        end
       ensure
         sync { $cc_client_critical = false }
       end
