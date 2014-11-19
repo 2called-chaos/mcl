@@ -66,7 +66,7 @@ module Mcl
           @shell.goodbye(reason)
           @server.app.log.info "[ConsoleServer] Client #{client_id} disconnected (#{reason})"
         end
-        block.call(self)
+        block.try(:call, self)
         @thread.try(:kill)
       end
 

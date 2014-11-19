@@ -119,24 +119,29 @@ module Mcl
           Thread.current.abort_on_exception = true if @app.config["dev"]
 
           # terminate sessions and quit loop
-          Thread.current.kill if Thread.current != Thread.main[:mcl_console_server]
+          Thread.current.kill if @halting || Thread.current != Thread.main[:mcl_console_server]
 
           loop do
             Thread.start(@socket.accept) do |sock|
-              begin
+              if @halting
+                @socket.close
+                Thread.current.kill
+              else
                 begin
-                  session = new_session(self, Thread.current, sock)
-                  @sessions << session
-                  session.helo!
-                rescue
-                  client_id = session.client_id rescue nil
-                  app.log.warn("[ConsoleServer] session `#{client_id || "unknown"}' prematurely terminated: #{$!.class.name}: #{$!.message}")
-                  raise
+                  begin
+                    session = new_session(self, Thread.current, sock)
+                    @sessions << session
+                    session.helo!
+                  rescue
+                    client_id = session.client_id rescue nil
+                    app.log.warn("[ConsoleServer] session `#{client_id || "unknown"}' prematurely terminated: #{$!.class.name}: #{$!.message}")
+                    raise
+                  end
+                  session.loop!
+                ensure
+                  session.socket.close rescue nil
+                  vanish(session)
                 end
-                session.loop!
-              ensure
-                session.socket.close rescue nil
-                vanish(session)
               end
             end
           end
