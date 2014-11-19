@@ -86,8 +86,9 @@ module Mcl
               nil
             end
             if var
-              protocol "ack/input:#{str}"
-              session.terminate(var)
+              session.terminate(var) do
+                protocol "ack/input:#{str}"
+              end
             end
           else
             puts c("! Unknown command `#{chunks[0]}', type `commands' to get a list.", :red)

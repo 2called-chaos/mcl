@@ -55,7 +55,7 @@ module Mcl
         @lock.synchronize(&block)
       end
 
-      def terminate ex = nil, silent = false
+      def terminate ex = nil, silent = false, &block
         @halting = true
         Timeout::timeout(max_wait) { sleep 0.25 while sync{@critical} } rescue nil
         unless silent
@@ -66,6 +66,7 @@ module Mcl
           @shell.goodbye(reason)
           @server.app.log.info "[ConsoleServer] Client #{client_id} disconnected (#{reason})"
         end
+        block.call(self)
         @thread.try(:kill)
       end
 
