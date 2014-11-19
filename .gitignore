@@ -7,3 +7,4 @@ vendor/handlers/*
 /vendor/bundle
 /vendor/data
 /config
+/tmp
