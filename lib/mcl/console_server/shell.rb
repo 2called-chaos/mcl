@@ -2,7 +2,7 @@ module Mcl
   class ConsoleServer
     class Shell
       attr_reader :session, :server, :app
-      attr_accessor :colorize, :env
+      attr_accessor :colorize, :env, :mem
       include Colorize
       include Commands
       include Protocol
@@ -14,6 +14,7 @@ module Mcl
         @colorize = true
         @protocol = false
         @env = {}
+        @mem = {}
       end
 
       def encode_env data
@@ -63,11 +64,11 @@ module Mcl
       end
 
       def push_log msg
-        puts "#{msg}".chomp unless @env[:livelog] == false
+        puts "#{msg}".chomp unless @env["livelog"] == false
       end
 
       def push_mlog msg
-        puts "#{msg}".chomp unless @env[:livemlog] == false
+        puts "#{msg}".chomp unless @env["livemlog"] == false
       end
 
       # handle user input message
