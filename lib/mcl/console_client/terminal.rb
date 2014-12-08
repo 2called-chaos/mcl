@@ -181,12 +181,16 @@ module Mcl
 
         if str.start_with?(TCOM_PREF)
           # terminal command
-          str << "help" if str == TCOM_PREF
-          fw = str[1..-1].split(" ").first
-          if respond_to?("_tc_#{fw}")
-            send("_tc_#{fw}", str[1..-1].split(" ")[1..-1], str)
-          else
-            print_line c("Unknown terminal command `#{TCOM_PREF+fw}`, try `#{TCOM_PREF}help`...", :red), refresh: false
+          begin
+            str << "help" if str == TCOM_PREF
+            fw = str[1..-1].split(" ").first
+            if respond_to?("_tc_#{fw}")
+              send("_tc_#{fw}", str[1..-1].split(" ")[1..-1], str)
+            else
+              print_line c("Unknown terminal command `#{TCOM_PREF+fw}`, try `#{TCOM_PREF}help`...", :red), refresh: false
+            end
+          ensure
+            $cc_acknowledged = nil
           end
         else
           $cc_client_exiting = true if ["exit", "quit"].include?(str)
