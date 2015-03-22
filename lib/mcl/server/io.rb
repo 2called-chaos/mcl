@@ -113,6 +113,10 @@ module Mcl
           File.unlink(b[0])
         end
       end
+
+      def world_copy old_world, new_world
+        FileUtils.cp_r(world_root(old_world), world_root(new_world))
+      end
     end
   end
 end
