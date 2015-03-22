@@ -2,6 +2,7 @@ module Mcl
   Mcl.reloadable(:HMMclCore)
   class HMMclCore < Handler
     def setup
+      early_console_server_shutdown
       register_sprop(:root)
       register_danger(:admin)
       register_help(:guest)
@@ -14,6 +15,13 @@ module Mcl
       register_stop(:admin)
       register_stopmc(:root)     # <---- root permissions because it will stall the server due to bug MC-63802
       register_version(:member)
+    end
+
+    def early_console_server_shutdown
+      app.ipc_early do
+        app.log.debug "[SHUTDOWN] Stopping console socket server..."
+        app.console_server.shutdown!
+      end
     end
 
     def register_danger acl_level
