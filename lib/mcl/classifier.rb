@@ -51,8 +51,9 @@ module Mcl
           register(pat) do |res, r|
             if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
               catch(:handler_exit) do
-                handler.acl_verify(r[1], acl_lvl) if opts[:acl]
-                b[r[1], r[2].split(" ")[1..-1], handler, OptionParser.new]
+                u = r[1].to_s.gsub(/[§]./, "")
+                handler.acl_verify(u, acl_lvl) if opts[:acl]
+                b[u, r[2].split(" ")[1..-1], handler, OptionParser.new]
               end
             end
           end
