@@ -9,6 +9,10 @@ the shipped handlers just ask your question in the issues.
 
 ---
 
+## PLEASE NOTE!
+Since Minecraft 1.8.3 the log format has slighty changed. Unfortuntely this removed the possibility for me to determine the position of a player entirely. This breaks some of the features and takes away a lot of potential for other features. I hope but doubt that this will change again. At the moment it doesn't seem to get any further with the development of Minecraft and therefore the usefulness of this wrapper (designed for often changing snapshots) becomes less and less. I'm not calling it dead yet but time will tell...
+
+
 ## Help
 If you need help or have problems [open an issue](https://github.com/2called-chaos/mcl/issues/new) or [chat with me](http://webchat.esper.net/?channels=mcl).
 
