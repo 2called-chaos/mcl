@@ -11,6 +11,10 @@ module Mcl
         end
       end
 
+      def level= lvl
+
+      end
+
       def close
         # sure
       end
