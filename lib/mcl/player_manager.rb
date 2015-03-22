@@ -107,7 +107,8 @@ module Mcl
             sleep 3
             $mcl.sync do
               app.server.trawm(player, {text: "[MCL] ", color: "light_purple"}, {text: "Welcome to MCL!", color: "gold"})
-              app.server.trawm(player, {text: "[MCL] ", color: "light_purple"}, {text: "Type ", color: "yellow"}, {text: "!help", color: "aqua"}, {text: " or ", color: "yellow"}, {text: "!cbook self", color: "aqua"}, {text: " to get started!", color: "yellow"})
+              # app.server.trawm(player, {text: "[MCL] ", color: "light_purple"}, {text: "Type ", color: "yellow"}, {text: "!help", color: "aqua"}, {text: " or ", color: "yellow"}, {text: "!cbook self", color: "aqua"}, {text: " to get started!", color: "yellow"})
+              app.server.trawm(player, {text: "[MCL] ", color: "light_purple"}, {text: "Type ", color: "yellow"}, {text: "!help", color: "aqua"}, {text: " to get started!", color: "yellow"})
             end
           end
         end
