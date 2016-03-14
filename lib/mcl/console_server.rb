@@ -81,7 +81,7 @@ module Mcl
           @app.log.debug "[ConsoleServer-FAILSAFE] something went wrong in the session termination process, killed!"
         end
         @server.kill
-        @socket.close
+        @socket.close if @socket
         File.unlink(sock_info_path)
         File.unlink(socket_path) if @socket.is_a?(UNIXSocket) && File.exist?(socket_path) && File.socket?(socket_path)
       end
@@ -114,6 +114,7 @@ module Mcl
     end
 
     def spawn_server
+      return unless @socket
       Thread.main[:mcl_console_server] = @server = Thread.new do
         loop do
           Thread.current.abort_on_exception = true if @app.config["dev"]
