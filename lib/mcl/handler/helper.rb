@@ -37,8 +37,8 @@ module Mcl
 
       def announce_server_restart
         $mcl.server.invoke %{/title @a times 10 120 60}
-        $mcl.server.invoke %{/title @a subtitle [{text:"a", color: "green", obfuscated: true},{text:" get ready for immediate reboot ", color: "gold", obfuscated: false},{text:"a", color: "green", obfuscated: true}]}
-        $mcl.server.invoke %{/title @a title {text:"Server is about to restart", color: "red"}}
+        $mcl.server.invoke %{/title @a subtitle [{"text":"a", "color": "green", "obfuscated": true},{"text":" get ready for immediate reboot ", "color": "gold", "obfuscated": false},{"text":"a", "color": "green", "obfuscated": true}]}
+        $mcl.server.invoke %{/title @a title {"text":"Server is about to restart", "color": "red"}}
       end
 
       def require_dm_for_selection p, p1, p2

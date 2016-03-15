@@ -301,12 +301,12 @@ module Mcl
     end
 
     def command_line cmd, desc, cmd2 = nil
-      %q{{text:"%CMD%\n", color:"dark_green", hoverEvent:{action: "show_text", value: "%DESC%"}, clickEvent:{action: "suggest_command", value: "%CMD2%"}}}.gsub("%CMD%", cmd).gsub("%CMD2%", cmd2 || cmd).gsub("%DESC%", desc)
+      %q{{"text":"%CMD%\n", "color":"dark_green", "hoverEvent":{"action": "show_text", "value": "%DESC%"}, "clickEvent":{"action": "suggest_command", "value": "%CMD2%"}}}.gsub("%CMD%", cmd).gsub("%CMD2%", cmd2 || cmd).gsub("%DESC%", desc)
     end
 
     def command_book_page title, strs
       [].tap do |r|
-        r << %q{{text:"%TITLE%\n", underlined: true, bold: true, color: "red"}}.gsub("%TITLE%", title)
+        r << %q{{"text":"%TITLE%\n", "underlined": true, "bold": true, "color": "red"}}.gsub("%TITLE%", title)
         strs.each {|*a| r << command_line(*a.flatten)}
       end.join("\n")
     end

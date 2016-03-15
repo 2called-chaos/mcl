@@ -86,7 +86,7 @@ module Mcl
           logs.in_groups_of(14, false).each do |group|
             page = []
             group.each_with_index do |log, i|
-              page << %Q{{text: "#{log.tracked_at.strftime("%F %T")}\\n", color: "#{i % 2 == 0 ? "blue" : "dark_blue"}", hoverEvent:{action:"show_text", value: "Ran behind #{log.delay}ms and skipped #{log.skipped_ticks} tick(s)\\n(#{Player.fseconds(Time.current - log.tracked_at)} ago)"}}}
+              page << %Q{{"text": "#{log.tracked_at.strftime("%F %T")}\\n", "color": "#{i % 2 == 0 ? "blue" : "dark_blue"}", "hoverEvent":{"action":"show_text", "value": "Ran behind #{log.delay}ms and skipped #{log.skipped_ticks} tick(s)\\n(#{Player.fseconds(Time.current - log.tracked_at)} ago)"}}}
             end
             pages << page.join("\n")
           end

@@ -45,8 +45,8 @@ module Mcl
                 next if v == :comment
                 x += k.to_s.length > 20 ? 2 : 1
 
-                val = v.blank? ? %Q{"-blank-", color: "gray", italic: true} : %Q{"#{v}"}
-                bs << %Q{{text: "#{k}\\n", color: "#{i % 2 == 0 ? :blue : :dark_blue}", hoverEvent:{action:"show_text",value:#{val}},clickEvent:{action:"run_command", value:"!sprop #{k}"}}}
+                val = v.blank? ? %Q{"-blank-", "color": "gray", "italic": true} : %Q{"#{v}"}
+                bs << %Q{{"text": "#{k}\\n", "color": "#{i % 2 == 0 ? :blue : :dark_blue}", "hoverEvent":{"action":"show_text","value":#{val}},"clickEvent":{"action":"run_command", "value":"!sprop #{k}"}}}
                 if x >= 13
                   b << bs.join("\n")
                   x, bs = 0, []

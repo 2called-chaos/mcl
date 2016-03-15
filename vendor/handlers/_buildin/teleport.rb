@@ -66,9 +66,9 @@ module Mcl
             sp = []
             page_players.each_with_index do |p, i|
               if p == "-"
-                sp << %Q{{text:"Teleport X => me\\n", color:"red", bold: true}}
+                sp << %Q{{"text":"Teleport X => me\\n", "color":"red", "bold": true}}
               else
-                sp << %Q{{text:"#{p}\\n", color:"#{i % 2 == 0 ? "blue" : "dark_blue"}", hoverEvent:{action:"show_text", value: "TP #{p} to me"}, clickEvent:{action:"run_command", value: "!tp #{p} <"}}}
+                sp << %Q{{"text":"#{p}\\n", "color":"#{i % 2 == 0 ? "blue" : "dark_blue"}", "hoverEvent":{"action":"show_text", "value": "TP #{p} to me"}, "clickEvent":{"action":"run_command", "value": "!tp #{p} <"}}}
               end
             end
             pages << sp.join("\n")
@@ -81,9 +81,9 @@ module Mcl
             sp = []
             page_players.each_with_index do |p, i|
               if p == "-"
-                sp << %Q{{text:"Teleport me => X\\n", color:"red", bold: true}}
+                sp << %Q{{"text":"Teleport me => X\\n", "color":"red", "bold": true}}
               else
-                sp << %Q{{text:"#{p}\\n", color:"#{i % 2 == 0 ? "blue" : "dark_blue"}", hoverEvent:{action:"show_text", value: "TP me to #{p}"}, clickEvent:{action:"run_command", value: "!tp #{p}"}}}
+                sp << %Q{{"text":"#{p}\\n", color:"#{i % 2 == 0 ? "blue" : "dark_blue"}", "hoverEvent":{"action":"show_text", "value": "TP me to #{p}"}, "clickEvent":{"action":"run_command", "value": "!tp #{p}"}}}
               end
             end
             pages << sp.join("\n")

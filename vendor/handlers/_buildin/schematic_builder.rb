@@ -57,32 +57,32 @@ module Mcl
       def com_book player, args
         pages = []
         pages << %Q{
-          {text:"ScheBu\\n","color":"red","bold":"true"}
-          {text:"Schematic Builder\\n","color":"red"}
-          {text:"-------------------\\n"}
-          {text:"P2: Important Notes\\n"}
-          {text:"P4: Process of building\\n"}
-          {text:"P+: Command help\\n"}
+          {"text":"ScheBu\\n","color":"red","bold":"true"}
+          {"text":"Schematic Builder\\n","color":"red"}
+          {"text":"-------------------\\n"}
+          {"text":"P2: Important Notes\\n"}
+          {"text":"P4: Process of building\\n"}
+          {"text":"P+: Command help\\n"}
         }.strip
         pages << %Q{
-          {text:"Important Notes\\n","color":"red","bold":"true"}
-          {text:"-----------------\\n"}
-          {text:"ScheBu will read the schematic, convert it to a block matrix and send a setblock command to the server console, FOR EACH BLOCK! This is obviously very imperformant and you shouldn't use that for large schematics."}
+          {"text":"Important Notes\\n","color":"red","bold":"true"}
+          {"text":"-----------------\\n"}
+          {"text":"ScheBu will read the schematic, convert it to a block matrix and send a setblock command to the server console, FOR EACH BLOCK! This is obviously very imperformant and you shouldn't use that for large schematics."}
         }.strip
         pages << %Q{
-          {text:"Important Notes\\n","color":"red","bold":"true"}
-          {text:"-----------------\\n"}
-          {text:"MCL, which is the parent of ScheBu, will be unresponsive during builds."}
+          {"text":"Important Notes\\n","color":"red","bold":"true"}
+          {"text":"-----------------\\n"}
+          {"text":"MCL, which is the parent of ScheBu, will be unresponsive during builds."}
         }.strip
         pages << %Q{
-          {text:"Process\\n","color":"red","bold":"true"}
-          {text:"-----------------\\n"}
-          {text:"When you load a schematic, we just check if it exists and contains valid NBT data. We also extract the dimensions of the schematic. All settings you change (rotation, etc.) will not be calculated until you issue the build command."}
+          {"text":"Process\\n","color":"red","bold":"true"}
+          {"text":"-----------------\\n"}
+          {"text":"When you load a schematic, we just check if it exists and contains valid NBT data. We also extract the dimensions of the schematic. All settings you change (rotation, etc.) will not be calculated until you issue the build command."}
         }.strip
         pages << %Q{
-          {text:"Process\\n","color":"red","bold":"true"}
-          {text:"-----------------\\n"}
-          {text:"Upon build the schematic content will be loaded, converted, processed and then build. You cannot build 2 things at the same time!"}
+          {"text":"Process\\n","color":"red","bold":"true"}
+          {"text":"-----------------\\n"}
+          {"text":"Upon build the schematic content will be loaded, converted, processed and then build. You cannot build 2 things at the same time!"}
         }.strip
 
         $mcl.server.invoke book(player, "ScheBu Infosheet", pages, author: "ScheBu")
