@@ -11,7 +11,7 @@ module Mcl
 
       def book who, title, pages, opts = {}
         opts = {author: "MCL"}.merge(opts)
-        %{/give #{who} written_book 1 0 {title:"#{title}",author:"#{opts[:author]}",pages:[#{pagify_all(*pages)}]}}
+        %{/give #{who} written_book 1 0 {"title":"#{title}","author":"#{opts[:author]}","pages":[#{pagify_all(*pages)}]}}
       end
     end
   end
