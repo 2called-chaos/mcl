@@ -163,7 +163,7 @@ module Mcl
       end
 
       def numeric_version ver
-        ver.each_byte.with_index.inject(0) {|n, (c, i)| n + (255**(ver.length - i) * c) }
+        mc_numeric_version(ver)
       end
 
       def tellm p, *msg

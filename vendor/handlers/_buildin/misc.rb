@@ -98,7 +98,7 @@ module Mcl
     def register_rec acl_level
       register_command :rec, desc: "plays music discs", acl: acl_level do |player, args|
         if args[0].present?
-          $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound records.#{args[0]} #{player} ~ ~ ~ 10000 #{args[1] || 1} 1}
+          $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound #{playsound_broken "record", "records"}.#{args[0]} #{playsound_broken "music", nil} #{player} ~ ~ ~ 10000 #{args[1] || 1} 1}
         else
           trawm(player, {text: "Usage: ", color: "gold"}, {text: "!rec <track> [pitch]", color: "yellow"})
           trawm(player, {text: "Tracks: ", color: "gold"}, {text: "11 13 blocks cat chirp far mall mellohi stal strad wait ward", color: "yellow"})

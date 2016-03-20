@@ -48,6 +48,41 @@ module Mcl
       def title t, color = "light_purple"
         { text: "[#{t}] ", color: color }
       end
+
+      def playsound_broken yes = true, no = false
+        if mc_snapshot?
+          mc_version_compare(server.version, "16w02a", :>=) ? yes : no
+        else
+          mc_version_compare(server.version, "1.9", :>=) ? yes : no
+        end
+      end
+
+      def mc_numeric_version ver = nil
+        ver ||= server.version
+        ver.each_byte.with_index.inject(0) {|n, (c, i)| n + (255**(ver.length - i) * c) }
+      end
+
+      def mc_snapshot? ver = nil
+        ver ||= server.version
+        !!!Gem::Version.new(ver) rescue true
+      end
+
+      def mc_comparable_version ver
+        Gem::Version.new(ver) rescue mc_numeric_version(ver)
+      end
+
+      def mc_version_compare v1, v2, meth = :==
+        rv1 = mc_comparable_version(v1)
+        rv2 = mc_comparable_version(v2)
+
+        if rv1.class == rv2.class
+          rv1.send(meth, rv2)
+        elsif meth == :==
+          false
+        else
+          raise ArgumentError, "uncomparable versions: #{v1} (#{v1.class}) ?=? #{v2} (#{v2.class})"
+        end
+      end
     end
   end
 end

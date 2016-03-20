@@ -11,6 +11,12 @@ module Mcl
       register_warp(:member)
     end
 
+    def sound_list
+      playsound_broken \
+      ? %w[entity.endermen.teleport entity.enderdragon.growl entity.ghast.shoot entity.ghast.hurt entity.donkey.angry entity.villager.hurt]
+      : %w[mob.endermen.portal mob.enderdragon.growl mob.ghast.scream mob.horse.donkey.angry mob.villager.hit]
+    end
+
     def register_warp acl_level
       register_command :warp, :warps, desc: "Beam me up, Scotty (more info with !warp)", acl: acl_level do |player, args, handler|
         case args[0]
@@ -22,8 +28,8 @@ module Mcl
             if warp = find_warp(srv ? :__server : player, args[0]).last
               warp(player, warp)
               sleep 0.1
-              sound = %w[mob.endermen.portal mob.enderdragon.growl mob.ghast.scream mob.horse.donkey.angry mob.villager.hit].sample(1)[0]
-              $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound #{sound} @a[r=25] #{warp.join(" ")} 3 1}
+              sound = sound_list.sample(1)[0]
+              $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound #{sound} #{playsound_broken "ambient", nil} @a[r=25] #{warp.join(" ")} 3 1}
               $mcl.server.invoke %{/particle portal #{warp.join(" ")} 0 1 0 0.25 1000 force}
               tellm(player, {text: "Off you go...", color: "aqua"})
             else
