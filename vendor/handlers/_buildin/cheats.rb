@@ -69,8 +69,20 @@ module Mcl
           trawt(player, "give", {text: "!give requires at least one argument!", color: "red"})
         elsif args.count == 1
           $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args.join(" ")}"
+        elsif args.count == 2 && args[1].to_i != 0
+          stacks = args[1].to_i / 64
+          rest = args[1].to_i % 64
+          stacks.times{ $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args[0]} 64" }
+          $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args[0]} #{rest}" if rest > 0
         else
-          $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args.join(" ")}"
+          if args.last.to_i != 0
+            stacks = args.last.to_i / 64
+            rest = args.last.to_i % 64
+            stacks.times{ $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args[0]} #{args[1]} 64" }
+            $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args[0]} #{args[1]} #{rest}" if rest > 0
+          else
+            $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args.join(" ")}"
+          end
         end
       end
     end
