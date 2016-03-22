@@ -155,6 +155,7 @@ module Mcl
           unless @console_server.halting
             log.debug "[SHUTDOWN] Stopping console socket server..."
             @console_server.shutdown!
+            @log.remove_target @console_server.log
           end
         end
 

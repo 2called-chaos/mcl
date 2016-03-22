@@ -81,8 +81,8 @@ module Mcl
           @app.log.debug "[ConsoleServer-FAILSAFE] something went wrong in the session termination process, killed!"
         end
         @server.kill
-        @socket.close if @socket
-        File.unlink(sock_info_path)
+        @socket.close if @socket rescue IOError
+        File.unlink(sock_info_path) if File.exist?(sock_info_path)
         File.unlink(socket_path) if @socket.is_a?(UNIXSocket) && File.exist?(socket_path) && File.socket?(socket_path)
       end
     end

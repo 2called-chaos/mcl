@@ -11,6 +11,10 @@ module Mcl
       @targets << target
     end
 
+    def remove_target target
+      @targets.delete(target)
+    end
+
     def close
       @targets.each do |t|
         t.close unless t.instance_variable_get(:"@mcl_uncloseable")
