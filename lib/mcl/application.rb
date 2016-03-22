@@ -8,7 +8,7 @@ module Mcl
       @mutex = Monitor.new
       @instance = instance
       @graceful = []
-      @ipc_earlies = []
+      @ipc_earlies = {}
       @promises = []
       @event_backlog = []
       @delayed = []
@@ -74,13 +74,13 @@ module Mcl
       end
     end
 
-    def ipc_early &block
-      @ipc_earlies.unshift block
+    def ipc_early name, &block
+      @ipc_earlies[name] = block
     end
 
     def ipc_early_hooks
       log.debug "Running early hooks..."
-      @ipc_earlies.each do |task|
+      @ipc_earlies.each do |name, task|
         begin
           task.call
         rescue

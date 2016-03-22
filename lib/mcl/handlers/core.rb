@@ -18,7 +18,7 @@ module Mcl
     end
 
     def early_console_server_shutdown
-      app.ipc_early do
+      app.ipc_early :early_console_server_shutdown do
         app.log.debug "[SHUTDOWN] Stopping console socket server..."
         app.console_server.shutdown!
       end

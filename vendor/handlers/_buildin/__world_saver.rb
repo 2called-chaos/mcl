@@ -11,7 +11,7 @@ module Mcl
       register_parser(/^Saved the world/i) { $world_saver_world_saved = true }
 
       # execute before minecraft server stops
-      app.ipc_early do
+      app.ipc_early :world_saver_hook do
         app.log.info "[WorldSaver] Saving worlds..."
 
         begin
