@@ -23,15 +23,44 @@ module Mcl
       register_command :whereis, desc: "shows you the position of a player", acl: acl_level do |player, args|
         target = args.first || player
 
-        detect_player_position(target) do |pos|
-          if pos
+        detect_player_position(target) do |p1|
+          if p1
             trawt(player, "NSA",
               {text: "Player ", color: "green"},
               {text: target, color: "aqua", hoverEvent: {action: "show_text", value: "teleport to #{target}"}, clickEvent: {action: "run_command", value: "!tp #{target}"}},
               {text: " is at ", color: "green"},
-              {text: pos.join(" "), color: "aqua", hoverEvent: {action: "show_text", value: "teleport to #{pos.join(" ")}"}, clickEvent: {action: "run_command", value: "!tp #{pos.join(" ")}"}},
+              {text: p1.join(" "), color: "aqua", hoverEvent: {action: "show_text", value: "teleport to #{p1.join(" ")}"}, clickEvent: {action: "run_command", value: "!tp #{p1.join(" ")}"}},
               {text: "!", color: "green"}
             )
+
+            # detect issuer position for distance measurement
+            detect_player_position(player) do |p2|
+              if p2
+                distance = coord_distance(p2, p1)
+                direction = coord_direction(p2, p1)
+
+                # message
+                trawt(player, "NSA",
+                  {text: "This is ", color: "yellow"},
+                  {text: "#{distance.to_i} meters ", color: "gold"},
+                  {text: "in ", color: "yellow"},
+                  {text: coord_direction_str(direction), color: "gold"},
+                  {text: " direction.", color: "yellow"}
+                )
+
+                # particle indicator
+                particles, spacing = case distance
+                  when 0 then [0, 0]
+                  when 1...20 then [[distance.to_i, 5].min, distance > 10 ? 2 : 0]
+                  when 20...100 then [10, 3]
+                  else [20, 5]
+                end
+
+                direction_indicator_points(p2, direction, particles, spacing).each do |point|
+                  indicate_coord player, point, :barrier
+                end
+              end
+            end
           else
             trawt(player, "NSA", {text: "Couldn't determine position of #{target} :/ Maybe the target is underwater.", color: "red"})
           end
