@@ -140,7 +140,7 @@ module Mcl
               unspaced = 0
               next
             else
-              unspaced += 1 unless i = 0
+              unspaced += 1 unless i == 0
               points << [x, y, z]
             end
           end
