@@ -99,7 +99,7 @@ module Mcl
       register_command :rec, desc: "plays music discs", acl: acl_level do |player, args|
         voice = args.delete("-v")
         if args[0].present?
-          $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound #{playsound_broken "record", "records"}.#{args[0]} #{playsound_broken(voice ? "voice" : "music", nil)} #{player} ~ ~ ~ 10000 #{args[1] || 1} 1}
+          $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound #{playsound_broken "record", "records"}.#{args[0]} #{playsound_broken(voice ? "voice" : "record", nil)} #{player} ~ ~ ~ 10000 #{args[1] || 1} 1}
         else
           trawm(player, {text: "Usage: ", color: "gold"}, {text: "!rec <track> [pitch] [-v]", color: "yellow"})
           trawm(player, {text: "Tracks: ", color: "gold"}, {text: "11 13 blocks cat chirp far mall mellohi stal strad wait ward", color: "yellow"})
