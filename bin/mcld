@@ -17,5 +17,5 @@ if [ "$(id -u)" == "0" ]; then
    exit 1
 fi
 
-# Actually run Heatmon
+# Actually run MCL
 cd $PROJECT_ROOT && bundle exec ruby lib/mcld.rb "$@"
