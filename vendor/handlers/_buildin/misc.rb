@@ -75,7 +75,7 @@ module Mcl
 
           # etype
           entity = args.shift
-          types = %w[MinecartChest EyeOfEnderSignal ItemFrame MinecartCommandBlock Item EntityHorse Fireball EnderDragon MinecartTNT Villager ThrownPotion Guardian SnowMan LeashKnot Arrow MushroomCow LavaSlime Zombie MinecartSpawner EnderCrystal Snowball Enderman CaveSpider MinecartHopper XPOrb ThrownExpBottle FireworksRocketEntity Chicken FallingSand Giant VillagerGolem PrimedTnt Endermite Creeper Rabbit ThrownEnderpearl Silverfish ArmorStand Squid Skeleton SmallFireball MinecartRideable Wolf Witch Ozelot Cow Slime Painting Pig MinecartFurnace Bat Blaze WitherBoss PigZombie Spider Ghast Sheep WitherSkull Boat LightningBolt]
+          types = %w[MinecartChest EyeOfEnderSignal ItemFrame MinecartCommandBlock Item EntityHorse Fireball EnderDragon MinecartTNT Villager ThrownPotion Guardian SnowMan LeashKnot Arrow Cow MushroomCow LavaSlime Zombie MinecartSpawner EnderCrystal Snowball Enderman CaveSpider MinecartHopper XPOrb ThrownExpBottle FireworksRocketEntity Chicken FallingSand Giant VillagerGolem PrimedTnt Endermite Creeper Rabbit ThrownEnderpearl Silverfish ArmorStand Squid Skeleton SmallFireball MinecartRideable Wolf Witch Ozelot Slime Painting Pig MinecartFurnace Bat Blaze WitherBoss PigZombie Spider Ghast Sheep WitherSkull Boat LightningBolt]
           etype = types.grep(/#{entity}/i).first || entity
 
           if !(!pmemo(player)[:danger_mode] && amount > 500 && require_danger_mode(player, "Summoning >500 entities require danger mode to be enabled!"))
