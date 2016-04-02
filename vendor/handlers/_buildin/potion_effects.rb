@@ -93,6 +93,10 @@ module Mcl
       # starve
       ph :starve, [:hunger, 120, 30], "gives you or target 120x hunger for 30s"
 
+      # glow
+      ph :glow, [:glow, 120, 1], "gives you or target glow effect for 120s"
+      ph :nuclear, [:glow, 6000, 1], "gives you or target glow effect"
+
       # misc
       ph :hearts, [:absorption, 6000, 255], "gives you or target 255x absorption"
       ph :"<3",   [:absorption, 60, 255],   "gives you or target 255x absorption for 60s"
