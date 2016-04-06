@@ -46,7 +46,7 @@ module Mcl
 
       # doFireTick
       register_command(:firetick, :firespread, desc: "deactivates doFireTick", acl: acl_level) { gamerule("doFireTick", true) }
-      register_command(:nofiretick, :nofirespread, :firealarm, desc: "activates doFireTick", acl: acl_level) { gamerule("doFireTick", true) }
+      register_command(:nofiretick, :nofirespread, :firealarm, desc: "activates doFireTick", acl: acl_level) { gamerule("doFireTick", false) }
 
       # doMobLoot
       register_command(:loot, desc: "activates doMobLoot", acl: acl_level) { gamerule("doMobLoot", true) }
