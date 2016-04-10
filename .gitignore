@@ -2,6 +2,7 @@
 !vendor/handlers/
 vendor/handlers/*
 !vendor/handlers/_buildin/
+!vendor/handlers/_extras/
 /_server/
 /log
 /vendor/bundle
