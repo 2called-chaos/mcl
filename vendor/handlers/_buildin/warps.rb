@@ -41,28 +41,34 @@ module Mcl
             tellm(player, {text: "set <name> [<x> <y> <z>]", color: "gold"}, {text: " add/update warp to current or given position", color: "reset"})
             tellm(player, {text: "delete <name>", color: "gold"}, {text: " delete warp", color: "reset"})
             tellm(player, {text: "share <name> [target]", color: "gold"}, {text: " reveal warp to target (@a by default)", color: "reset"})
-            tellm(player, {text: "list [-a] [-s] [page|filter] [page]", color: "gold"}, {text: " list/search warps", color: "reset"})
+            tellm(player, {text: "list [-a] [-s] [-u user] [page|filter] [page]", color: "gold"}, {text: " list/search warps", color: "reset"})
           end
         end
       end
     end
 
     def com_set player, args
-      srv = args.delete("-s")
+      muser = player
+      opt = OptionParser.new
+      opt.on("-s") { muser = :__server }
+      opt.on("-u USER", String) {|v| muser = v }
+      opt.parse!(args)
       name = args.shift.presence
-      acl_verify(player, acl_srv) if srv
+      acl_verify(player, acl_srv) if muser == :__system
+      acl_verify(player, acl_mod) if muser != :__system && muser != player
+
       if name && (args.count == 0 || args.count == 3)
         if args.count == 0
           detect_player_position(player) do |pos|
             if pos
-              set_warp(srv ? :__server : player, name, pos)
+              set_warp(muser, name, pos)
               tellm(player, {text: "Warp ", color: "green"}, {text: name, color: "aqua"}, {text: " set to ", color: "green"}, {text: pos.join(" "), color: "aqua"}, {text: "!", color: "green"})
             else
               tellm(player, {text: "Couldn't determine your position :/ Is your head in water?", color: "red"})
             end
           end
         else
-          set_warp(srv ? :__server : player, name, args)
+          set_warp(muser, name, args)
           tellm(player, {text: "Warp ", color: "green"}, {text: name, color: "aqua"}, {text: " set to ", color: "green"}, {text: args.join(" "), color: "aqua"}, {text: "!", color: "green"})
         end
       else
@@ -71,12 +77,18 @@ module Mcl
     end
 
     def com_delete player, args
-      srv = args.delete("-s")
+      muser = player
+      opt = OptionParser.new
+      opt.on("-s") { muser = :__server }
+      opt.on("-u USER", String) {|v| muser = v }
+      opt.parse!(args)
       name = args.shift.presence
-      acl_verify(player, acl_srv) if srv
+      acl_verify(player, acl_srv) if muser == :__system
+      acl_verify(player, acl_mod) if muser != :__system && muser != player
+
       if name
-        if find_warp(srv ? :__server : player, name, false).last
-          delete_warp(srv ? :__server : player, name)
+        if find_warp(muser, name, false).last
+          delete_warp(muser, name)
           tellm(player, {text: "Warp is gone!", color: "green"})
         else
           tellm(player, {text: "Unknown warp!", color: "red"})
@@ -87,14 +99,21 @@ module Mcl
     end
 
     def com_share player, args
-      srv = args.delete("-s")
+      muser = player
+      opt = OptionParser.new
+      opt.on("-s") { muser = :__server }
+      opt.on("-u USER", String) {|v| muser = v }
+      opt.parse!(args)
       name = args.shift.presence
       target = args.shift.presence || "@a"
+      acl_verify(player, acl_srv) if muser == :__system
+      acl_verify(player, acl_mod) if muser != :__system && muser != player
+
       if name
-        warp = find_warp(srv ? :__server : player, name)
+        warp = find_warp(muser, name)
         if warp.last
-          tellm(player, {text: "You shared a #{"server " if srv}warp with ", color: "yellow"}, {text: "#{target}", color: "aqua"}, {text: ":", color: "yellow"})
-          tellm(target, {text: "#{player}", color: "aqua"}, {text: " shared a #{"server " if srv}warp with ", color: "yellow"}, {text: "#{target}", color: "aqua"}, {text: ":", color: "yellow"})
+          tellm(player, {text: "You shared a #{"server " if muser == :__system}warp with ", color: "yellow"}, {text: "#{target}", color: "aqua"}, {text: ":", color: "yellow"})
+          tellm(target, {text: "#{player}", color: "aqua"}, {text: " shared a #{"server " if muser == :__system}warp with ", color: "yellow"}, {text: "#{target}", color: "aqua"}, {text: ":", color: "yellow"})
           tellm(target, warp[0] == :__global ? {text: "GLOBAL", color: "red"} : {text: warp[0], color: "gold"}, {text: " #{name} ", color: "green", hoverEvent: {action: "show_text", value: {text: "warp now"}}, clickEvent: {action: "run_command", value: "!warp #{name}"}},{text: warp.last.join(" "), color: "yellow"})
           tellm(target,
             {text: "save warp", color: "aqua", underlined: true, hoverEvent: {action: "show_text", value: {text: "click to save"}}, clickEvent: {action: "run_command", value: "!warp set #{name} #{warp.last.join(" ")}"}},
@@ -110,9 +129,17 @@ module Mcl
     end
 
     def com_list player, args
-      all = args.delete("-a")
-      srv = args.delete("-s")
-      pram = memory(srv ? :__server : player)
+      all, muser = false, player
+      opt = OptionParser.new
+      opt.on("-a") { all = true }
+      opt.on("-s") { muser = :__server }
+      opt.on("-u USER", String) {|v| muser = v }
+      opt.parse!(args)
+      name = args.shift.presence
+      acl_verify(player, acl_srv) if muser == :__system
+      acl_verify(player, acl_mod) if muser != :__system && muser != player
+
+      pram = memory(muser)
       page, filter = 1, nil
 
       # filter
@@ -144,9 +171,9 @@ module Mcl
       pages = (swarps.count/7.0).ceil
 
       if swarps.any?
-        tellm(player, {text: "--- Showing #{"server " if srv}warps page #{page}/#{pages} (#{swarps.count} warps) ---", color: "aqua"})
+        tellm(player, {text: "--- Showing #{"server " if muser == :__system}warps page #{page}/#{pages} (#{swarps.count} warps) ---", color: "aqua"})
         page_contents[page-1].each {|warp| tellm(player, *warp) }
-        if srv
+        if muser == :__system
           tellm(player, {text: "Use ", color: "aqua"}, {text: "-a", color: "light_purple"}, {text: " to show warps in other worlds.", color: "aqua"}) unless all
         else
           tellm(player, {text: "Use ", color: "aqua"}, {text: "-s", color: "light_purple"}, {text: " to show server warps.", color: "aqua"})
@@ -160,6 +187,11 @@ module Mcl
       # ACL for modifying server warps
       def acl_srv
         :admin
+      end
+
+      # ACL for modifying/seeing other users warps
+      def acl_mod
+        :mod
       end
 
       def memory p, &block
