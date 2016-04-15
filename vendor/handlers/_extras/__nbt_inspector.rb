@@ -41,7 +41,7 @@ module Mcl
 
           tellm(player,
             {text: "found stronghold ", color: "yellow"},
-            {text: "##{i+1} #{prc["O"]}", color: "light_purple"},
+            {text: "##{i+1}", color: "light_purple"},
             {text: " #{chunk_coord}", color: "gray"},
             {text: " => ", color: "yellow"},
             {text: "#{xc} #{yc} #{zc}", color: "aqua", hoverEvent: {action: "show_text", value: {text: "click to teleport to portal room"}}, clickEvent: {action: "run_command", value: "!tp #{xc} #{yc} #{zc} #{yr} #{xr}"}}
