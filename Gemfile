@@ -5,7 +5,7 @@ gem 'rake'
 gem 'pry'
 gem 'daemons'
 gem 'file-tail'
-gem 'nbtfile'
+gem 'nbtfile', git: "https://github.com/2called-chaos/nbtfile.git"
 
 # database
 gem 'activerecord'
