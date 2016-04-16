@@ -136,53 +136,52 @@ module Mcl
     end
 
     def com_whereis
-        muser = player
-        opt = OptionParser.new
-        opt.on("-s") { muser = :__server }
-        opt.on("-u USER", String) {|v| muser = v }
-        opt.parse!(args)
-        name = args.shift.presence
-        acl_verify(player, acl_mod) if muser != :__system && muser != player
+      muser = player
+      opt = OptionParser.new
+      opt.on("-s") { muser = :__server }
+      opt.on("-u USER", String) {|v| muser = v }
+      opt.parse!(args)
+      name = args.shift.presence
+      acl_verify(player, acl_mod) if muser != :__system && muser != player
 
-        if name
-          warp = find_warp(muser, name)
-          if warp.last
-            detect_player_position(player) do |p2|
-              if p2
-                p1 = warp.last
-                distance = coord_distance(p2, p1)
-                direction = coord_direction(p2, p1)
+      if name
+        warp = find_warp(muser, name)
+        if warp.last
+          detect_player_position(player) do |p2|
+            if p2
+              p1 = warp.last
+              distance = coord_distance(p2, p1)
+              direction = coord_direction(p2, p1)
 
-                # message
-                tellm(player,
-                  {text: "Warp is ", color: "yellow"},
-                  {text: "#{distance.to_i} meters ", color: "gold"},
-                  {text: "in ", color: "yellow"},
-                  {text: coord_direction_str(direction), color: "gold"},
-                  {text: " direction.", color: "yellow"}
-                )
+              # message
+              tellm(player,
+                {text: "Warp is ", color: "yellow"},
+                {text: "#{distance.to_i} meters ", color: "gold"},
+                {text: "in ", color: "yellow"},
+                {text: coord_direction_str(direction), color: "gold"},
+                {text: " direction.", color: "yellow"}
+              )
 
-                # particle indicator
-                particles, spacing = case distance
-                  when 0 then [0, 0]
-                  when 1...20 then [[distance.to_i, 5].min, distance > 10 ? 2 : 0]
-                  when 20...100 then [10, 3]
-                  else [20, 5]
-                end
-
-                direction_indicator_points(p2, direction, particles, spacing).each do |point|
-                  indicate_coord player, point, :barrier
-                end
+              # particle indicator
+              particles, spacing = case distance
+                when 0 then [0, 0]
+                when 1...20 then [[distance.to_i, 5].min, distance > 10 ? 2 : 0]
+                when 20...100 then [10, 3]
+                else [20, 5]
               end
+
+              direction_indicator_points(p2, direction, particles, spacing).each do |point|
+                indicate_coord player, point, :barrier
+              end
+            else
+              tellm(player, {text: "Couldn't determine your position :/ Maybe your head is underwater.", color: "red"})
             end
-          else
-            tellm(player, {text: "Unknown warp!", color: "red"})
           end
         else
-          tellm(player, {text: "!warp whereis [-s] [-u] <name>", color: "red"})
+          tellm(player, {text: "Unknown warp!", color: "red"})
         end
       else
-        tellm(player, {text: "Couldn't determine your position :/ Maybe your head is underwater.", color: "red"})
+        tellm(player, {text: "!warp whereis [-s] [-u] <name>", color: "red"})
       end
     end
 
