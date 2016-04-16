@@ -23,9 +23,17 @@ module Mcl
         when "set", "delete", "list", "share"
           handler.send("com_#{args[0]}", player, args[1..-1])
         else
-          srv = args.delete("-s")
+          muser = player
+          opt = OptionParser.new
+          opt.on("-s") { muser = :__server }
+          opt.on("-u USER", String) {|v| muser = v }
+          opt.parse!(args)
+          name = args.shift.presence
+          acl_verify(player, acl_srv) if muser == :__system
+          acl_verify(player, acl_mod) if muser != :__system && muser != player
+
           if args.any?
-            if warp = find_warp(srv ? :__server : player, args[0]).last
+            if warp = find_warp(muser, name).last
               warp(player, warp)
               sleep 0.1
               sound = sound_list.sample(1)[0]
@@ -135,7 +143,6 @@ module Mcl
       opt.on("-s") { muser = :__server }
       opt.on("-u USER", String) {|v| muser = v }
       opt.parse!(args)
-      name = args.shift.presence
       acl_verify(player, acl_srv) if muser == :__system
       acl_verify(player, acl_mod) if muser != :__system && muser != player
 
