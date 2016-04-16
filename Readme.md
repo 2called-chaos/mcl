@@ -10,7 +10,7 @@ the shipped handlers just ask your question in the issues.
 ---
 
 ## Help
-If you need help or have problems [open an issue](https://github.com/2called-chaos/mcl/issues/new) or [chat with me](http://webchat.esper.net/?channels=mcl).
+If you need help or have problems [open an issue](https://github.com/2called-chaos/mcl/issues/new) or [chat with me](http://webchat.esper.net/?channels=mcl). Please note that I'm not always there so either be patient, stubborn or just create an issue (I won't bite you). Also make sure to _highlight_ me in IRC by including my full nickname _soahccc_ in your message.
 
 
 ## Features
