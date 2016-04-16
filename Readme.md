@@ -16,7 +16,7 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
 ## Features
   * Monitors itself and your minecraft server and restarts both when they crash
   * Simple **ACL** support (level based ACL)
-  * **[Awesome buildin handlers](https://mcl.breitzeit.de/handlers/buildin)** and you may [create your own](https://mcl.breitzeit.de/handlers/custom) as well!
+  * **[Awesome buildin handlers](https://mcl.breitzeit.de/handlers/buildin)**, **[extra handlers](https://mcl.breitzeit.de/handlers/extra)** and you may [create your own](https://mcl.breitzeit.de/handlers/custom) as well!
     Just to name a few (or the coolest):
       * **[Butcher](https://mcl.breitzeit.de/handlers/buildin/butcher)** Kill entities with convenience.
       * **[Lagtrack](https://mcl.breitzeit.de/handlers/buildin/lagtrack)** Keeps track of (and optionally notifies players about) minecraft server lag.
@@ -59,7 +59,7 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
 
 
 ## Deactivate handlers
-If you want to deactivate buildin handlers (or 3rd party ones) just rename the file to start with two underscores (e.g.: `__warps.rb`).
+If you want to deactivate buildin/extra handlers (or 3rd party ones) just rename the file to start with two underscores (e.g.: `__warps.rb`).
 
 
 ## Use MCL for multiple servers
@@ -114,7 +114,6 @@ In addition, Ruby makes it really easy to communicate and work with external ser
   * MCL does not take away the Minecraft server console unless you start the server with `nogui`.
   * **MCL does not modify minecraft** itself in any way! It's reading from and writing to the server console only.
   * MCL may download, create, symlink, backup, restore, delete or modify files and folders inside your server folder.
-  * The buildin _!eval_ plugin is disabled by default because it's evil!
   * When you see "ticks" somewhere it refers to the MCL loop. It has nothing to do with Minecraft ticks.
 
 
