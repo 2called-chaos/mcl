@@ -49,6 +49,7 @@ module Mcl
             tellm(player, {text: "set <name> [<x> <y> <z>]", color: "gold"}, {text: " add/update warp to current or given position", color: "reset"})
             tellm(player, {text: "delete <name>", color: "gold"}, {text: " delete warp", color: "reset"})
             tellm(player, {text: "share <name> [target]", color: "gold"}, {text: " reveal warp to target (@a by default)", color: "reset"})
+            tellm(player, {text: "whereis <name>", color: "gold"}, {text: " shows you how far and in which direction the warp is", color: "reset"})
             tellm(player, {text: "list [-a] [-s] [-u user] [page|filter] [page]", color: "gold"}, {text: " list/search warps", color: "reset"})
           end
         end
