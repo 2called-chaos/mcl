@@ -18,6 +18,13 @@ if ARGV[0] == "console" || ARGV[0] == "c"
     client.use "Transport"
     client.use "ConsoleServer::Colorize"
   end
+elsif ARGV[0] == "details"
+  ["mcl", "mcl/core"].each{|l| require "#{PROJECT_ROOT}/lib/#{l}" }
+  puts "     GIT_VERSION: #{`git --version`}"
+  puts "    RUBY_VERSION: #{RUBY_VERSION}"
+  puts "RUBY_DESCRIPTION: #{RUBY_DESCRIPTION}"
+  puts "      MCL COMMIT: #{Mcl.git_message}"
+  puts "         MCL SHA: #{Mcl.git_sha}"
 else
   # Require elevated privileges on windows
   require "#{PROJECT_ROOT}/lib/mcl"

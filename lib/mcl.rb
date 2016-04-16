@@ -5,6 +5,10 @@ module Mcl
     `cd "#{ROOT}" && git log -1 --pretty=%B HEAD`.strip
   end
 
+  def self.git_sha
+    `cd "#{ROOT}" && git log -1 --pretty=%H HEAD`.strip
+  end
+
   def self.windows?
     (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
   end
