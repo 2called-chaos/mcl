@@ -32,7 +32,7 @@ module Mcl
           acl_verify(player, acl_srv) if muser == :__system
           acl_verify(player, acl_mod) if muser != :__system && muser != player
 
-          if args.any?
+          if name
             if warp = find_warp(muser, name).last
               warp(player, warp)
               sleep 0.1
