@@ -2,10 +2,10 @@ module Mcl
   Mcl.reloadable(:HMclWarps)
   ## Warps / saved teleports
   # !warps <name>
-  # !warps set    [-s] <name> [<x> <y> <z>]
-  # !warps delete [-s] <name>
-  # !warps share  [-s] <name> [target]
-  # !warps list   [-a] [-s] [page|filter] [page]
+  # !warps set     [-u user] [-s] <name> [<x> <y> <z>]
+  # !warps delete  [-u user] [-s] <name>
+  # !warps share   [-u user] [-s] <name> [target]
+  # !warps list    [-u user] [-s] [-a] [page|filter] [page]
   class HMclWarps < Handler
     def setup
       register_warp(:member)
@@ -29,7 +29,6 @@ module Mcl
           opt.on("-u USER", String) {|v| muser = v }
           opt.parse!(args)
           name = args.shift.presence
-          acl_verify(player, acl_srv) if muser == :__system
           acl_verify(player, acl_mod) if muser != :__system && muser != player
 
           if name
@@ -114,7 +113,6 @@ module Mcl
       opt.parse!(args)
       name = args.shift.presence
       target = args.shift.presence || "@a"
-      acl_verify(player, acl_srv) if muser == :__system
       acl_verify(player, acl_mod) if muser != :__system && muser != player
 
       if name
@@ -143,7 +141,6 @@ module Mcl
       opt.on("-s") { muser = :__server }
       opt.on("-u USER", String) {|v| muser = v }
       opt.parse!(args)
-      acl_verify(player, acl_srv) if muser == :__system
       acl_verify(player, acl_mod) if muser != :__system && muser != player
 
       pram = memory(muser)
