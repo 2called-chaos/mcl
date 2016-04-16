@@ -135,7 +135,7 @@ module Mcl
       end
     end
 
-    def com_whereis
+    def com_whereis player, args
       muser = player
       opt = OptionParser.new
       opt.on("-s") { muser = :__server }
