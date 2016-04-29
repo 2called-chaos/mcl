@@ -1,4 +1,6 @@
 module Mcl
+  require "dentaku"
+
   Mcl.reloadable(:HMclSimpleCalc)
   ## Simple calculator
   # != <expression>
