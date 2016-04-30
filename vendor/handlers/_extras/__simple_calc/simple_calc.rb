@@ -6,11 +6,11 @@ module Mcl
   # != <expression>
   class HMclSimpleCalc < Handler
     def setup
-      register_equal
+      register_equal :guest
     end
 
-    def register_equal
-      register_command :calc, :"=", desc: "evaluates mathematical expressions", acl: :root do |player, args|
+    def register_equal acl_level
+      register_command :calc, :"=", desc: "evaluates mathematical expressions", acl: acl_level do |player, args|
         if args.any?
           begin
             expression = args.join(" ")
