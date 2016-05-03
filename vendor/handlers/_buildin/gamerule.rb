@@ -9,8 +9,8 @@ module Mcl
   # !nofiretick !nofirespread !firealarm
   # !loot
   # !noloot
-  # !drops
-  # !nodrops
+  # !drops !nodrops
+  # !edrops !noedrops
   # !keepinv
   # !loseinv
   # !foodregen
@@ -55,6 +55,10 @@ module Mcl
       # doTileDrops
       register_command(:drops, desc: "activates doTileDrops", acl: acl_level) { gamerule("doTileDrops", true) }
       register_command(:nodrops, desc: "deactivates doTileDrops", acl: acl_level) { gamerule("doTileDrops", false) }
+
+      # doEntityDrops
+      register_command(:edrops, desc: "activates doEntityDrops", acl: acl_level) { gamerule("doEntityDrops", true) }
+      register_command(:noedrops, desc: "deactivates doEntityDrops", acl: acl_level) { gamerule("doEntityDrops", false) }
 
       # keepInventory
       register_command(:keepinv, desc: "activates keepInventory", acl: acl_level) { gamerule("keepInventory", true) }
