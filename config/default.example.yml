@@ -26,6 +26,8 @@ root: /home/minecraft_server/my_server
 # directory you've specified so there is no need to `cd` into it.
 # If you plan to use automatic server updates use `minecraft_server.jar` (MCL uses symlinks).
 # REMEMBER that MCL will start your server, you MUST NOT!
+#
+# Java flags recommendation: https://aquifermc.org/threads/optimizing-paper-%C2%BB-remove-lag-spikes-fix-tps-improve-performance.101/#post-822
 launch_cmd: java -jar minecraft_server.jar
 
 
