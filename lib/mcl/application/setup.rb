@@ -132,7 +132,7 @@ module Mcl
         @command_acls = {}
         @command_names = {}
         if load_files
-          files = Dir["#{ROOT}/lib/mcl/handlers/**/*.rb"] + Dir["#{ROOT}/vendor/handlers/**/*.rb"]
+          files = (Dir["#{ROOT}/lib/mcl/handlers/**{,/*/**}/*.rb"] + Dir["#{ROOT}/vendor/handlers/**{,/*/**}/*.rb"]).uniq
           files.reject do |file|
             file.gsub("#{ROOT}/vendor/handlers/", "").split("/").any?{|fp| fp.start_with?("__") }
           end.each{|f| load f }
