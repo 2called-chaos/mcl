@@ -10,7 +10,6 @@ module Mcl
   # !idea [target]
   # !strike [target]
   # !longwaydown [target]
-
   # !muuhhh [target]
   class HMclMisc < Handler
     def setup
