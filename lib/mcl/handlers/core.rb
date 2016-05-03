@@ -3,6 +3,7 @@ module Mcl
   class HMMclCore < Handler
     def setup
       early_console_server_shutdown
+      register_ping(:guest, :mod)
       register_sprop(:root)
       register_danger(:admin)
       register_help(:guest)
@@ -28,6 +29,16 @@ module Mcl
       register_command :danger, desc: "enable danger mode for you to bypass security limits", acl: acl_level do |player, args|
         pmemo(player)[:danger_mode] = strbool(args.first) if args.any?
         trawm(player, {text: "Danger mode ", color: "gold"}, pmemo(player)[:danger_mode] ? {text: "ENABLED", color: "red"} : {text: "disabled", color: "green"})
+      end
+    end
+
+    def register_ping acl_level, acl_level_target
+      register_command :ping, desc: "pongs you back and advertises self self self self self....", acl: acl_level do |player, args|
+        acl_verify(player, acl_level_target) if args.first
+        target = args.first || player
+        trawt(target, "MCL", {text: "Minecraft Listener (short MCL) here!", color: "gold", bold: true})
+        trawt(target, "MCL", {text: "I'm your loyal server wrapper written in ", color: "yellow"}, {text: "Ruby", color: "aqua"}, {text: "!", color: "yellow"})
+        trawt(target, "MCL", {text: "Find me @ ", color: "yellow"}, {text: "https://mcl.breitzeit.de", underlined: true, color: "", hoverEvent: {action: "show_text", value: "click me!"}, clickEvent:{action: "open_url", value: "https://mcl.breitzeit.de"}})
       end
     end
 

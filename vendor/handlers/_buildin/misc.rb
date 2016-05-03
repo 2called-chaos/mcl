@@ -14,7 +14,6 @@ module Mcl
   # !muuhhh [target]
   class HMclMisc < Handler
     def setup
-      register_ping(:guest)
       register_clear(:guest)
       register_id(:guest)
       register_colors(:guest)
@@ -25,15 +24,6 @@ module Mcl
       register_strike(:mod)
       register_longwaydown(:builder)
       register_muuhhh(:mod)
-    end
-
-    def register_ping acl_level
-      register_command :ping, desc: "pongs you back and advertises self self self self self....", acl: acl_level do |player, args|
-        target = args.first || player
-        trawt(target, "MCL", {text: "Minecraft Listener (short MCL) here!", color: "gold", bold: true})
-        trawt(target, "MCL", {text: "I'm your loyal server wrapper written in ", color: "yellow"}, {text: "Ruby", color: "aqua"}, {text: "!", color: "yellow"})
-        trawt(target, "MCL", {text: "Find me @ ", color: "yellow"}, {text: "https://mcl.breitzeit.de", underlined: true, color: "", hoverEvent: {action: "show_text", value: "click me!"}, clickEvent:{action: "open_url", value: "https://mcl.breitzeit.de"}})
-      end
     end
 
     def register_clear acl_level
