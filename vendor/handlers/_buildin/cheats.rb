@@ -114,7 +114,7 @@ module Mcl
 
     def register_minecart acl_level
       register_command :minecart, desc: "summons a minecart above your or target's head", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon Minecart ~ ~2 ~"
+        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon MinecartRideable ~ ~2 ~"
       end
     end
 
