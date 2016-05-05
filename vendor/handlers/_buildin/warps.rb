@@ -28,7 +28,7 @@ module Mcl
           opt = OptionParser.new
           opt.on("-s") { muser = :__server }
           opt.on("-u USER", String) {|v| muser = v }
-          opt.parse!(args)
+          args = coord_save_optparse!(opt, args)
           name = args.shift.presence
           acl_verify(player, acl_mod) if muser != :__system && muser != player
 
@@ -61,7 +61,7 @@ module Mcl
       opt = OptionParser.new
       opt.on("-s") { muser = :__server }
       opt.on("-u USER", String) {|v| muser = v }
-      opt.parse!(args)
+      args = coord_save_optparse!(opt, args)
       name = args.shift.presence
       acl_verify(player, acl_srv) if muser == :__system
       acl_verify(player, acl_mod) if muser != :__system && muser != player
@@ -90,7 +90,7 @@ module Mcl
       opt = OptionParser.new
       opt.on("-s") { muser = :__server }
       opt.on("-u USER", String) {|v| muser = v }
-      opt.parse!(args)
+      args = coord_save_optparse!(opt, args)
       name = args.shift.presence
       acl_verify(player, acl_srv) if muser == :__system
       acl_verify(player, acl_mod) if muser != :__system && muser != player
@@ -112,7 +112,7 @@ module Mcl
       opt = OptionParser.new
       opt.on("-s") { muser = :__server }
       opt.on("-u USER", String) {|v| muser = v }
-      opt.parse!(args)
+      args = coord_save_optparse!(opt, args)
       name = args.shift.presence
       target = args.shift.presence || "@a"
       acl_verify(player, acl_mod) if muser != :__system && muser != player
@@ -141,7 +141,7 @@ module Mcl
       opt = OptionParser.new
       opt.on("-s") { muser = :__server }
       opt.on("-u USER", String) {|v| muser = v }
-      opt.parse!(args)
+      args = coord_save_optparse!(opt, args)
       name = args.shift.presence
       acl_verify(player, acl_mod) if muser != :__system && muser != player
 
@@ -192,7 +192,7 @@ module Mcl
       opt.on("-a") { all = true }
       opt.on("-s") { muser = :__server }
       opt.on("-u USER", String) {|v| muser = v }
-      opt.parse!(args)
+      args = coord_save_optparse!(opt, args)
       acl_verify(player, acl_mod) if muser != :__system && muser != player
 
       pram = memory(muser)
@@ -228,7 +228,7 @@ module Mcl
 
       if swarps.any?
         tellm(player, {text: "--- Showing #{"server " if muser == :__system}warps page #{page}/#{pages} (#{swarps.count} warps) ---", color: "aqua"})
-        page_contents[page-1].each {|warp| tellm(player, *warp) }
+        (page_contents[page-1]||[]).each {|warp| tellm(player, *warp) }
         if muser == :__system
           tellm(player, {text: "Use ", color: "aqua"}, {text: "-a", color: "light_purple"}, {text: " to show warps in other worlds.", color: "aqua"}) unless all
         else
@@ -298,6 +298,15 @@ module Mcl
             pram[$mcl.server.world].try(:delete, name.to_s)
           end
         end
+      end
+
+      def coord_save_optparse! opt, args
+        puts args.inspect
+        argp = args.map {|arg| arg.is_a?(String) && arg.match(/\A\-[0-9]+\z/) ? arg.gsub("-", "#%#") : arg }
+        puts argp.inspect
+        opt.parse!(argp)
+        puts argp.inspect
+        argp.map {|arg| arg.is_a?(String) && arg.match(/\A#%#[0-9]+\z/) ? arg.gsub("#%#", "-") : arg }.tap{|i| puts i.inspect }
       end
     end
     include Helper
