@@ -301,11 +301,8 @@ module Mcl
       end
 
       def coord_save_optparse! opt, args
-        puts args.inspect
         argp = args.map {|arg| arg.is_a?(String) && arg.match(/\A\-[0-9]+\z/) ? arg.gsub("-", "#%#") : arg }
-        puts argp.inspect
         opt.parse!(argp)
-        puts argp.inspect
         argp.map {|arg| arg.is_a?(String) && arg.match(/\A#%#[0-9]+\z/) ? arg.gsub("#%#", "-") : arg }.tap{|i| puts i.inspect }
       end
     end
