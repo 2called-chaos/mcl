@@ -6,6 +6,7 @@ module Mcl
   require "find"
   require "monitor"
   require "net/http"
+  require "httparty"
   require "open-uri"
   require "open3"
   require "optparse"
