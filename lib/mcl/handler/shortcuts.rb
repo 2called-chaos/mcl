@@ -50,6 +50,10 @@ module Mcl
         $mcl.async_call(&block)
       end
 
+      def sync &block
+        $mcl.sync(&block)
+      end
+
       def gm *a
         $mcl.server.gm(*a)
       end
