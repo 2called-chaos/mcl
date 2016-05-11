@@ -86,7 +86,7 @@ module Mcl
             end
             terminate($!, true)
           ensure
-            @socket.close
+            @socket.close rescue false
             @server.vanish(self)
           end
         end
