@@ -45,7 +45,8 @@ module Mcl
         cmd = cmd.to_s
         app.devlog "[SETUP]   Registering command `#{cmd}'", scope: "command_register"
         [
-          /<([^>]+)> \!(.+)/i,
+          /\A<([^>]+)> \!(.+)\z/i,
+          /\A\[([^\]]+)\] \!(.+)\z/i,
           /(.+) issued server command: \/\!(.+)/i,
         ].each do |pat|
           register(pat) do |res, r|
