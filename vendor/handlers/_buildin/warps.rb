@@ -299,12 +299,6 @@ module Mcl
           end
         end
       end
-
-      def coord_save_optparse! opt, args
-        argp = args.map {|arg| arg.is_a?(String) && arg.match(/\A\-[0-9]+\z/) ? arg.gsub("-", "#%#") : arg }
-        opt.parse!(argp)
-        argp.map {|arg| arg.is_a?(String) && arg.match(/\A#%#[0-9]+\z/) ? arg.gsub("#%#", "-") : arg }.tap{|i| puts i.inspect }
-      end
     end
     include Helper
   end

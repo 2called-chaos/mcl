@@ -83,6 +83,12 @@ module Mcl
           raise ArgumentError, "uncomparable versions: #{v1} (#{v1.class}) ?=? #{v2} (#{v2.class})"
         end
       end
+
+      def coord_save_optparse! opt, args
+        argp = args.map {|arg| arg.is_a?(String) && arg.match(/\A\-[0-9]+\z/) ? arg.gsub("-", "#%#") : arg }
+        opt.parse!(argp)
+        argp.map {|arg| arg.is_a?(String) && arg.match(/\A#%#[0-9]+\z/) ? arg.gsub("#%#", "-") : arg }
+      end
     end
   end
 end
