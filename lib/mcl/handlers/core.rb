@@ -170,7 +170,7 @@ module Mcl
       register_command :mclupdate, desc: "updates and reloads MCL via git", acl: acl_level do |player, args|
         traw("@a", "[MCL] Updating MCL...", color: "gold")
         traw("@a", "[MCL] git was: #{git_message}", color: "gold")
-        if system(%{cd "#{ROOT}" && git pull && bundle install --deployment})
+        if system(%{cd "#{ROOT}" && git checkout Gemfile.lock && git pull && bundle install})
           traw("@a", "[MCL] git now: #{git_message}", color: "gold")
           if args[0].present?
             announce_server_restart
