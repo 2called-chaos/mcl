@@ -163,7 +163,7 @@ module Mcl
     end
 
     def register_mclshell acl_level
-      register_command(:mclshell, desc: "ONLY FOR DEVELOPMENT (will freeze MCL)", acl: acl_level) { binding.pry }
+      register_command(:mclshell, desc: "ONLY FOR DEVELOPMENT (will freeze MCL)", acl: acl_level) {|player, args, handler, opt| binding.pry }
     end
 
     def register_mclupdate acl_level
