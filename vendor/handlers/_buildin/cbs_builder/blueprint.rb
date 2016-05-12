@@ -2,16 +2,18 @@ module Mcl
   class HMclCBSBuilder
     class Blueprint
       MAX_SPEC = Gem::Version.new("1.0")
-      attr_reader :data, :options, :tokens, :hooks, :grid, :src
+      attr_reader :data, :options, :tokens, :hooks, :grid, :src, :strict, :forced_grid_mode
 
-      def initialize yamlstr, url = false, strict = false
+      def initialize yamlstr, url = false, strict = false, force_gm = false
         @src = url
-        @data = _parse_data(yamlstr, strict)
+        @strict = strict
+        @data = _parse_data(yamlstr, @strict)
+        @forced_grid_mode = force_gm
         @options = _parse_options(@data["options"])
         @hooks = _parse_hooks(@data["hooks"])
         @tokens = _parse_tokens(@data["tokens"])
-        @grid = _parse_grid(@data["grid"], @data["grid_mode"], @tokens)
-        add_option("grid_mode", @data["grid_mode"], true)
+        @grid = _parse_grid(@data["grid"], grid_mode, @tokens)
+        add_option("grid_mode", grid_mode, true)
         volume # precalc
       end
 
@@ -19,15 +21,19 @@ module Mcl
         define_method(field) { @data[field] }
       end
 
+      def grid_mode
+        forced_grid_mode || @data["grid_mode"]
+      end
+
       def dimensions
         @_dimensions ||= begin
           layers = @grid.length
-          unless @data["grid_mode"].end_with?("c")
+          unless grid_mode.end_with?("c")
             mrow = @grid.map{|r| r.length }.max
             mcol = @grid.map{|r| r.map{|c| c.length }.max  }.max
           end
 
-          case @data["grid_mode"]
+          case grid_mode
             when "x" then [mrow, layers, mcol]
             when "y" then [layers, mrow, mcol]
             when "z" then [mcol, layers, mrow]
@@ -65,9 +71,9 @@ module Mcl
         raise "No key `name' specified but it is required!" if data["name"].blank?
 
         # grid_mode
-        raise "No key `grid_mode' specified but it is required!" if data["grid_mode"].blank?
+        raise "No key `grid_mode' specified but it is required!" if grid_mode.blank?
         valid_modes = _grid_modes(data["spec_version"])
-        raise "Invalid `grid_mode' specified `#{data["grid_mode"]}' not in `#{valid_modes.join(", ")}'!" if !valid_modes.include?(data["grid_mode"])
+        raise "Invalid `grid_mode' specified `#{grid_mode}' not in `#{valid_modes.join(", ")}'!" if !valid_modes.include?(grid_mode)
 
         # grid
         raise "No key `grid' specified but it is required!" if data["grid"].blank?
@@ -236,7 +242,7 @@ module Mcl
 
       def compile start_pos
         [].tap do |container|
-          case mode = @data["grid_mode"]
+          case mode = grid_mode
           when "x"
             x, y, z = start_pos
             grid.each_with_index do |layer, yd|

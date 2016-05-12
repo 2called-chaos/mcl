@@ -6,7 +6,7 @@ module Mcl
   # This allows you to write simple blueprints for command block related stuff (that's what it is intended for at least)
   # and let them build into your world. (e.g. write the stuff in your editor and magicly put it into the game)
   #
-  # !cbs load <url>
+  # !cbs load <url> [-s] [-g mode]
   # !cbs info
   # !cbs opt [option] [value]
   # !cbs air <t/f>
@@ -17,7 +17,7 @@ module Mcl
   # !cbs status
   # !cbs cancel
   # !cbs build [clear]
-  # !cbs one [<url> <x> <y> <z> [-aclpo]]
+  # !cbs one [<url> <x> <y> <z> [-acglops]]
   # !cbs sign <x> <y> <z> [-i]
   class HMclCBSBuilder < Handler
     def setup
@@ -30,8 +30,8 @@ module Mcl
         when "load", "info", "opt", "air", "pos", "pc", "ipos", "reset", "status", "cancel", "build", "one", "sign"
           send("com_#{args[0]}", player, args[1..-1])
         else
-          tellm(player, {text: "load <url>", color: "gold"}, {text: " load a remote CBS script", color: "reset"})
-          tellm(player, {text: "one [<url> <x> <y> <z> [-aclpo]]", color: "gold"}, {text: " all in one command", color: "reset"})
+          tellm(player, {text: "load <url> [-s] [-g mode]", color: "gold"}, {text: " load a remote CBS script", color: "reset"})
+          tellm(player, {text: "one [<url> <x> <y> <z> [-acglops]]", color: "gold"}, {text: " all in one command", color: "reset"})
           tellm(player, {text: "sign <x> <y> <z> [-i]", color: "gold"}, {text: " set all-in-one sign (-i alters sign text)", color: "reset"})
           tellm(player, {text: "info", color: "gold"}, {text: " show details about current script", color: "reset"})
           tellm(player, {text: "opt <option> [value|-]", color: "gold"}, {text: " show/set/unset script options", color: "reset"})
@@ -50,7 +50,10 @@ module Mcl
 
     module Commands
       def com_load player, args, &callback
-        bp, url = current_blueprint(player), args[0]
+        strict = args.delete("-s")
+        bp, url = current_blueprint(player), args.shift
+        force_gm = args.shift if args.delete("-g")
+
 
         if bp && bp.building
           tellm(player, {text: "Build in progress!", color: "red"})
@@ -64,7 +67,7 @@ module Mcl
                 tellm(player, {text: "Loading, hang on tight...", color: "gray"})
               }
             end
-            load_blueprint(url) do |blueprint, ex|
+            load_blueprint(url, strict, force_gm) do |blueprint, ex|
               t.kill
               begin
                 raise ex if ex
@@ -120,6 +123,8 @@ module Mcl
           tellm(player, {text: "Desc: ", color: "gold"}, {text: bp._.description, color: "yellow"}) if bp._.description
 
           tellm(player, {text: "Dimensions: ", color: "gold"}, {text: bp._.dimensions.join("x"), color: "yellow"}, {text: " = #{bp._.volume} blocks", color: "gray"})
+          forced = bp._.forced_grid_mode ? {text: " (forced to #{bp._.forced_grid_mode})", color: "red"} : {}
+          tellm(player, {text: "Grid mode: ", color: "gold"}, {text: bp._.grid_mode, color: "yellow"}, forced)
 
           tell_options(player, bp._.options)
         end
@@ -292,11 +297,13 @@ module Mcl
 
       def com_one player, args
         if args.any?
-          noair, clear, pc, build, bopts = false, false, false, true, {}
+          noair, clear, gm, pc, strict, build, bopts = false, false, false, false, false, true, {}
           opt = OptionParser.new
           opt.on("-a") { noair = true }
           opt.on("-c") { clear = true }
           opt.on("-l") { build = false }
+          opt.on("-s") { strict = false }
+          opt.on("-g gm", String) {|v| gm = v }
           opt.on("-p xyz", String) {|v| pc = v }
           opt.on("-o n=v", String) {|v|
             c = v.split("=")
@@ -309,7 +316,10 @@ module Mcl
 
           if url
             if x && y && z
-              com_load(player, [url]) do |p, b|
+              largs = [url]
+              largs << "-s" if strict
+              largs << "-g #{gm}" if gm
+              com_load(player, largs) do |p, b|
                 com_pos(player, [x, y, z]) do
                   com_pc(player, [pc]) if pc
                   com_air(player, ["f"]) if noair
@@ -325,12 +335,14 @@ module Mcl
             tellm(player, {text: "URL missing, abort!", color: "red"})
           end
         else
-          tellm(player, {text: "!cbs one [<url> <x> <y> <z> [-acpo]]", color: "gold"})
+          tellm(player, {text: "!cbs one [<url> <x> <y> <z> [-acglops]]", color: "gold"})
           tellm(player, {text: "  -a", color: "aqua"}, {text: " don't copy air (!cbs air false)", color: "reset"})
           tellm(player, {text: "  -c", color: "aqua"}, {text: " clear area before build (!cbs build clear)", color: "reset"})
+          tellm(player, {text: "  -g gm", color: "aqua"}, {text: " force grid mode", color: "reset"})
           tellm(player, {text: "  -l", color: "aqua"}, {text: " load only (doesn't build, does (-c)lear)", color: "reset"})
-          tellm(player, {text: "  -p", color: "aqua"}, {text: " define xyz corner (!cbs pc)", color: "reset"})
+          tellm(player, {text: "  -p xyz", color: "aqua"}, {text: " define xyz corner (!cbs pc)", color: "reset"})
           tellm(player, {text: "  -o \"name=value\"", color: "aqua"}, {text: " set options (!cbs opt)", color: "reset"})
+          tellm(player, {text: "  -s", color: "aqua"}, {text: " load with strict mode", color: "reset"})
           if bp = current_blueprint(player)
             tellm(player, {text: "Command for your settings:", color: "yellow"})
             valid, command = one_command(bp)
@@ -411,6 +423,8 @@ module Mcl
             valid = false
           end
           c << "-a" unless bp.air?
+          c << "-s" if bp._.strict
+          c << "-g #{bp._.forced_grid_mode}" if bp._.forced_grid_mode
           c << "-p #{bp.pc}" unless bp.pc == "xyz"
 
           # options
@@ -505,7 +519,7 @@ module Mcl
         end
       end
 
-      def load_blueprint url, &callback
+      def load_blueprint url, strict = false, force_gm = false, &callback
         raise ArgumentError, "callback block required" unless callback
         async do
           catch :stop_execution do
@@ -519,7 +533,7 @@ module Mcl
 
             # load
             begin
-              blueprint = Blueprint.new(content, url)
+              blueprint = Blueprint.new(content, url, strict, force_gm)
             rescue StandardError => ex
               sync { callback.call(content, ex) }
               throw :stop_execution
