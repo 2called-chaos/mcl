@@ -121,10 +121,11 @@ module Mcl
           tellm(player, {text: "Name: ", color: "gold"}, {text: bp._.name, color: "yellow"})
           tellm(player, {text: "Version: ", color: "gold"}, {text: bp._.version, color: "yellow"}) if bp._.version
           tellm(player, {text: "Desc: ", color: "gold"}, {text: bp._.description, color: "yellow"}) if bp._.description
-
           tellm(player, {text: "Dimensions: ", color: "gold"}, {text: bp._.dimensions.join("x"), color: "yellow"}, {text: " = #{bp._.volume} blocks", color: "gray"})
-          forced = bp._.forced_grid_mode ? {text: " (forced to #{bp._.forced_grid_mode})", color: "red"} : {}
-          tellm(player, {text: "Grid mode: ", color: "gold"}, {text: bp._.grid_mode, color: "yellow"}, forced)
+
+          gmargs = [{text: "Grid mode: ", color: "gold"}, {text: bp._.data["grid_mode"], color: "yellow"}]
+          gmargs << {text: " (forced to #{bp._.forced_grid_mode})", color: "red"} if bp._.forced_grid_mode
+          tellm(player, *gmargs)
 
           tell_options(player, bp._.options)
         end

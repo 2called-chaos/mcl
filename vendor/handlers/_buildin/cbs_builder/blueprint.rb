@@ -71,9 +71,10 @@ module Mcl
         raise "No key `name' specified but it is required!" if data["name"].blank?
 
         # grid_mode
-        raise "No key `grid_mode' specified but it is required!" if grid_mode.blank?
+        gmode = forced_grid_mode || data["grid_mode"]
+        raise "No key `grid_mode' specified but it is required!" if gmode.blank?
         valid_modes = _grid_modes(data["spec_version"])
-        raise "Invalid `grid_mode' specified `#{grid_mode}' not in `#{valid_modes.join(", ")}'!" if !valid_modes.include?(grid_mode)
+        raise "Invalid `grid_mode' specified `#{gmode}' not in `#{valid_modes.join(", ")}'!" if !valid_modes.include?(gmode)
 
         # grid
         raise "No key `grid' specified but it is required!" if data["grid"].blank?
