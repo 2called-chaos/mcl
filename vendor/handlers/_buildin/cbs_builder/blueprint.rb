@@ -11,6 +11,7 @@ module Mcl
         @hooks = _parse_hooks(@data["hooks"])
         @tokens = _parse_tokens(@data["tokens"])
         @grid = _parse_grid(@data["grid"], @data["grid_mode"], @tokens)
+        add_option("grid_mode", @data["grid_mode"], true)
         volume # precalc
       end
 
