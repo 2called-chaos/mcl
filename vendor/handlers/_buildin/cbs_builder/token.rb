@@ -118,21 +118,6 @@ module Mcl
       def _command coord, payload
         %{ #{payload.strip[0] == "/" ? payload : "/#{payload}"} }.strip
       end
-
-      # def value
-      #   @value || default
-      # end
-
-      # def value= val
-      #   case @allowed
-      #     when NilClass, "string" then nil
-      #     when "integer"
-      #       raise "`#{val}' is not an integer" unless val.to_s =~ /\A(\-)?([0-9]+)\z/
-      #     else
-      #       raise "unknown allow filter `#{@allowed}'"
-      #   end
-      #   @value = val
-      # end
     end
   end
 end
