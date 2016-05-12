@@ -90,8 +90,8 @@ module Mcl
         end
 
         data
-      rescue
-        raise "Failed to load blueprint, is the syntax correct? (#{$!.message}"
+      rescue StandardError => ex
+        raise "Failed to load blueprint, is the syntax correct? (#{ex.message})"
       end
 
       def _valid_keys spec_version
