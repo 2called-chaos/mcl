@@ -136,7 +136,7 @@ module Mcl
         [].tap do |grid|
           grid_data.each do |page|
             if grid_mode.end_with?("c")
-              grid << Token.new(page.gsub("\n", "").squeeze(" "))
+              _parse_row(page.gsub("\n", "").squeeze(" "), tokens, true).each {|t| grid << t }
             else
               grid << [].tap {|layer|
                 lines = page.split("\n").map(&:strip).reject(&:blank?)
@@ -155,22 +155,18 @@ module Mcl
         end
       end
 
-      def _parse_row row_data, tokens
+      def _parse_row row_data, tokens, single_token = false
+        lends = {"<" => ">", "[" => "]", "{" => "}"}
+        literal_start = /\A([0-9]+)?((<|\[|\{)(?:.*))\z/
+        literal_full = /\A([0-9]+)?((<|\[|\{)(?:.*)(?:>|\]|\}))\z/
+        token_full = /\A([0-9]+)?([^0-9]{1}[^\s]*)\z/i
+
         [].tap do |row|
-          rbuf = row_data.split(/\s+/)
-          until rbuf.empty?
-            item = rbuf.shift
-            if m = item.match(/\A([0-9+])?(<|\[|\{)(.*)\z/)
-              count, literal, token = m[1], m[2], "#{m[2]}#{m[3]}"
-              literalend = {"<" => ">", "[" => "]", "{" => "}"}[literal]
-              until token.end_with?(literalend)
-                if rbuf.empty?
-                  raise "unclosed literal #{literal} in `#{row_data}'"
-                end
-                token << " " << rbuf.shift
-              end
+          if single_token
+            if m = row_data.match(literal_full)
+              count, token, literal = m[1], m[2], m[3]
               (count.presence ? count.to_i : 1).times {|i| row << Token.new(token, i: i) }
-            elsif m = item.match(/\A([0-9]+)?([^0-9]+)\z/i)
+            elsif m = row_data.match(token_full)
               count, token = m[1], m[2]
               (count.presence ? count.to_i : 1).times {|i|
                 tk = tokens[token]
@@ -178,7 +174,32 @@ module Mcl
                 row << (tk.variables? ? tk.fork(i: i) : tk)
               }
             else
-              raise "Unknown parse error `#{item}'"
+              raise "Unknown parse error `#{token}'"
+            end
+          else
+            rbuf = row_data.split(/\s+/)
+            until rbuf.empty?
+              item = rbuf.shift
+              if m = item.match(literal_start)
+                count, token, literal = m[1], m[2], m[3]
+                literalend = lends[literal]
+                until token.end_with?(literalend)
+                  if rbuf.empty?
+                    raise "unclosed literal #{literal} in `#{row_data}'"
+                  end
+                  token << " " << rbuf.shift
+                end
+                (count.presence ? count.to_i : 1).times {|i| row << Token.new(token, i: i) }
+              elsif m = item.match(token_full)
+                count, token = m[1], m[2]
+                (count.presence ? count.to_i : 1).times {|i|
+                  tk = tokens[token]
+                  raise "undefined token `#{token}'" unless tk
+                  row << (tk.variables? ? tk.fork(i: i) : tk)
+                }
+              else
+                raise "Unknown parse error `#{item}'"
+              end
             end
           end
         end
