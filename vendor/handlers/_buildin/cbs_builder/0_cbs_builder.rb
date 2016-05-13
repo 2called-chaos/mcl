@@ -1,5 +1,3 @@
-# sign
-# commandblock tokens
 module Mcl
   Mcl.reloadable(:HMclCBSBuilder)
   ## CommandBlockScript builder
@@ -526,7 +524,11 @@ module Mcl
           catch :stop_execution do
             # fetch
             begin
-              content = HTTParty.get(url)
+              if url.start_with?("ex:")
+                content = File.read("#{File.dirname(__FILE__)}/_examples/#{url[3..-1].gsub(/[^a-z0-9_\-]/i, "")}.yml")
+              else
+                content = HTTParty.get(url)
+              end
             rescue StandardError => ex
               sync { callback.call(false, ex) }
               throw :stop_execution

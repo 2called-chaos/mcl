@@ -118,12 +118,16 @@ module Mcl
         end
       end
 
+      def _compact_multirow input
+        input.split("\n").reject{|l| l.strip.start_with?("#") }.join(" ").squeeze(" ")
+      end
+
       def _parse_hooks hooks_data
         { "load" => [], "before" => [], "after" => [] }.tap do |hooks|
           hooks_data.each do |type, commands|
             if %w[load before after].include?(type)
               commands.each do |cmd|
-                hooks[type] << Token.new("{#{cmd.gsub("\n", "").squeeze(" ")}}") if cmd.present?
+                hooks[type] << Token.new("{#{_compact_multirow(cmd)}}") if cmd.present?
               end if commands.respond_to?(:each)
             else
               raise "unknown hook type `#{type}', allowed keys are load, before and after"
@@ -135,7 +139,7 @@ module Mcl
       def _parse_tokens token_data
         {}.tap do |tokens|
           token_data.each do |name, value|
-            tokens[name] = Token.new(value.gsub("\n", "").squeeze(" ")) if value.present?
+            tokens[name] = Token.new(_compact_multirow(value)) if value.present?
           end if token_data
         end
       end
@@ -144,7 +148,7 @@ module Mcl
         [].tap do |grid|
           grid_data.each do |page|
             if grid_mode.end_with?("c")
-              _parse_row(page.gsub("\n", "").squeeze(" "), tokens, true).each {|t| grid << t }
+              _parse_row(_compact_multirow(page), tokens, true).each {|t| grid << t }
             else
               grid << [].tap {|layer|
                 lines = page.split("\n").map(&:strip).reject(&:blank?)
@@ -178,11 +182,11 @@ module Mcl
               count, token = m[1], m[2]
               (count.presence ? count.to_i : 1).times {|i|
                 tk = tokens[token]
-                raise "undefined token `#{token}'" unless tk
+                raise "undefined token `#{token}' in `#{row_data}'" unless tk
                 row << (tk.variables? ? tk.fork(i: i) : tk)
               }
             else
-              raise "Unknown parse error `#{token}'"
+              raise "Unknown parse error `#{row_data}'"
             end
           else
             rbuf = row_data.split(/\s+/)
@@ -190,19 +194,22 @@ module Mcl
               item = rbuf.shift
               if m = item.match(literal_start)
                 count, token, literal = m[1], m[2], m[3]
+                had_space = token !~ /\A#{Regexp.escape(literal)}[#{Regexp.escape("+~!-^v><\\")}]+/i
                 literalend = lends[literal]
-                until token.end_with?(literalend)
+                while token.end_with?("\\#{literalend}") || !(had_space && token.end_with?(literalend))
                   if rbuf.empty?
                     raise "unclosed literal #{literal} in `#{row_data}'"
                   end
                   token << " " << rbuf.shift
+                  had_space = true
                 end
+                token.gsub!("\\#{literalend}", "#{literalend}")
                 (count.presence ? count.to_i : 1).times {|i| row << Token.new(token, i: i) }
               elsif m = item.match(token_full)
                 count, token = m[1], m[2]
                 (count.presence ? count.to_i : 1).times {|i|
                   tk = tokens[token]
-                  raise "undefined token `#{token}'" unless tk
+                  raise "undefined token `#{token}' in `#{row_data}'" unless tk
                   row << (tk.variables? ? tk.fork(i: i) : tk)
                 }
               else
@@ -217,7 +224,7 @@ module Mcl
         @hooks[type.to_s].map do |hook|
           case type.to_s
           when "load"
-            hook.compile([0, 0, 0], options)
+            hook.compile([0, 0, 0], :south, options)
           when "before", "after"
             if start_pos || end_pos
               nopts = options.dup
@@ -234,7 +241,7 @@ module Mcl
             else
               nopts = options
             end
-            hook.compile([0, 0, 0], nopts)
+            hook.compile([0, 0, 0], :south, nopts)
           else
             raise "unknown hook type `#{type}', allowed keys are load, before and after"
           end

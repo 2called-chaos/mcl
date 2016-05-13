@@ -1,0 +1,34 @@
+# required
+spec_version: 1.0
+name: "hook test"
+
+# optional
+author_name: "2called-chaos"
+author_url: "https://github.com/2called-chaos"
+description: "Hook test"
+
+grid_mode: z
+grid:
+  - "3[diamond_block]"
+
+hooks:
+  # no extra variables
+  load:
+    - |
+      /say LOAD %player% %grid_mode%
+  # sx sy sz ex ey ez
+  before:
+    - |
+      /say START %player% %grid_mode% %sx% %sy% %sz% - %ex% %ey% %ez%
+    - |
+      /tellraw [
+        {"text": "We can use multiline command stuff like this", "color": "blue"},
+        {
+          "text": "or this",
+          "color": "red"
+        }
+      ]
+  # sx sy sz ex ey ez
+  after:
+    - |
+      /say DONE %player% %grid_mode% %sx% %sy% %sz% - %ex% %ey% %ez%

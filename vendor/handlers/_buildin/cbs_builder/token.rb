@@ -140,7 +140,7 @@ module Mcl
 
         # compile data value
         bin = cbopts[:conditional] ? "1" : "0"
-        case direction
+        case cbopts[:direction]
           when :down then  bin << 0.to_s(2).rjust(3, "0")
           when :up then    bin << 1.to_s(2).rjust(3, "0")
           when :north then bin << 2.to_s(2).rjust(3, "0")

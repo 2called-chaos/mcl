@@ -1,0 +1,20 @@
+# required
+spec_version: 1.0
+name: "command grid test"
+
+# optional
+author_name: "2called-chaos"
+author_url: "https://github.com/2called-chaos"
+description: "Build a grid with command blocks to test modifiers"
+
+grid_mode: z
+grid:
+  - |
+    </say hello %player%>   </say hello %player%>
+    10<+- say hello %i%>    10<+- /say hello %i%>
+    <!~^ say hello>         <!~^ /say hello>
+    <!~v say hello>         <!~v /say hello>
+    <!~< say hello>         <!~< /say hello>
+    <!~> say hello>         <!~> /say hello>
+    <!~\ say hello\> im >   <!~\ /say hello>
+    3[diamond_block]

@@ -1,0 +1,41 @@
+# required
+spec_version: 1.0
+name: "command row test"
+
+# optional
+author_name: "2called-chaos"
+author_url: "https://github.com/2called-chaos"
+description: "Build a row with command blocks to test modifiers"
+
+grid_mode: zc
+grid:
+  - |
+    <
+      /say hello %player%
+    >
+  - |
+    10<+-
+      /say hello %i%
+    >
+  - |
+    <!~^
+      /say
+      # comment
+      hello
+    >
+  - |
+    <!~v
+      /say hello
+    >
+  - |
+    <!~<
+      /say hello
+    >
+  - |
+    <!~>
+      /say hello
+    >
+  - |
+    <!~\\
+      /say hello
+    >
