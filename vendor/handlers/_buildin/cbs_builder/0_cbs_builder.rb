@@ -491,7 +491,7 @@ module Mcl
           {text: "#{bp.start_pos.join(" ")}", color: "aqua"},
           {text: " => ", color: "yellow"},
           {text: "#{bp.end_pos.join(" ")}", color: "aqua"}
-        )
+        ) if bp.start_pos
       end
 
       def require_blueprint player, req_nobuild = true
