@@ -317,7 +317,8 @@ module Mcl
             if x && y && z
               largs = [url]
               largs << "-s" if strict
-              largs << "-g #{gm}" if gm
+              largs << "-g" if gm
+              largs << gm if gm
               com_load(player, largs) do |p, b|
                 com_pos(player, [x, y, z]) do
                   com_pc(player, [pc]) if pc
