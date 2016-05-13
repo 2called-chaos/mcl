@@ -367,7 +367,7 @@ module Mcl
           infosign = args.delete("-i")
 
           if (args.count == 1 && args.first == "~") || args.count == 3
-            if valid && command.length <= 100
+            if valid
               detect_relative_coordinate(player, args) do |npos|
                 tellm(player, {text: "Attempted to update sign at ", color: "yellow"}, {text: "#{npos.join(" ")}", color: "aqua"})
                 txt = {}
@@ -380,10 +380,6 @@ module Mcl
                   /blockdata #{npos.join(" ")} {#{txt.map{|k,v| %{#{k}:"#{v}"} }.join(",")}}
                 }.gsub("\n", "").squeeze(" ")
               end
-            elsif valid
-              tellm(player, {text: "Abort, one-command is too long!", color: "red"})
-              tellm(player, {text: "#{command.length} exceeds 100 limit by #{command.length - 100} characters", color: "gray"})
-              tellm(player, {text: "Shorten URL or fork script to reduce options!", color: "red"})
             else
               tellm(player, {text: "Insertion point required!", color: "red"})
             end
