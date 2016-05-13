@@ -15,6 +15,6 @@ grid:
     <!~^ say hello>         <!~^ /say hello>
     <!~v say hello>         <!~v /say hello>
     <!~< say hello>         <!~< /say hello>
-    <!~> say hello>         <!~> /say hello>
-    <!~\ say hello\> im >   <!~\ /say hello>
+    <!~> say he>llo>        <!~> /say he>llo>
+    <!~\ say hello\> im >   <!~\ say hello\> im >
     3[diamond_block]

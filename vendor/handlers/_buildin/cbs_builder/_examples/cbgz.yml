@@ -1,0 +1,23 @@
+# required
+spec_version: 1.0
+name: "command grid test z"
+
+# optional
+author_name: "2called-chaos"
+author_url: "https://github.com/2called-chaos"
+description: "Build a grid with command blocks to test modifiers"
+
+grid_mode: z
+grid:
+  - |
+    </say hello %player%> </say hello %player%>
+    <^ say hello>         <^ say hello>
+    <v say hello>         <v say hello>
+    << say hello>         << say hello>
+    <> say he>llo>        <> say he>llo>
+    <\ say hello\> im >   <\ say hello\> im >
+
+# z: (horizontally layered front->back)
+#  each column (->) moves on +x
+#  each line (v) moves on +z
+#  each page moves +y

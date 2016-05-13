@@ -73,67 +73,89 @@ module Mcl
         }
       end
 
-      def relative_facing original, relative
-        case original
-        when :east
-          case relative
+      def relative_facing grid_mode, turn = false
+        case grid_mode
+        when "x"
+          case turn
+            when :back  then :down
+            when :right then :south
+            when :left  then :north
+            when :up    then :west
+            when :down  then :up
+            else :east
+          end
+        when "y"
+          case turn
+            when :back  then :west
+            when :right then :south
+            when :left  then :north
+            when :up    then :up
+            when :down  then :east
+            else :down
+          end
+        when "z"
+          case turn
+            when :back  then :up
+            when :right then :east
+            when :left  then :west
+            when :up    then :north
+            when :down  then :down
+            else :south
+          end
+        when "xc"
+          case turn
             when :back  then :west
             when :right then :south
             when :left  then :north
             when :up    then :up
             when :down  then :down
+            else :east
           end
-        when :south
-          case relative
-            when :back  then :north
-            when :right then :west
-            when :left  then :east
-            when :up    then :up
-            when :down  then :down
-          end
-        when :up
-          case relative
+        when "yc"
+          case turn
             when :back  then :down
             when :right then :west
             when :left  then :east
             when :up    then :south
             when :down  then :north
+            else :up
           end
-        when :down
-          case relative
-            when :back  then :up
+        when "zc"
+          case turn
+            when :back  then :north
             when :right then :west
             when :left  then :east
-            when :up    then :south
-            when :down  then :north
+            when :up    then :up
+            when :down  then :down
+            else :south
           end
         end
       end
 
-      def compile coord, direction, opts = {}
+      def compile coord, grid_mode, opts = {}
         res = payload.dup
         token_opts.each {|_, opt| opt.apply!(res) }
         opts.each {|_, opt| opt.apply!(res) }
         coord_opts(coord).each {|_, opt| opt.apply!(res) }
 
         [:command_block, :setblock, :command].detect do |m|
-          return __send__(:"_#{m}", coord, direction, res) if __send__(:"#{m}?")
+          return __send__(:"_#{m}", coord, grid_mode, res) if __send__(:"#{m}?")
         end || res
       end
 
-      def _command_block coord, direction, payload
-        cbopts = { block: "command_block", direction: direction, conditional: false, always_active: false }
+      def _command_block coord, grid_mode, payload
+        cbopts = { block: "command_block", direction: relative_facing(grid_mode), conditional: false, always_active: false }
         modifiers.each do |mod|
           case mod
             when "+" then cbopts[:block] = "chain_command_block"
             when "~" then cbopts[:block] = "repeating_command_block"
             when "!" then cbopts[:conditional] = true
             when "-" then cbopts[:always_active] = true
-            when "\\" then cbopts[:direction] = relative_facing(direction, :back)
-            when ">" then cbopts[:direction] = relative_facing(direction, :right)
-            when "<" then cbopts[:direction] = relative_facing(direction, :left)
-            when "^" then cbopts[:direction] = relative_facing(direction, :up)
-            when "v" then cbopts[:direction] = relative_facing(direction, :down)
+            when "\\" then cbopts[:direction] = relative_facing(grid_mode, :back)
+            when ">" then cbopts[:direction] = relative_facing(grid_mode, :right)
+            when "<" then cbopts[:direction] = relative_facing(grid_mode, :left)
+            when "^" then cbopts[:direction] = relative_facing(grid_mode, :up)
+            when "v" then cbopts[:direction] = relative_facing(grid_mode, :down)
             else raise("unknown modifier #{mod} in `#{@data}'")
           end
         end if modifiers
@@ -164,11 +186,11 @@ module Mcl
         %{ /setblock #{coord.join(" ")} minecraft:#{cbopts[:block]} #{bin.to_i(2)} replace {#{datatag}} }.strip
       end
 
-      def _setblock coord, direction, payload
+      def _setblock coord, grid_mode, payload
         %{ /setblock #{coord.join(" ")} #{payload} }.strip
       end
 
-      def _command coord, direction, payload
+      def _command coord, grid_mode, payload
         %{ #{payload.strip[0] == "/" ? payload : "/#{payload}"} }.strip
       end
     end
