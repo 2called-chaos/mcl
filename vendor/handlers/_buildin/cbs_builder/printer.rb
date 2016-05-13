@@ -40,9 +40,9 @@ module Mcl
         return false unless @pos
         @pos.dup.tap do |pos|
           xd, yd, zd = blueprint.dimensions
-          pos[0] -= xd if pc["X"]
-          pos[1] -= yd if pc["Y"]
-          pos[2] -= zd if pc["Z"]
+          pos[0] -= xd - 1 if pc["X"]
+          pos[1] -= yd - 1 if pc["Y"]
+          pos[2] -= zd - 1 if pc["Z"]
         end
       end
 
@@ -50,9 +50,9 @@ module Mcl
         return false unless @pos
         @pos.dup.tap do |pos|
           xd, yd, zd = blueprint.dimensions
-          pos[0] += xd if pc["x"]
-          pos[1] += yd if pc["y"]
-          pos[2] += zd if pc["z"]
+          pos[0] += xd - 1 if pc["x"]
+          pos[1] += yd - 1 if pc["y"]
+          pos[2] += zd - 1 if pc["z"]
         end
       end
 
