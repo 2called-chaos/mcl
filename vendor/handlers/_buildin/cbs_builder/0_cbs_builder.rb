@@ -349,7 +349,7 @@ module Mcl
             if valid && command.length <= 100
               tellm(player, {text: command, color: "green"})
             elsif valid
-              tellm(player, {text: command, color: "gold", hoverEvent: {action: "show_text", value: "command is too long for chat/sign (shorten URL?))"}})
+              tellm(player, {text: command, color: "gold", hoverEvent: {action: "show_text", value: "command is too long for chat (shorten URL?))"}})
             else
               tellm(player, {text: command, color: "red", hoverEvent: {action: "show_text", value: "invalid: missing position"}})
             end
@@ -375,7 +375,7 @@ module Mcl
                   txt[bp._.src ? "Text2" : "Text3"] = {text: "#{bp._.name}", color: "blue"}.to_json.gsub('"', '\"')
                   txt["Text3"] = {text: bp._.src.to_s.gsub(/http(s)?:\/\//, ""), color: "dark_gray"}.to_json.gsub('"', '\"') if bp._.src
                 end
-                txt["Text4"] = {text: "» click 2 update «", color: "dark_red", clickEvent: {action: "run_command", value: "/say #{command}"}}.to_json.gsub('"', '\\"')
+                txt["Text4"] = {text: "» click 2 update «", color: "dark_red", clickEvent: {action: "run_command", value: "/say #{command.gsub("\\", "\\\\\\")}"}}.to_json.gsub('"', '\\"')
                 $mcl.server.invoke %{
                   /blockdata #{npos.join(" ")} {#{txt.map{|k,v| %{#{k}:"#{v}"} }.join(",")}}
                 }.gsub("\n", "").squeeze(" ")
