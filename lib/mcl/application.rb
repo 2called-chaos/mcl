@@ -20,6 +20,9 @@ module Mcl
         ensure_directories
         setup_logger
 
+        # debug environment
+        debug_env
+
         # save booted version
         @booted_mcl_rev = Mcl.git_message
         log.warn "[SETUP] You use an old git version, commit messages will appear as %B but updating will work fine!" if @booted_mcl_rev == "%B"
@@ -41,6 +44,27 @@ module Mcl
         Thread.main[:mcl_original_exception] = nil
         raise
       end
+    end
+
+    def debug_env
+      log.debug "[ENV]             PATH: #{ENV["PATH"]}"
+      log.debug "[ENV]      GIT_VERSION: #{`git --version`.chomp}"
+      log.debug "[ENV]     RUBY_VERSION: #{RUBY_VERSION}"
+      log.debug "[ENV] RUBY_DESCRIPTION: #{RUBY_DESCRIPTION}"
+      log.debug "[ENV]         RUBY_BIN: #{debug_which "ruby"}"
+      log.debug "[ENV]       MCL COMMIT: #{Mcl.git_message}"
+      log.debug "[ENV]          MCL SHA: #{Mcl.git_sha}"
+    end
+
+    def debug_which(cmd)
+      exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+      ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+        exts.each { |ext|
+          exe = File.join(path, "#{cmd}#{ext}")
+          return exe if File.executable?(exe) && !File.directory?(exe)
+        }
+      end
+      return nil
     end
 
     def loop!
