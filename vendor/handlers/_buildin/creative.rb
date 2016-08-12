@@ -51,16 +51,20 @@ module Mcl
     def register_npc_inventory acl_level
       register_command :npcinv, desc: "clears or sets all slots of entities to given item", acl: acl_level do |player, args|
         if args.empty?
-          trawt(player, "NPCinv", {text: "Usage: !npcinv <selector> [<item> [slots]]", color: "aqua"})
+          trawt(player, "NPCinv", {text: "Usage: !npcinv <selector> [<item[:amount]> [slots]]", color: "aqua"})
           trawt(player, "NPCinv", {text: "Slot may be a range from 0-7, default: all 8 slots", color: "aqua"})
           trawt(player, "NPCinv", {text: "e.g. !npcinv @e[type=Villager,r=10] wheat_seeds 0-6 7", color: "aqua"})
         else
           selector = args.shift
-          item = args.shift
+          item = args.shift || "air"
+          item << "/64" unless item["/"]
+          item, amount = item.split("/")
           slots = args.join(",").sub(",,", ",") if item
-          StringExpandRange.expand("[#{slots}]").each do |slot|
-            $mcl.server.invoke "/replaceitem #{selector} slot.villager.#{slot} #{item || "air"}"
+          all_slots = StringExpandRange.expand("[#{slots}]")
+          all_slots.each do |slot|
+            $mcl.server.invoke "/replaceitem entity #{selector} slot.villager.#{slot} #{item || "air"} #{amount}"
           end
+          trawt(player, "NPCinv", {text: "executed #{all_slots.length} commands", color: "green"})
         end
       end
     end
