@@ -62,7 +62,7 @@ module Mcl
           slots = args.join(",").sub(",,", ",") if item
           all_slots = StringExpandRange.expand("[#{slots}]")
           all_slots.each do |slot|
-            $mcl.server.invoke "/replaceitem entity #{selector} slot.villager.#{slot} #{item || "air"} #{amount}"
+            $mcl.server.invoke "/execute #{player} ~ ~ ~ /replaceitem entity #{selector} slot.villager.#{slot} #{item || "air"} #{amount}"
           end
           trawt(player, "NPCinv", {text: "executed #{all_slots.length} commands", color: "green"})
         end
