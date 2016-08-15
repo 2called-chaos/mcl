@@ -180,7 +180,9 @@ module Mcl
 
     def spool_event ev
       @event_backlog << ev
-      @event_backlog = @event_backlog.last(@config["event_backlog"] || 100)
+      while @event_backlog.length > (@config["event_backlog"] || 100)
+        @event_backlog.shift
+      end
     end
 
     def log_backlog lines = 100
