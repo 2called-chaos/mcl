@@ -8,6 +8,8 @@ module Mcl
             _print_line c("  #{TCOM_PREF}help                        ", :cyan) << c("shows this help", :yellow)
             _print_line c("  #{TCOM_PREF}exit                        ", :cyan) << c("closes connection and console", :yellow)
             _print_line c("  #{TCOM_PREF}reconnect                   ", :cyan) << c("reconnect to the console server", :yellow)
+            _print_line c("  #{TCOM_PREF}autoretry                   ", :cyan) << c("enable or disable auto reconnect on connection loss", :yellow)
+            _print_line c("  #{TCOM_PREF}colorize                    ", :cyan) << c("enable or disable colored output", :yellow)
             _print_line c("  #{TCOM_PREF}snoop [on/off]              ", :cyan) << c("shows or controls protocol snoop", :yellow)
             _print_line c("  #{TCOM_PREF}debug [on/off]              ", :cyan) << c("shows or controls debug output", :yellow)
             _print_line c("  #{TCOM_PREF}ps1 [help|ps1-expr]         ", :cyan) << c("shows or updates your ps1", :yellow)
@@ -45,9 +47,32 @@ module Mcl
           if args[0]
             @opts[:snoop] = strbool(args[0])
             print_line c("Protocol snooping is now ", :cyan) << (@opts[:snoop] ? c("enabled", :green) : c("disabled", :red))
+            print_line c("Warning: config file will not be updated! (CLI settings passed)", :red) if $cc_forced_settings
           else
             print_line c("# ?snoop [on/off]", :magenta)
             print_line c("Protocol snooping is currently ", :cyan) << (@opts[:snoop] ? c("enabled", :green) : c("disabled", :red))
+          end
+        end
+
+        def _tc_autoretry args, str
+          if args[0]
+            @opts[:reconnect] = strbool(args[0])
+            print_line c("Auto retry is now ", :cyan) << (@opts[:reconnect] ? c("enabled", :green) : c("disabled", :red))
+            print_line c("Warning: config file will not be updated! (CLI settings passed)", :red) if $cc_forced_settings
+          else
+            print_line c("# ?autoretry [on/off]", :magenta)
+            print_line c("Auto retry is currently ", :cyan) << (@opts[:reconnect] ? c("enabled", :green) : c("disabled", :red))
+          end
+        end
+
+        def _tc_colorize args, str
+          if args[0]
+            @opts[:colorize] = strbool(args[0])
+            print_line c("Colored output is now ", :cyan) << (@opts[:colorize] ? c("enabled", :green) : c("disabled", :red))
+            print_line c("Warning: config file will not be updated! (CLI settings passed)", :red) if $cc_forced_settings
+          else
+            print_line c("# ?colorize [yes/no]", :magenta)
+            print_line c("Colored output is currently ", :cyan) << (@opts[:colorize] ? c("enabled", :green) : c("disabled", :red))
           end
         end
 
@@ -55,6 +80,7 @@ module Mcl
           if args[0]
             @opts[:debug] = strbool(args[0])
             print_line c("Debugging output is now ", :cyan) << (@opts[:debug] ? c("enabled", :green) : c("disabled", :red))
+            print_line c("Warning: config file will not be updated! (CLI settings passed)", :red) if $cc_forced_settings
           else
             print_line c("# ?debug [on/off]", :magenta)
             print_line c("Debug output is currently ", :cyan) << (@opts[:debug] ? c("enabled", :green) : c("disabled", :red))
@@ -77,6 +103,7 @@ module Mcl
               @opts[:ps1] = aval
               terminal_reset
               print_line c("Your PS1 was updated!", :green)
+              print_line c("Warning: config file will not be updated! (CLI settings passed)", :red) if $cc_forced_settings
             end
           else
             ps1 = instance_eval(&@ps1)
@@ -96,6 +123,7 @@ module Mcl
               @opts[:prompt] = aval
               terminal_reset
               print_line c("Your prompt was updated!", :green)
+              print_line c("Warning: config file will not be updated! (CLI settings passed)", :red) if $cc_forced_settings
             end
           else
             prompt = instance_eval(&@prompt)
@@ -120,10 +148,12 @@ module Mcl
 
         def _tc_mode args, str
           if args[0].try(:downcase) == "vi"
-            Readline.vi_editing_mode
+            @opts[:mode] = "vi"
+            terminal_reset
             print_line c("Terminal is now in VI editing mode!", :green)
           elsif args[0].try(:downcase) == "emacs"
-            Readline.emacs_editing_mode
+            @opts[:mode] = "emacs"
+            terminal_reset
             print_line c("(i) ", :cyan) << c("Terminal is now in emacs editing mode!", :green)
           else
             vi_status = Readline.vi_editing_mode? rescue "unsupported"

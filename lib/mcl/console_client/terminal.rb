@@ -12,6 +12,7 @@ module Mcl
       TCOM_PREF = "?"
 
       def terminal_init
+        @opts[:mode] = "vi"
         @opts[:prompt] = "%{green}%{ps1}%{red}> "
         @opts[:ps1] = "%{instance_nd}"
         @opts = @opts.merge(load_client_options) if respond_to?(:load_client_options)
@@ -24,6 +25,11 @@ module Mcl
       def terminal_reset
         @prompt = ->(_){ @opts[:prompt] }
         @ps1 = ->(_){ @opts[:ps1] }
+
+        case @opts[:mode]
+          when "vi" then Readline.vi_editing_mode
+          when "emacs" then Readline.emacs_editing_mode
+        end
       end
 
       def terminal_run
@@ -54,7 +60,7 @@ module Mcl
               begin
                 clear_buffer
               ensure
-                save_client_options(@opts.except(:dispatch)) if respond_to?(:save_client_options)
+                save_client_options(@opts.except(:dispatch)) if respond_to?(:save_client_options) && !$cc_forced_settings
               end
             end
           end
