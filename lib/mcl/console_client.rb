@@ -12,7 +12,7 @@ module Mcl
     def initialize instance, argv, &block
       @instance = instance
       @argv = argv
-      @opts = { debug: false, dispatch: :terminal, reconnect: true, snoop: false, colorize: true }
+      @opts = { debug: false, dispatch: :terminal, reconnect: true, snoop: false, colorize: true }.with_indifferent_access
       @opt = OptionParser.new
       @lock = Monitor.new
       block.call(self)
