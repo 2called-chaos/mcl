@@ -6,16 +6,24 @@ module Mcl
       include History
       include Environment
       include Commands
+      include ClientOptions
 
       # Prefix to use for terminal commands (will not be forwared to the remote)
       TCOM_PREF = "?"
 
       def terminal_init
-        @prompt = ->(_){ "%{green}%{ps1}%{red}> " }
-        @ps1 = ->(_){ "%{instance_nd}" }
+        @opts[:prompt] = "%{green}%{ps1}%{red}> "
+        @opts[:ps1] = "%{instance_nd}"
+        @opts = @opts.merge(load_client_options) if respond_to?(:load_client_options)
+        terminal_reset
         @spool = Queue.new
         debug "TCOM_PREF is `#{TCOM_PREF}'"
         $cc_acknowledged = _protocol_message "session/identify:#{CLIENT_NAME}"
+      end
+
+      def terminal_reset
+        @prompt = ->(_){ @opts[:prompt] }
+        @ps1 = ->(_){ @opts[:ps1] }
       end
 
       def terminal_run
@@ -43,7 +51,11 @@ module Mcl
             begin
               save_history
             ensure
-              clear_buffer
+              begin
+                clear_buffer
+              ensure
+                save_client_options(@opts.except(:dispatch)) if respond_to?(:save_client_options)
+              end
             end
           end
         end

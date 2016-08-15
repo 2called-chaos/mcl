@@ -52,6 +52,7 @@ module Mcl
     require "#{lib}/console_server/session"
     require "#{lib}/console_server/log"
     require "#{lib}/console_server"
+    require "#{lib}/console_client/client_options"
     require "#{lib}/console_client/discovery"
     require "#{lib}/console_client/transport"
     require "#{lib}/console_client/protocol"

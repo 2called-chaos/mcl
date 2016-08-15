@@ -74,7 +74,8 @@ module Mcl
             else
               aval = "#{args.join(" ")}"
               aval = "" if aval == '""'
-              @ps1 = ->(_){ aval }
+              @opts[:ps1] = aval
+              terminal_reset
               print_line c("Your PS1 was updated!", :green)
             end
           else
@@ -92,7 +93,8 @@ module Mcl
             else
               aval = "#{args.join(" ")}"
               aval = "" if aval == '""'
-              @prompt = ->(_){ aval }
+              @opts[:prompt] = aval
+              terminal_reset
               print_line c("Your prompt was updated!", :green)
             end
           else
