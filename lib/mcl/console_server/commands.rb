@@ -2,14 +2,16 @@ module Mcl
   class ConsoleServer
     module Commands
       def _invoke_mcl str
+        puts c("Execution of MCL commands is not yet implemented", :red)
       end
 
       def _invoke_mc str
-        $mcl.sync { $mcl.server.invoke(str) }
+        $mcl.sync { $mcl.server.invoke(str.strip) }
       end
 
-      def _cmd_say line, args = nil
-        _invoke_mc %{/say #{line[1..-1]}}
+      def _cmd_say str, args = []
+        msg = args.any? ? args.join(" ") : str
+        _invoke_mc %{/say #{msg.strip}}
       end
 
       # ---
@@ -73,18 +75,15 @@ module Mcl
       end
       alias_method :_cmd_quit, :_cmd_exit
 
-      def _cmd_moep line, args
-        15.times {|n| `say #{n}` ; sleep 0.5 ; break if session.halting }
-      end
-
       def _cmd_log line, args, meth = :log
         # options
         mkey = meth == :log ? "livelog" : "livemlog"
+        state = env[mkey] ? c("ON", :green) : c("off", :red)
         opts = { lines: nil, grep: [], types: [], filter: false }
         opt = OptionParser.new
         opt.banner = c("Usage: log [opts] [args…]", :cyan)
-        opt.separator "    <#{c "on", :cyan}/#{c "off", :cyan}>\t\t\t     turn live logging on or off (when turning on you can combine -f -t -n -g)"
-        opt.separator "    <#{c "N", :cyan}>\t\t\t\tshortcut for #{c "-n N", :cyan}"
+        opt.separator "    <#{c "on", :cyan}/#{c "off", :cyan}>\t\t\t     #{state} – turn #{meth == :log ? "server" : "MCL"} live logging on or off (when turning on you can combine -f -t -n -g)"
+        opt.separator "    <#{c "N", :cyan}>\t\t\t\t     shortcut for #{c "-n N", :cyan}"
         opt.on("-h", "--help", "shows this help") { return puts opt.to_s }
         opt.on("-n", "--lines N", Integer, "Amount of lines to show/consider") {|n| opts[:lines] = n }
         opt.on("-g", "--grep REGEX", String, "grep/search backlog with regular expression", "can be used multiple times", "(can be combined with -n which is 1000 by default)"){|r| opts[:grep] << /#{r}/i ; opts[:lines] ||= 1000 }

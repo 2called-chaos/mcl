@@ -82,11 +82,11 @@ module Mcl
         elsif str.strip.empty?
           # no input => discard
         elsif str.start_with?("!") # MCL command
-          _invoke_mcl(str)
+          _invoke_mcl(str[1..-1].strip)
         elsif str.start_with?("/") # MC command
-          _invoke_mc(str)
+          _invoke_mc(str[1..-1].strip)
         elsif str.start_with?(".") # say shortcut
-          _cmd_say(str)
+          _cmd_say(str[1..-1].strip)
         else # lookup command
           chunks = str.split(" ")
           if respond_to?("_cmd_#{chunks[0]}")
@@ -105,7 +105,8 @@ module Mcl
         end
       rescue
         puts c("#{$!.class}: #{$!.message}", :red)
-        puts c("#{$@.first}", :red)
+        puts c("#{$@[0]}", :red)
+        puts c("#{$@[1]}", :red)
         app.log.warn "[ConsoleServer] #{session.client_id} - failed to handle `#{str}' (#{$!.class}: #{$!.message})"
       ensure
         protocol "ack/input:#{str}"

@@ -37,9 +37,8 @@ module Mcl
 
     def init_params
       opt.banner = "Usage: mcld console [options]"
-      opt.on("-o", "--connect-once", "Don't try to reconnect if connection broke") { @opts[:reconnect] = false }
+      opt.on("-o", "--connect-once", "Don't try to reconnect if connection terminates") { @opts[:reconnect] = false }
       opt.on("-m", "--monochrome", "Don't colorize shell (remote may still send colored output)") { @opts[:colorize] = false }
-      # opt.separator("")
       opt.on("-s", "--snoop", "Show protocol messages (in and out)") { @opts[:snoop] = true }
       opt.on("-d", "--debug", "Enable debug output") { @opts[:debug] = true }
       opt.on("-h", "--help", "Shows this help") { @opts[:dispatch] = :help }

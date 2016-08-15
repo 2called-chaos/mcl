@@ -6,6 +6,8 @@ module Mcl
           sync do
             _print_line c("The following terminal commands are available:", :magenta)
             _print_line c("  #{TCOM_PREF}help                        ", :cyan) << c("shows this help", :yellow)
+            _print_line c("  #{TCOM_PREF}exit                        ", :cyan) << c("closes connection and console", :yellow)
+            _print_line c("  #{TCOM_PREF}reconnect                   ", :cyan) << c("reconnect to the console server", :yellow)
             _print_line c("  #{TCOM_PREF}snoop [on/off]              ", :cyan) << c("shows or controls protocol snoop", :yellow)
             _print_line c("  #{TCOM_PREF}debug [on/off]              ", :cyan) << c("shows or controls debug output", :yellow)
             _print_line c("  #{TCOM_PREF}ps1 [help|ps1-expr]         ", :cyan) << c("shows or updates your ps1", :yellow)
@@ -27,6 +29,17 @@ module Mcl
           Readline::HISTORY.pop until Readline::HISTORY.empty?
           _hist_was.each{|s| Readline::HISTORY << s }
         end
+
+        def _tc_exit args, str
+          $cc_client_exiting = true
+          Thread.main.exit
+        end
+        alias_method :_tc_quit, :_tc_exit
+
+        def _tc_reconnect args, str
+          transport_disconnect
+        end
+        alias_method :_tc_retry, :_tc_reconnect
 
         def _tc_snoop args, str
           if args[0]

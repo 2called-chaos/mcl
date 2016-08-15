@@ -31,10 +31,11 @@ module Mcl
         $cc_client_reconnecting = true
         $cc_acknowledged = _protocol_message "session/identify:#{CLIENT_NAME}"
         $cc_client_critical = true
+        clear_buffer
         begin
-          if @opts[:reconnect]
+          if @opts[:reconnect] && !$cc_client_exiting
             print_line "Connection to socket lost (#{ex.try(:message) || "generic"})! Reconnecting...", refresh: false
-            sleep 5
+            sleep 1
             begin
               send *discover_transport(true)
               print_line "Connected!", refresh: false

@@ -19,6 +19,7 @@ module Mcl
       end
 
       def terminal_run
+        print_line(c("[INFO] ", :green) << c("See local terminal help with ") << c("?help", :magenta) << c(" or just ") << c("?", :magenta))
         load_history
         transport_connect
         output_proc
