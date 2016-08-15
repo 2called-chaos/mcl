@@ -178,6 +178,7 @@ module Mcl
           debug "Ignored stale request #{buf}".chomp
           $cc_acknowledged = nil
         else
+          return if buf.blank?
           $cc_acknowledged = "#{buf}".chomp
           handle_line(buf)
         end
