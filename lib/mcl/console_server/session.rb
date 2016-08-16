@@ -27,7 +27,7 @@ module Mcl
         @socket.flush rescue IOError
       end
 
-      def helo!
+      def start!
         @server.app.log.info "[ConsoleServer] Client #{client_id} connected"
         @shell.hello
       end
@@ -71,6 +71,7 @@ module Mcl
       end
 
       def loop!
+        raise "session must be started before it can be looped!" unless @shell.started
         loop do
           begin
             # Returns nil on EOF

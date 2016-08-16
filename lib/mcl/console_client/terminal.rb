@@ -15,7 +15,7 @@ module Mcl
         @opts[:mode] = "vi"
         @opts[:prompt] = "%{green}%{ps1}%{red}> "
         @opts[:ps1] = "%{instance_nd}"
-        @opts = @opts.merge(load_client_options) if respond_to?(:load_client_options)
+        @opts = @opts.merge(load_client_options) if respond_to?(:load_client_options) && !$cc_forced_settings
         terminal_reset
         @spool = Queue.new
         debug "TCOM_PREF is `#{TCOM_PREF}'"
@@ -87,15 +87,15 @@ module Mcl
       end
 
       def _color_cprompt str
-        str.gsub("%{black}",   @colorize ? "\e[30m" : "")
-           .gsub("%{red}",     @colorize ? "\e[31m" : "")
-           .gsub("%{green}",   @colorize ? "\e[32m" : "")
-           .gsub("%{yellow}",  @colorize ? "\e[33m" : "")
-           .gsub("%{blue}",    @colorize ? "\e[34m" : "")
-           .gsub("%{magenta}", @colorize ? "\e[35m" : "")
-           .gsub("%{cyan}",    @colorize ? "\e[36m" : "")
-           .gsub("%{white}",   @colorize ? "\e[37m" : "")
-           .gsub("%{reset}",   @colorize ? "\e[0m" : "")
+        str.gsub("%{black}",   colorize? ? "\e[30m" : "")
+           .gsub("%{red}",     colorize? ? "\e[31m" : "")
+           .gsub("%{green}",   colorize? ? "\e[32m" : "")
+           .gsub("%{yellow}",  colorize? ? "\e[33m" : "")
+           .gsub("%{blue}",    colorize? ? "\e[34m" : "")
+           .gsub("%{magenta}", colorize? ? "\e[35m" : "")
+           .gsub("%{cyan}",    colorize? ? "\e[36m" : "")
+           .gsub("%{white}",   colorize? ? "\e[37m" : "")
+           .gsub("%{reset}",   colorize? ? "\e[0m" : "")
       end
 
       def output_proc

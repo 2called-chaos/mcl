@@ -30,7 +30,7 @@ module Mcl
             print_line c("Try restarting the console if you just updated MCL.", :red)
           end
         else
-          print_line c("Unknown protocol instruction: #{action}", :red)
+          print_line c("Unknown protocol instruction: #{action} (#{data})", :red)
         end
       rescue StandardError => e
         sync do
@@ -50,8 +50,13 @@ module Mcl
       # = Protocol =
       # ============
       def _pt_session_state_ready msg, data
-        protocol "session/colorize:disable" unless @colorize
+        protocol "session/colorize:disable" unless colorize?
         protocol "session/identify:#{CLIENT_NAME}"
+      end
+
+      def _pt_session_state_authentication_required msg, data
+        print_line c("Connection terminated: authentication required!", :red)
+        _pt_ack_input_exit
       end
 
       def _pt_ack_input msg, data

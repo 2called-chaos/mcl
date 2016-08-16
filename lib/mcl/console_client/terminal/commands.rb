@@ -67,7 +67,8 @@ module Mcl
 
         def _tc_colorize args, str
           if args[0]
-            @opts[:colorize] = strbool(args[0])
+            @opts[:colorize] = v = strbool(args[0])
+            protocol "session/colorize:#{v ? "enable" : "disable"}" unless colorize?
             print_line c("Colored output is now ", :cyan) << (@opts[:colorize] ? c("enabled", :green) : c("disabled", :red))
             print_line c("Warning: config file will not be updated! (CLI settings passed)", :red) if $cc_forced_settings
           else

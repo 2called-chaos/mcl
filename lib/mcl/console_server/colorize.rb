@@ -20,7 +20,7 @@ module Mcl
       alias_method :c, :colorize
 
       def colorize?
-        @colorize
+        @opts ? @opts[:colorize] : @colorize
       end
     end
   end

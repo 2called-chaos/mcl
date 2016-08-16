@@ -19,14 +19,6 @@ module Mcl
       init_params
       begin
         @opt.parse!(argv)
-        @colorize = @opts[:colorize]
-
-        # patch colorize
-        unless @opts[:colorize]
-          def self.c *args
-            args.first
-          end
-        end
       rescue
         puts "#{$@[0]}: #{$!.message} (#{$!.class})"
         $@[1..-1].each{|m| puts "\tfrom #{m}" }
@@ -117,10 +109,6 @@ module Mcl
 
     def release_signals
       Signal.trap("INT", "DEFAULT")
-    end
-
-    def c *args
-      args.first
     end
   end
 end
