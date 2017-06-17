@@ -66,6 +66,16 @@ module Mcl
       @cache[player] ||= Player.where(nickname: player).first_or_initialize
     end
 
+    def by_uuid uuid
+      p = @cache.detect{|p| p.uuid = uuid }
+      unless p
+        if pt = Player.where(uuid: uuid).first
+          p = @cache[pt.nickname] = pt
+        end
+      end
+      p
+    end
+
     def update_uuid player, uuid
       prec(player).uuid = uuid
     end
