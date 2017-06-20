@@ -89,13 +89,20 @@ Note: `!help` only shows you commands you have the permission for.
 
 
 ## Ideas
-- Ability to make some commands available through playtime
 - Bridges (e.g. Twitter, IRC)
 - Notifications (e.g. server overloaded, server restart, version update, etc.)
 - Games (Mr. X)
 - Worldsettings (apply server properties / gamerules per world by using a text config)
 - Roll the Dice
-
+- disable/choose handlers (instance config)
+- disable/choose commands (instance config)
+- per user aliases
+  - !alias list/remove/?
+  - !alias add <name> <command>
+  - !alias add foo !tp Troubi
+  - !alias add killall /kill @a
+- dynamic groups / permissions
+  - ability to make some commands available through playtime
 
 
 ## Why is this useful?
