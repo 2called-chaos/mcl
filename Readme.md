@@ -29,6 +29,7 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
 
 
 ## Upcoming features
+  * **ConsoleClient** - a way to access MCL and the console from a CLI environment (actually done, but no documentation)
   * **Backups** - backup and restore your worlds (scheduled or when you need it)
   * **Flagbook** - Easy access to flags
   * **Bannerbook** - Easy access to banners
