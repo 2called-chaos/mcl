@@ -1,4 +1,4 @@
-class CreateLagtrackLogs < ActiveRecord::Migration
+class CreateLagtrackLogs < ActiveRecord::Migration[5.1]
   def change
     create_table :lagtrack_logs do |t|
       t.string :world
