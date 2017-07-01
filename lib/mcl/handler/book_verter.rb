@@ -2,7 +2,8 @@ module Mcl
   class Handler
     module BookVerter
       def pageify page
-        '"{\"text\":\"\",\"extra\":[%%P%%]}"'.gsub('%%P%%', page.strip.gsub("\n", ",").squeeze(" ").gsub('"', '\"'))
+        pc = page.strip.gsub("\n", ",").squeeze(" ").gsub("\\n", "\\\\\\\\n").gsub('"', '\"')
+        "\"{\\\"text\\\":\\\"\\\",\\\"extra\\\":[#{pc}]}\""
       end
 
       def pagify_all *pages
