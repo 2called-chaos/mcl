@@ -49,15 +49,15 @@ module Mcl
 
       def enchantments
         %w[
-          protection
           aqua_affinity
-          bane_of_arthropodos
+          bane_of_arthropods
+          binding_curse
           blast_protection
           depth_strider
           efficiency
           feather_falling
-          fire_protection
           fire_aspect
+          fire_protection
           flame
           fortune
           frost_walker
@@ -69,13 +69,16 @@ module Mcl
           mending
           power
           projectile_protection
+          protection
           punch
           respiration
           sharpness
           silk_touch
           smite
+          sweeping
           thorns
           unbreaking
+          vanishing_curse
         ]
       end
     end
