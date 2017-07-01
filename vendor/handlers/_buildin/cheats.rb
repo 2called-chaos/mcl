@@ -108,13 +108,13 @@ module Mcl
 
     def register_boat acl_level
       register_command :boat, desc: "summons a boat above your or target's head", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon Boat ~ ~2 ~"
+        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon boat ~ ~2 ~"
       end
     end
 
     def register_minecart acl_level
       register_command :minecart, desc: "summons a minecart above your or target's head", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon MinecartRideable ~ ~2 ~"
+        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon minecart ~ ~2 ~"
       end
     end
 

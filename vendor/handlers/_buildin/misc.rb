@@ -63,8 +63,8 @@ module Mcl
           opt.parse!(args) #rescue nil
 
           # etype
-          entity = args.shift
-          types = %w[AreaEffectCloud ArmorStand Arrow Bat Blaze Boat Spider CaveSpider Chicken Cow Creeper DragonFireball EnderCrystal EnderDragon Enderman Endermite EntityHorse EyeOfEnderSignal FallingSand Fireball FireworksRocketEntity Ghast Giant Guardian Item ItemFrame Slime LavaSlime LeashKnot LightningBolt MinecartRideable MinecartChest MinecartCommandBlock MinecartFurnace MinecartHopper MinecartSpawner MinecartTNT MushroomCow Ozelot Painting Pig PigZombie PrimedTnt Rabbit Sheep Shulker ShulkerBullet Silverfish Skeleton SmallFireball SnowMan Snowball SpectralArrow Squid ThrownEgg ThrownEnderpearl ThrownExpBottle ThrownPotion Villager VillagerGolem Witch WitherBoss WitherSkull Wolf XPOrb Zombie]
+          entity = args.shift.to_s.underscore.presence
+          types = %w[area_effect_cloud armor_stand arrow bat blaze boat cave_spider chest_minecart chicken commandblock_minecart cow creeper donkey dragon_fireball egg elder_guardian ender_crystal ender_dragon ender_pearl enderman endermite evocation_fangs evocation_illager eye_of_ender_signal falling_block fireball fireworks_rocket furnace_minecart ghast giant guardian hopper_minecart horse husk illusion_illager item item_frame leash_knot lightning_bolt llama llama_spit magma_cube minecart mooshroom mule ocelot painting parrot pig polar_bear potion rabbit sheep shulker shulker_bullet silverfish skeleton skeleton_horse slime small_fireball snowball snowman spawner_minecart spectral_arrow spider squid stray tnt tnt_minecart vex villager villager_golem vindication_illager witch wither wither_skeleton wither_skull wolf xp_bottle xp_orb zombie zombie_horse zombie_pigman zombie_villager]
           etype = types.grep(/#{entity}/i).first || entity
 
           if !(!pmemo(player)[:danger_mode] && amount > 500 && require_danger_mode(player, "Summoning >500 entities require danger mode to be enabled!"))
@@ -104,7 +104,7 @@ module Mcl
 
     def register_strike acl_level
       register_command :strike, desc: "strikes you or a target with lightning", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon LightningBolt"
+        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon lightning_bolt"
       end
     end
 
@@ -146,7 +146,7 @@ module Mcl
 
     module Helper
       def cow target, pos = "~ ~ ~"
-        $mcl.sync { $mcl.server.invoke "/execute #{target} ~ ~ ~ summon Cow #{pos}" } # {DropChances:[0F,0F,0F,0F,0F]}
+        $mcl.sync { $mcl.server.invoke "/execute #{target} ~ ~ ~ summon cow #{pos}" } # {DropChances:[0F,0F,0F,0F,0F]}
       end
     end
     include Helper

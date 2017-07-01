@@ -17,7 +17,7 @@ module Mcl
         case type.to_s.strip
           when "p", "particle" then $mcl.server.invoke "/particle reddust #{coord} 0 0 0 1 100 force"
           when "b", "barrier" then $mcl.server.invoke "/particle barrier #{coord} 0 0 0 1 1 force"
-          when "crystal" then $mcl.server.invoke "/summon EnderCrystal #{parts[0] - 0.5} #{parts[1] - 0.5} #{parts[2] + 0.5}"
+          when "crystal" then $mcl.server.invoke "/summon ender_crystal #{parts[0] - 0.5} #{parts[1] - 0.5} #{parts[2] + 0.5}"
           when "c", "cross"
             $mcl.server.invoke "/particle reddust #{coord} 1 0 0 1 100 force"
             $mcl.server.invoke "/particle reddust #{coord} 0 1 0 1 100 force"
