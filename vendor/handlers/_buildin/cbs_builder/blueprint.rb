@@ -194,6 +194,7 @@ module Mcl
                   row << tk.fork(i: i, )
                 else
                   row << tk
+                end
               }
             else
               raise "Unknown parse error `#{row_data}'"
