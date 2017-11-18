@@ -37,6 +37,7 @@ module Mcl
             when "x" then [mrow, layers, mcol]
             when "y" then [layers, mrow, mcol]
             when "z" then [mcol, layers, mrow]
+            when "z2" then [mrow, layers, mcol]
             when "xc" then [layers, 1, 1]
             when "yc" then [1, layers, 1]
             when "zc" then [1, 1, layers]
@@ -105,7 +106,7 @@ module Mcl
 
       def _grid_modes spec_version
         case spec_version
-          when "1.0" then %w[x y z xc yc zc]
+          when "1.0" then %w[x y z z2 xc yc zc]
           else raise("SpecVersionError #{spec_version.inspect} grid modes not supported")
         end
       end

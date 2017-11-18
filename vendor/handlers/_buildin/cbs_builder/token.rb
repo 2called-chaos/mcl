@@ -102,6 +102,15 @@ module Mcl
             when :down  then :down
             else :south
           end
+        when "z2"
+          case turn
+            when :back  then :up
+            when :right then :east
+            when :left  then :west
+            when :up    then :north
+            when :down  then :down
+            else :south
+          end
         when "xc"
           case turn
             when :back  then :west
