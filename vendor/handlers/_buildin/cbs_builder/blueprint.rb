@@ -172,7 +172,7 @@ module Mcl
         lends = {"<" => ">", "[" => "]", "{" => "}"}
         literal_start = /\A([0-9]+)?((<|\[|\{)(?:.*))\z/
         literal_full = /\A([0-9]+)?((<|\[|\{)(?:.*)(?:>|\]|\}))\z/
-        token_full = /\A([0-9]+)?([^0-9]{1}[^\s]*)\z/i
+        token_full = /\A([0-9]+)?([^0-9]{1}[^\s\(]*)(?:\(([^\)]+)\))?\z/i
 
         [].tap do |row|
           if single_token
@@ -180,11 +180,20 @@ module Mcl
               count, token, literal = m[1], m[2], m[3]
               (count.presence ? count.to_i : 1).times {|i| row << Token.new(token, i: i) }
             elsif m = row_data.match(token_full)
-              count, token = m[1], m[2]
+              count, token, xargs = m[1], m[2], m[3]
               (count.presence ? count.to_i : 1).times {|i|
                 tk = tokens[token]
                 raise "undefined token `#{token}' in `#{row_data}'" unless tk
-                row << (tk.variables? ? tk.fork(i: i) : tk)
+                if tk.variables?
+                  fopt = { i: i }
+                  if xargs
+                    fargs = xargs.to_s.split(",")
+                    fargs.each_with_index{|fa, ii| fopt[:"#{ii}"] = fa }
+                    fopt[:"@"] = fargs.join(" ")
+                  end
+                  row << tk.fork(i: i, )
+                else
+                  row << tk
               }
             else
               raise "Unknown parse error `#{row_data}'"
