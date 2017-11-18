@@ -168,6 +168,25 @@ module Mcl
         end
       end
 
+      def _parse_token match, row_data, tokens, token
+        count, token, xargs = match[1], match[2], match[3]
+        (count.presence ? count.to_i : 1).times {|i|
+          tk = tokens[token]
+          raise "undefined token `#{token}' in `#{row_data}'" unless tk
+          if tk.variables?
+            fopt = { i: i }
+            if xargs
+              fargs = xargs.to_s.split(",")
+              fargs.each_with_index{|fa, ii| fopt[:"#{ii}"] = fa }
+              fopt[:"@"] = fargs.join(" ")
+            end
+            row << tk.fork(fopt)
+          else
+            row << tk
+          end
+        }
+      end
+
       def _parse_row row_data, tokens, single_token = false
         lends = {"<" => ">", "[" => "]", "{" => "}"}
         literal_start = /\A([0-9]+)?((<|\[|\{)(?:.*))\z/
@@ -180,22 +199,7 @@ module Mcl
               count, token, literal = m[1], m[2], m[3]
               (count.presence ? count.to_i : 1).times {|i| row << Token.new(token, i: i) }
             elsif m = row_data.match(token_full)
-              count, token, xargs = m[1], m[2], m[3]
-              (count.presence ? count.to_i : 1).times {|i|
-                tk = tokens[token]
-                raise "undefined token `#{token}' in `#{row_data}'" unless tk
-                if tk.variables?
-                  fopt = { i: i }
-                  if xargs
-                    fargs = xargs.to_s.split(",")
-                    fargs.each_with_index{|fa, ii| fopt[:"#{ii}"] = fa }
-                    fopt[:"@"] = fargs.join(" ")
-                  end
-                  row << tk.fork(i: i, )
-                else
-                  row << tk
-                end
-              }
+              _parse_token(m, row_data, tokens, token)
             else
               raise "Unknown parse error `#{row_data}'"
             end
@@ -217,12 +221,7 @@ module Mcl
                 token.gsub!("\\#{literalend}", "#{literalend}")
                 (count.presence ? count.to_i : 1).times {|i| row << Token.new(token, i: i) }
               elsif m = item.match(token_full)
-                count, token = m[1], m[2]
-                (count.presence ? count.to_i : 1).times {|i|
-                  tk = tokens[token]
-                  raise "undefined token `#{token}' in `#{row_data}'" unless tk
-                  row << (tk.variables? ? tk.fork(i: i) : tk)
-                }
+                _parse_token(m, row_data, tokens, token)
               else
                 raise "Unknown parse error `#{item}'"
               end
