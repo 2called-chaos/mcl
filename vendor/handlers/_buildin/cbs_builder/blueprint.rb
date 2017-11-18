@@ -278,6 +278,15 @@ module Mcl
                 end
               end
             end
+          when "z2"
+            x, y, z = start_pos
+            grid.each_with_index do |layer, xd|
+              layer.each_with_index do |line, zd|
+                line.each_with_index do |token, yd|
+                  container << token.compile([x + xd, y + yd, z + zd], mode, options)
+                end
+              end
+            end
           when "xc", "yc", "zc"
             pos = { "x" => start_pos[0], "y" => start_pos[1], "z" => start_pos[2] }
             grid.each do |token|
