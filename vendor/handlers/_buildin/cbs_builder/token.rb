@@ -105,8 +105,8 @@ module Mcl
         when "z2"
           case turn
             when :back  then :north
-            when :right then :down
-            when :left  then :up
+            when :right then :up
+            when :left  then :down
             when :up    then :west
             when :down  then :east
             else :south
