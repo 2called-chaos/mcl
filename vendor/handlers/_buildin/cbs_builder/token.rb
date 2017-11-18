@@ -104,11 +104,11 @@ module Mcl
           end
         when "z2"
           case turn
-            when :back  then :up
-            when :right then :east
-            when :left  then :west
-            when :up    then :north
-            when :down  then :down
+            when :back  then :north
+            when :right then :down
+            when :left  then :up
+            when :up    then :west
+            when :down  then :east
             else :south
           end
         when "xc"
