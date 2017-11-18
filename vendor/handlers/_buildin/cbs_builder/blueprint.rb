@@ -37,7 +37,7 @@ module Mcl
             when "x" then [mrow, layers, mcol]
             when "y" then [layers, mrow, mcol]
             when "z" then [mcol, layers, mrow]
-            when "z2" then [mrow, layers, mcol]
+            when "z2" then [layers, mcol, mrow]
             when "xc" then [layers, 1, 1]
             when "yc" then [1, layers, 1]
             when "zc" then [1, 1, layers]
