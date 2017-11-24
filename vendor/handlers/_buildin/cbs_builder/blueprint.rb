@@ -168,7 +168,7 @@ module Mcl
         end
       end
 
-      def _parse_token match, row_data, tokens, token
+      def _parse_token match, row, row_data, tokens, token
         count, token, xargs = match[1], match[2], match[3]
         (count.presence ? count.to_i : 1).times {|i|
           tk = tokens[token]
@@ -189,8 +189,8 @@ module Mcl
 
       def _parse_row row_data, tokens, single_token = false
         lends = {"<" => ">", "[" => "]", "{" => "}"}
-        literal_start = /\A([0-9]+)?((<|\[|\{)(?:.*))\z/
-        literal_full = /\A([0-9]+)?((<|\[|\{)(?:.*)(?:>|\]|\}))\z/
+        literal_start = /\A([0-9]+)?((<|\[|\{)(?:.*))\z/i
+        literal_full = /\A([0-9]+)?((<|\[|\{)(?:.*)(?:>|\]|\}))\z/i
         token_full = /\A([0-9]+)?([^0-9]{1}[^\s\(]*)(?:\(([^\)]+)\))?\z/i
 
         [].tap do |row|
@@ -199,7 +199,7 @@ module Mcl
               count, token, literal = m[1], m[2], m[3]
               (count.presence ? count.to_i : 1).times {|i| row << Token.new(token, i: i) }
             elsif m = row_data.match(token_full)
-              _parse_token(m, row_data, tokens, token)
+              _parse_token(m, row, row_data, tokens, token)
             else
               raise "Unknown parse error `#{row_data}'"
             end
@@ -221,7 +221,7 @@ module Mcl
                 token.gsub!("\\#{literalend}", "#{literalend}")
                 (count.presence ? count.to_i : 1).times {|i| row << Token.new(token, i: i) }
               elsif m = item.match(token_full)
-                _parse_token(m, row_data, tokens, token)
+                _parse_token(m, row, row_data, tokens, token)
               else
                 raise "Unknown parse error `#{item}'"
               end
