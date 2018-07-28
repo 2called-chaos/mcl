@@ -8,7 +8,7 @@ module Mcl
     WAIT_TICKS = 20
 
     def setup
-      register_parser(/^Saved the world/i) { $world_saver_world_saved = true }
+      register_parser(/^Saved the (?:key => "value", world|game)/i) { $world_saver_world_saved = true }
 
       # execute before minecraft server stops
       app.ipc_early :world_saver_hook do
