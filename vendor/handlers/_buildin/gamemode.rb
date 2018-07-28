@@ -19,7 +19,18 @@ module Mcl
 
     module Helper
       def gm mode, target
-        $mcl.server.invoke "/gamemode #{mode} #{target}"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/gamemode #{mode} #{target}"
+          cmd.since "1.13", "17w45a" do
+            smode = {
+              0 => "survival",
+              1 => "creative",
+              2 => "adventure",
+              3 => "spectator",
+            }[mode] || mode
+            "/gamemode #{smode} #{target}"
+          end
+        end
       end
     end
     include Helper
