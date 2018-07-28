@@ -47,27 +47,8 @@ module Mcl
           app.server.update_status :stopped unless alive?
         end
 
-        # bootstrap
-        if File.exist?("#{root}/bootstrap")
-          version = File.read("#{root}/bootstrap").strip
-          url = "#{Mcl.windows? ? "http" : "https"}://s3.amazonaws.com/Minecraft.Download/versions/#{version}/minecraft_server.#{version}.jar"
-          vpath = "#{root}/#{app.config["mcv_infix"]}#{File.basename(url)}"
-          app.log.info "[IPC] bootstrapping Minecraft server version `#{version}'..."
-
-          # download
-          open(url, "rb") do |page|
-            File.open(vpath, "wb") do |file|
-              while chunk = page.read(1024)
-                file.write(chunk)
-              end
-            end
-          end
-
-          # link & remove bsfile
-          FileUtils.rm("#{root}/minecraft_server.jar", force: true) rescue nil if Mcl.windows?
-          FileUtils.ln_s "#{vpath}", "#{root}/minecraft_server.jar", force: true
-          File.unlink("#{root}/bootstrap")
-        end
+        # bootstrap server files/config
+        ipc_bootstrap!("#{root}/bootstrap")
 
         if $_ipc_reattach
           app.log.info "[IPC] reattaching handle..."
@@ -108,6 +89,52 @@ module Mcl
         app.log.info "[IPC] detaching handle..."
         $_ipc_reattach = [@_ipc_stdin, @_ipc_stdouterr, @_ipc_thread]
         @_ipc_stdin, @_ipc_stdouterr, @_ipc_thread = nil, nil, nil
+      end
+
+      def ipc_bootstrap! bsfile
+        return unless File.exist?(bsfile)
+        bscontent = File.readlines(bsfile)
+        version = bscontent.shift.to_s.strip
+        sprops = bscontent.map(&:strip).reject{|l| l.start_with?("#") || l == "" }
+
+        if vdata = app.get_handlers(HMclSnap2date)[0].get_version(version)
+          app.log.info "[IPC] bootstrapping Minecraft server version `#{vdata[:id]}'..."
+          vpath = "#{root}/#{app.config["mcv_infix"]}#{vdata[:jar_name]}"
+
+          # download
+          unless File.exist?(vpath)
+            open(vdata.dig(:downloads, :server, :url), "rb") do |page|
+              File.open(vpath, "wb") do |file|
+                while chunk = page.read(1024)
+                  file.write(chunk)
+                end
+              end
+            end
+          end
+
+          # writing properties
+          if sprops.any?
+            app.log.info "[IPC] applying server properties from bootstrap..."
+            File.open("#{root}/server.properties", "a+") do |f|
+              f.puts *sprops
+            end
+          end
+
+          # link & remove bsfile
+          FileUtils.rm("#{root}/minecraft_server.jar", force: true) rescue nil if Mcl.windows?
+          FileUtils.ln_s "#{vpath}", "#{root}/minecraft_server.jar", force: true
+          File.unlink(bsfile)
+        else
+          raise "The specified version `#{version}' couldn't be found (try `latest' or `snapshot' or double check your selected version)"
+        end
+      rescue StandardError => ex
+        app.log.error "# [#{ex.class}] Failed to bootstrap server: #{ex.message}"
+        FileUtils.mv(bsfile, "#{bsfile}.failed")
+        File.open("#{bsfile}.failed", "a+") do |f|
+          f.puts nil, "# ---------- ERROR ----------", "#{ex.class}: #{ex.message}"
+          ex.backtrace.each {|l| f.puts "#   #{l}"}
+        end
+        raise
       end
     end
   end

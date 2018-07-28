@@ -139,6 +139,12 @@ module Mcl
       log.debug(*a) if @config["dev"] && @config["devchannels"].include?(opts[:scope])
     end
 
+    def get_handlers *klasses
+      @handlers.select do |h|
+        klasses.any?{|klass| h.is_a?(klass) }
+      end
+    end
+
     # define point where application or unsafe can safely exit when term signal is received
     def mayexit
       if !$debug_mode_changed.nil?

@@ -12,7 +12,7 @@ module Mcl
     attr_reader :cron, :watched_versions
 
     def setup
-      @snapurl = "#{Mcl.windows? ? "http" : "https"}://s3.amazonaws.com/Minecraft.Download/versions/%VERSION%/minecraft_server.%VERSION%.jar"
+      @version_manifest = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
       @announced = []
       seed_db
       setup_checker
@@ -36,6 +36,7 @@ module Mcl
           Thread.current.kill if Thread.current != Thread.main[:snap2date_checker]
           if @cron && (eman.tick - @tick_checked) >= 250
             @tick_checked = eman.tick
+            version_manifest(true)
             (watched_versions - @announced).uniq.sort.reverse.each do |ver|
               hit = released?(ver)
               $mcl.sync do
@@ -68,6 +69,7 @@ module Mcl
           acl_verify(player, acl_levels[:check])
           async do
             vs = args[1] ? args[1..-1] : watched_versions
+            version_manifest(true)
             vs.each do |ver|
               ve = StringExpandRange.expand(ver)
               if ve.count > 30
@@ -111,7 +113,7 @@ module Mcl
           case args[1]
             when nil then tellm(player, {text: "Define a version to unwatch!", color: "red"})
             when "all" then vel = watched_versions
-            when "old" then vel = watched_versions.select{|v| numeric_version(v) <= numeric_version($mcl.server.version) }
+            when "old" then vel = watched_versions.reject{|v| update?(v) }
             else vel = args[1..-1]
           end
           vel.each do |v|
@@ -162,10 +164,6 @@ module Mcl
         Setting.set("snap2date.watched_versions", @watched_versions.join(" "))
       end
 
-      def numeric_version ver
-        mc_numeric_version(ver)
-      end
-
       def tellm p, *msg
         trawm(p, title("S2D"), *msg)
       end
@@ -173,36 +171,71 @@ module Mcl
       # ==========
       # = Update =
       # ==========
-      def url_for_version version
-        @snapurl.gsub("%VERSION%", version)
+      def version_manifest reload = false
+        @_version_manifest = nil if reload
+        @_version_manifest ||= begin
+          {latest: {}, versions: {}}.tap do |r|
+            JSON.parse(HTTParty.get(@version_manifest).body).each do |k, v|
+              if k == "latest"
+                r[:latest] = v.symbolize_keys
+              elsif k == "versions"
+                v.each do |ver|
+                  r[:versions][ver["id"]] = ver.symbolize_keys
+                end
+              end
+            end
+          end
+        end
+      rescue StandardError => ex
+        @app.log.error "[#{ex.class}] Failed to gather version manifest: #{ex.message}"
+        return {}
       end
 
-      def uri_for_version version
-        URI.parse(url_for_version(version))
+      def get_version v, details = true
+        manifest = version_manifest
+        if v.to_s == "latest"
+          v = manifest[:latest][:release]
+        elsif v.to_s == "snapshot"
+          v = manifest[:latest][:snapshot]
+        end
+
+        res = manifest[:versions][v].dup
+        res[:jar_name] = "minecraft_server.#{res[:id]}.jar"
+        if details
+          begin
+            x = JSON.parse(HTTParty.get(manifest[:versions][v][:url]).body)
+            res = res.merge(x.deep_symbolize_keys)
+          rescue StandardError => ex
+            @app.log.debug "[#{ex.class}] Failed to gather version details: #{ex.message}"
+          end
+        end
+        res
       end
 
       def released? version
-        uri = uri_for_version(version)
-        Net::HTTP.start(uri.host) do |http|
-          req = Net::HTTP::Head.new(uri.path)
-          res = http.request(req)
-
-          if res.code.to_i == 200
-            {
-              version: version,
-              link: url_for_version(version),
-              date: Time.parse(res["Last-Modified"]),
-            }
-          else
-            false
-          end
-        end
+        vdata = get_version(version)
+        {
+          version: vdata[:id],
+          jar_name: vdata[:jar_name],
+          link: vdata.dig(:downloads, :server, :url),
+          date: Time.parse(vdata[:releaseTime]),
+          vdata: vdata,
+        }
       rescue
         return false
       end
 
       def update? hit
-        $mcl.server.version && numeric_version(hit[:version]) > numeric_version($mcl.server.version)
+        av = mc_comparable_version($mcl.server.version)
+        sv = mc_comparable_version(hit[:version])
+
+        if av.class == sv.class
+          sv > av
+        elsif av.is_a?(Gem::Version) && sv.is_a?(Integer)
+          true
+        else
+          false
+        end
       end
 
       def version_path
@@ -223,15 +256,14 @@ module Mcl
             hit = ver.is_a?(Hash) ? ver : released?(ver)
             if hit
               if force || update?(hit)
-                if !File.exist?("#{version_path}#{File.basename(hit[:link])}") || force
-                  # download
-                  download(hit[:link])
+                if !File.exist?("#{version_path}#{hit[:jar_name]}") || force
+                  download(hit)
                 end
 
                 # symlink
                 $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(linking)", color: "reset"}) }
                 FileUtils.rm("#{$mcl.server.root}/minecraft_server.jar", force: true) rescue nil if Mcl.windows?
-                FileUtils.ln_s "#{version_path}#{File.basename(hit[:link])}", "#{$mcl.server.root}/minecraft_server.jar", force: true
+                FileUtils.ln_s "#{version_path}#{hit[:jar_name]}", "#{$mcl.server.root}/minecraft_server.jar", force: true
 
                 # backup
                 tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(creating backup)", color: "reset"})
@@ -257,7 +289,7 @@ module Mcl
         end
       end
 
-      def download url, &callback
+      def download hit, &callback
         announcer = async do
           loop do
             Thread.current.kill if Thread.current[:mcl_halting]
@@ -273,11 +305,11 @@ module Mcl
         begin
           @bytes_total = nil
           open(
-            url, "rb",
+            hit[:link], "rb",
             content_length_proc: ->(content_length) { @bytes_total = content_length },
             progress_proc: ->(bytes_transferred) { @bytes_transferred = bytes_transferred },
           ) do |page|
-            File.open("#{version_path}#{File.basename(url)}", "wb") do |file|
+            File.open("#{version_path}#{hit[:jar_name]}", "wb") do |file|
               while chunk = page.read(1024)
                 file.write(chunk)
                 Thread.pass
