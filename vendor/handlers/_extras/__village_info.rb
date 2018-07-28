@@ -187,6 +187,9 @@ module Mcl
       end
 
       def do_stat player, villages, opts = {}, args = []
+        if !villages.any?
+          return tellm(player, l("no village found", "red"))
+        end
         villages.each_with_index do |village, i|
           next if opts[:vindex] && opts[:vindex] != i + 1
           center = [village["CX"], village["CY"], village["CZ"]]
