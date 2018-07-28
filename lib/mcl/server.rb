@@ -31,6 +31,7 @@ module Mcl
     def invoke command = nil, &block
       raise ArgumentError, "command or block must be given" if !command && !block
       cmd = block ? VersionedCommand.new(app, &block).compile(@version) : command
+      cmd = cmd.call(app) if cmd.respond_to?(:call)
       ipc_invoke(cmd[0] == "/" ? cmd[1..-1] : cmd)
     end
   end

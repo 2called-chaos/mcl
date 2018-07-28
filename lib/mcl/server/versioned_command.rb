@@ -9,35 +9,34 @@ module Mcl
         block.call(self, app)
       end
 
-      def default cmd
-        @default = cmd
+      def default cmd = nil, &block
+        @default = block || cmd
       end
 
       def before *versions, &block
-        cmd = block ? block.call(self) : versions.pop
+        cmd = block ? block : versions.pop
         versions.each do |v|
           @constraints << [:before, v, cmd]
         end
       end
 
       def since *versions, &block
-        cmd = block ? block.call(self) : versions.pop
+        cmd = block ? block : versions.pop
         versions.each do |v|
           @constraints << [:since, v, cmd]
         end
       end
 
       def after *versions, &block
-        cmd = block ? block.call(self) : versions.pop
+        cmd = block ? block : versions.pop
         versions.each do |v|
           @constraints << [:after, v, cmd]
         end
       end
 
       def between versions = {}, cmd = nil, &block
-        cmd = block.call(self) if block
         versions.each do |from, upto|
-          @constraints << [:between, from, upto, cmd]
+          @constraints << [:between, from, upto, block || cmd]
         end
       end
 
@@ -66,6 +65,13 @@ module Mcl
 
       def mc_comparable_version *a
         app.handlers.first.mc_comparable_version(*a)
+      end
+    end
+
+
+    class VersionedSwitch < VersionedCommand
+      def compile v, *args, &block
+        super(v).call(*args, &block)
       end
     end
   end

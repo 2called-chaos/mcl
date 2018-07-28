@@ -47,42 +47,64 @@ module Mcl
     def register_l0 acl_level, acl_level_others
       register_command :l0, desc: "removes all levels from you or a target", acl: acl_level do |player, args|
         acl_verify(player, acl_level_others) if args.first && args.first != player
-        $mcl.server.invoke "/xp -10000L #{args.first || player}"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/xp -10000L #{args.first || player}"
+          cmd.since "1.13", "17w45a", "/xp set #{args.first || player} 0 levels"
+        end
       end
     end
 
     def register_l30 acl_level
       register_command :l30, desc: "adds 30 levels to you or a target", acl: acl_level do |player, args|
-        $mcl.server.invoke "/xp 30L #{args.first || player}"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/xp 30L #{args.first || player}"
+          cmd.since "1.13", "17w45a", "/xp set #{args.first || player} 30 levels"
+        end
       end
     end
 
     def register_l1337 acl_level
       register_command :l1337, desc: "sets your or target's level to 1337", acl: acl_level do |player, args|
-        $mcl.server.invoke "/xp -10000L #{args.first || player}"
-        $mcl.server.invoke "/xp 1337L #{args.first || player}"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/xp 1337L #{args.first || player}"
+          cmd.since "1.13", "17w45a", "/xp set #{args.first || player} 1337 levels"
+        end
       end
     end
 
     def register_give acl_level
       register_command :give, desc: "alias for the /give command", acl: acl_level do |player, args|
-        if args.count == 0
-          trawt(player, "give", {text: "!give requires at least one argument!", color: "red"})
-        elsif args.count == 1
-          $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args.join(" ")}"
-        elsif args.count == 2 && args[1].to_i != 0
-          stacks = args[1].to_i / 64
-          rest = args[1].to_i % 64
-          stacks.times{ $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args[0]} 64" }
-          $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args[0]} #{rest}" if rest > 0
-        else
-          if args.last.to_i != 0
-            stacks = args.last.to_i / 64
-            rest = args.last.to_i % 64
-            stacks.times{ $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args[0]} #{args[1]} 64" }
-            $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args[0]} #{args[1]} #{rest}" if rest > 0
-          else
-            $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args.join(" ")}"
+        version_switch do |v|
+          v.default do
+            if args.count == 0
+              trawt(player, "give", {text: "!give requires at least one argument!", color: "red"})
+            elsif args.count == 1
+              $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args.join(" ")}"
+            elsif args.count == 2 && args[1].to_i != 0
+              stacks = args[1].to_i / 64
+              rest = args[1].to_i % 64
+              stacks.times{ $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args[0]} 64" }
+              $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{player} #{args[0]} #{rest}" if rest > 0
+            else
+              if args.last.to_i != 0
+                stacks = args.last.to_i / 64
+                rest = args.last.to_i % 64
+                stacks.times{ $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args[0]} #{args[1]} 64" }
+                $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args[0]} #{args[1]} #{rest}" if rest > 0
+              else
+                $mcl.server.invoke "/execute #{player} ~ ~ ~ /give #{args.join(" ")}"
+              end
+            end
+          end
+
+          v.since "1.13", "17w45a" do
+            if args.count == 0
+              trawt(player, "give", {text: "!give requires at least one argument!", color: "red"})
+            elsif args.count == 2
+              $mcl.server.invoke "/execute as #{player} at #{player} run give #{player} #{args.join(" ")}"
+            else
+              $mcl.server.invoke "/execute as #{player} at #{player} run give #{args.join(" ")}"
+            end
           end
         end
       end
@@ -96,115 +118,185 @@ module Mcl
 
     def register_portal acl_level
       register_command :portal, desc: "summons a nether portal at your/targets feet", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ setblock ~ ~ ~ portal"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/execute #{args.first || player} ~ ~ ~ setblock ~ ~ ~ portal"
+          cmd.since "1.13", "17w45a", "/execute as #{args.first || player} at #{args.first || player} run setblock ~ ~ ~ nether_portal"
+        end
       end
     end
 
     def register_endportal acl_level
       register_command :endportal, desc: "summons an end portal at your/targets feet", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ setblock ~ ~ ~ end_portal"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/execute #{args.first || player} ~ ~ ~ setblock ~ ~ ~ end_portal"
+          cmd.since "1.13", "17w45a", "/execute as #{args.first || player} at #{args.first || player} run setblock ~ ~ ~ end_portal"
+        end
       end
     end
 
     def register_boat acl_level
       register_command :boat, desc: "summons a boat above your or target's head", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon boat ~ ~2 ~"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/execute #{args.first || player} ~ ~ ~ summon boat ~ ~2 ~"
+          cmd.since "1.13", "17w45a", "/execute as #{args.first || player} at #{args.first || player} run summon boat ~ ~2 ~"
+        end
       end
     end
 
     def register_minecart acl_level
       register_command :minecart, desc: "summons a minecart above your or target's head", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon minecart ~ ~2 ~"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/execute #{args.first || player} ~ ~ ~ summon minecart ~ ~2 ~"
+          cmd.since "1.13", "17w45a", "/execute as #{args.first || player} at #{args.first || player} run summon minecart ~ ~2 ~"
+        end
       end
     end
 
     def register_pick acl_level
       register_command :pick, desc: "gives you a diamond pickaxe", acl: acl_level do |player, args|
-        $mcl.server.invoke %{/give #{args.first || player} minecraft:diamond_pickaxe 1 0 {display:{Name:"Cheated Pick"}}}
+        $mcl.server.invoke do |cmd|
+          cmd.default %|/give #{args.first || player} minecraft:diamond_pickaxe 1 0 {display:{Name:"Cheated Pick"}}|
+          cmd.since "1.13", "17w45a", %|/give #{args.first || player} minecraft:diamond_pickaxe{display:{Name:"#{json_etext "Cheated Pick"}"}}|
+        end
       end
     end
 
     def register_upick acl_level
       register_command :upick, desc: "gives you a highly enchanted diamond pick", acl: acl_level do |player, args|
-        $mcl.server.invoke %{
-          /give @a minecraft:diamond_pickaxe 1 0 {display:{Name:"OpPick"},Unbreakable:1,ench:[
-            {id:16,lvl:255},{id:20,lvl:255},{id:32,lvl:255},{id:33,lvl:255},{id:35,lvl:255}],
-            HideFlags:31,CanDestroy:["minecraft:stone","minecraft:grass","minecraft:dirt","minecraft:log","minecraft:planks"],Durability:-1}
-        }.gsub("\n", "").squeeze(" ")
+        $mcl.server.invoke do |cmd|
+          cmd.default %{
+            /give @a minecraft:diamond_pickaxe 1 0 {display:{Name:"OpPick"},Unbreakable:1,ench:[
+              {id:16,lvl:255},{id:20,lvl:255},{id:32,lvl:255},{id:33,lvl:255},{id:35,lvl:255}],
+              HideFlags:31,CanDestroy:["minecraft:stone","minecraft:grass","minecraft:dirt","minecraft:log","minecraft:planks"],Durability:-1}
+          }.gsub("\n", "").squeeze(" ").strip
+          cmd.since "1.13", "17w45a", %|
+            /give #{args.first || player} minecraft:diamond_pickaxe{display:{Name:"#{json_etext "OpPick"}"},Unbreakable:1,HideFlags:31,Durability:-1,Enchantments:[
+              {id:sharpness,lvl:255},{id:first_aspect,lvl:255},{id:efficiency,lvl:255},{id:silk_touch,lvl:255},{id:fortune,lvl:255}
+            ]}
+          |.gsub("\n", "").squeeze(" ").strip
+        end
       end
     end
 
     def register_shovel acl_level
       register_command :shovel, desc: "gives you a diamond shovel", acl: acl_level do |player, args|
-        $mcl.server.invoke %{/give #{args.first || player} minecraft:diamond_shovel 1 0 {display:{Name:"Cheated Shovel"}}}
+        $mcl.server.invoke do |cmd|
+          cmd.default %|/give #{args.first || player} minecraft:diamond_shovel 1 0 {display:{Name:"Cheated Shovel"}}|
+          cmd.since "1.13", "17w45a", %|/give #{args.first || player} minecraft:diamond_shovel{display:{Name:"#{json_etext "Cheated Shovel"}"}}|
+        end
       end
     end
 
     def register_ushovel acl_level
       register_command :ushovel, desc: "gives you a highly enchanted diamond shovel", acl: acl_level do |player, args|
-        $mcl.server.invoke %{
-          /give @a minecraft:diamond_shovel 1 0 {display:{Name:"OpShovel"},Unbreakable:1,ench:[
-            {id:16,lvl:255},{id:20,lvl:255},{id:32,lvl:255},{id:33,lvl:255},{id:35,lvl:255}],
-            HideFlags:31,CanDestroy:["minecraft:stone","minecraft:grass","minecraft:dirt","minecraft:log","minecraft:planks"],Durability:-1}
-        }.gsub("\n", "").squeeze(" ")
+        $mcl.server.invoke do |cmd|
+          cmd.default %{
+            /give @a minecraft:diamond_shovel 1 0 {display:{Name:"OpShovel"},Unbreakable:1,ench:[
+              {id:16,lvl:255},{id:20,lvl:255},{id:32,lvl:255},{id:33,lvl:255},{id:35,lvl:255}],
+              HideFlags:31,CanDestroy:["minecraft:stone","minecraft:grass","minecraft:dirt","minecraft:log","minecraft:planks"],Durability:-1}
+          }.gsub("\n", "").squeeze(" ").strip
+          cmd.since "1.13", "17w45a", %|
+            /give #{args.first || player} minecraft:diamond_shovel{display:{Name:"#{json_etext "OpShovel"}"},Unbreakable:1,HideFlags:31,Durability:-1,Enchantments:[
+              {id:sharpness,lvl:255},{id:first_aspect,lvl:255},{id:efficiency,lvl:255},{id:silk_touch,lvl:255},{id:fortune,lvl:255}
+            ]}
+          |.gsub("\n", "").squeeze(" ").strip
+        end
       end
     end
 
     def register_axe acl_level
       register_command :axe, desc: "gives you a diamond axe", acl: acl_level do |player, args|
-        $mcl.server.invoke %{/give #{args.first || player} minecraft:diamond_axe 1 0 {display:{Name:"Cheated Axe"}}}
+        $mcl.server.invoke do |cmd|
+          cmd.default %|/give #{args.first || player} minecraft:diamond_shovel 1 0 {display:{Name:"Cheated Axe"}}|
+          cmd.since "1.13", "17w45a", %|/give #{args.first || player} minecraft:diamond_axe{display:{Name:"#{json_etext "Cheated Axe"}"}}|
+        end
       end
     end
 
     def register_uaxe acl_level
       register_command :uaxe, desc: "gives you a highly enchanted diamond axe", acl: acl_level do |player, args|
-        $mcl.server.invoke %{
-          /give @a minecraft:diamond_axe 1 0 {display:{Name:"OpAxe"},Unbreakable:1,ench:[
-            {id:16,lvl:255},{id:20,lvl:255},{id:32,lvl:255},{id:33,lvl:255},{id:35,lvl:255}],
-            HideFlags:31,CanDestroy:["minecraft:stone","minecraft:grass","minecraft:dirt","minecraft:log","minecraft:planks"],Durability:-1}
-        }.gsub("\n", "").squeeze(" ")
+        $mcl.server.invoke do |cmd|
+          cmd.default %{
+            /give @a minecraft:diamond_axe 1 0 {display:{Name:"OpAxe"},Unbreakable:1,ench:[
+              {id:16,lvl:255},{id:20,lvl:255},{id:32,lvl:255},{id:33,lvl:255},{id:35,lvl:255}],
+              HideFlags:31,CanDestroy:["minecraft:stone","minecraft:grass","minecraft:dirt","minecraft:log","minecraft:planks"],Durability:-1}
+          }.gsub("\n", "").squeeze(" ").strip
+          cmd.since "1.13", "17w45a", %|
+            /give #{args.first || player} minecraft:diamond_axe{display:{Name:"#{json_etext "OpAxe"}"},Unbreakable:1,HideFlags:31,Durability:-1,Enchantments:[
+              {id:sharpness,lvl:255},{id:first_aspect,lvl:255},{id:efficiency,lvl:255},{id:silk_touch,lvl:255},{id:fortune,lvl:255}
+            ]}
+          |.gsub("\n", "").squeeze(" ").strip
+        end
       end
     end
 
     def register_speedegg acl_level
       register_command :speedegg, desc: "gives you a speed egg which lets you run faster", acl: acl_level do |player, args|
         boost = (args.first || 3).to_i / 10.0
-        $mcl.server.invoke %{
-          /give #{args.second || player} minecraft:egg 1 0 {display:{Name:"Speedegg #{(boost * 10).to_i}"},ench:[{id:0,lvl:255}],HideFlags:31,AttributeModifiers:[
-            {AttributeName:"generic.movementSpeed",Name:"generic.movementSpeed",Amount:#{boost},Operation:0,UUIDMost:98288,UUIDLeast:132143}
-          ]}
-        }.gsub("\n", "").squeeze(" ")
+        $mcl.server.invoke do |cmd|
+          cmd.default %{
+            /give #{args.second || player} minecraft:egg 1 0 {display:{Name:"Speedegg #{(boost * 10).to_i}"},ench:[{id:0,lvl:255}],HideFlags:31,AttributeModifiers:[
+              {AttributeName:"generic.movementSpeed",Name:"generic.movementSpeed",Amount:#{boost},Operation:0,UUIDMost:98288,UUIDLeast:132143}
+            ]}
+          }.gsub("\n", "").squeeze(" ").strip
+          cmd.since "1.13", "17w45a", %|
+            /give #{args.first || player} minecraft:egg{display:{Name:"#{json_etext "Speedegg #{(boost * 10).to_i}"}"},Enchantments:[{id:protection,lvl:255}],HideFlags:31,AttributeModifiers:[
+              {AttributeName:"generic.movementSpeed",Name:"generic.movementSpeed",Amount:#{boost},Operation:0,UUIDMost:98288,UUIDLeast:132143}
+            ]}
+          |.gsub("\n", "").squeeze(" ").strip
+        end
       end
     end
 
     def register_slapbread acl_level
       register_command :slapbread, desc: "gives you a slap bread", acl: acl_level do |player, args|
-        $mcl.server.invoke %{
-          /give #{args.first || player} minecraft:bread 1 0 {display:{Name:"Slapbread"},ench:[{id:19,lvl:255}],AttributeModifiers:[
-            {AttributeName:"generic.maxHealth",Name:"generic.maxHealth",Amount:40,Operation:0,UUIDMost:11947,UUIDLeast:137372},
-            {AttributeName:"generic.knockbackResistance",Name:"generic.knockbackResistance",Amount:1,Operation:0,UUIDMost:67558,UUIDLeast:116297},
-            {AttributeName:"generic.attackDamage",Name:"generic.attackDamage",Amount:0,Operation:0,UUIDMost:23120,UUIDLeast:188440}
-          ]}
-        }.gsub("\n", "").squeeze(" ")
+        $mcl.server.invoke do |cmd|
+          cmd.default %{
+            /give #{args.first || player} minecraft:bread 1 0 {display:{Name:"Slapbread"},ench:[{id:19,lvl:255}],AttributeModifiers:[
+              {AttributeName:"generic.maxHealth",Name:"generic.maxHealth",Amount:40,Operation:0,UUIDMost:11947,UUIDLeast:137372},
+              {AttributeName:"generic.knockbackResistance",Name:"generic.knockbackResistance",Amount:1,Operation:0,UUIDMost:67558,UUIDLeast:116297},
+              {AttributeName:"generic.attackDamage",Name:"generic.attackDamage",Amount:0,Operation:0,UUIDMost:23120,UUIDLeast:188440}
+            ]}
+          }.gsub("\n", "").squeeze(" ").strip
+          cmd.since "1.13", "17w45a", %|
+            /give #{args.first || player} minecraft:bread{display:{Name:"Slapbread"},Enchantments:[{id:knockback,lvl:255}],AttributeModifiers:[
+              {AttributeName:"generic.maxHealth",Name:"generic.maxHealth",Amount:40,Operation:0,UUIDMost:11947,UUIDLeast:137372},
+              {AttributeName:"generic.knockbackResistance",Name:"generic.knockbackResistance",Amount:1,Operation:0,UUIDMost:67558,UUIDLeast:116297},
+              {AttributeName:"generic.attackDamage",Name:"generic.attackDamage",Amount:0,Operation:0,UUIDMost:23120,UUIDLeast:188440}
+            ]}
+          |.gsub("\n", "").squeeze(" ").strip
+        end
       end
     end
 
     def register_slaystick acl_level
       register_command :slaystick, desc: "gives you a lethal stick", acl: acl_level do |player, args|
-        $mcl.server.invoke %{
-          /give #{args.first || player} minecraft:stick 1 0 {display:{Name:"Slaystick"},ench:[{id:20,lvl:255}],AttributeModifiers:[
-            {AttributeName:"generic.maxHealth",Name:"generic.maxHealth",Amount:40,Operation:0,UUIDMost:11947,UUIDLeast:137372},
-            {AttributeName:"generic.knockbackResistance",Name:"generic.knockbackResistance",Amount:1,Operation:0,UUIDMost:67558,UUIDLeast:116297},
-            {AttributeName:"generic.attackDamage",Name:"generic.attackDamage",Amount:255,Operation:0,UUIDMost:23120,UUIDLeast:188440}
-          ]}
-        }.gsub("\n", "").squeeze(" ")
+        $mcl.server.invoke do |cmd|
+          cmd.default %{
+            /give #{args.first || player} minecraft:stick 1 0 {display:{Name:"Slaystick"},ench:[{id:20,lvl:255}],AttributeModifiers:[
+              {AttributeName:"generic.maxHealth",Name:"generic.maxHealth",Amount:40,Operation:0,UUIDMost:11947,UUIDLeast:137372},
+              {AttributeName:"generic.knockbackResistance",Name:"generic.knockbackResistance",Amount:1,Operation:0,UUIDMost:67558,UUIDLeast:116297},
+              {AttributeName:"generic.attackDamage",Name:"generic.attackDamage",Amount:255,Operation:0,UUIDMost:23120,UUIDLeast:188440}
+            ]}
+          }.gsub("\n", "").squeeze(" ").strip
+          cmd.since "1.13", "17w45a", %|
+            /give #{args.first || player} minecraft:stick{display:{Name:"Slaystick"},Enchantments:[{id:20,lvl:255}],AttributeModifiers:[
+              {AttributeName:"generic.maxHealth",Name:"generic.maxHealth",Amount:40,Operation:0,UUIDMost:11947,UUIDLeast:137372},
+              {AttributeName:"generic.knockbackResistance",Name:"generic.knockbackResistance",Amount:1,Operation:0,UUIDMost:67558,UUIDLeast:116297},
+              {AttributeName:"generic.attackDamage",Name:"generic.attackDamage",Amount:255,Operation:0,UUIDMost:23120,UUIDLeast:188440}
+            ]}
+          |.gsub("\n", "").squeeze(" ").strip
+        end
       end
     end
 
     def register_lootbrick acl_level
       register_command :lootbrick, desc: "gives you a loot brick", acl: acl_level do |player, args|
         boost = args.first || 255
-        $mcl.server.invoke %{/give #{args.second || player} minecraft:brick 1 0 {HideFlags:31,display:{Name:"Lootbrick"},ench:[{id:21,lvl:#{boost}}]}}
+        $mcl.server.invoke do |cmd|
+          cmd.default %{/give #{args.second || player} minecraft:brick 1 0 {HideFlags:31,display:{Name:"Lootbrick"},ench:[{id:21,lvl:#{boost}}]}}
+          cmd.since "1.13", "17w45a", %{/give #{args.second || player} minecraft:brick{HideFlags:31,display:{Name:"Lootbrick"},Enchantments:[{id:looting,lvl:#{boost}}]}}
+        end
       end
     end
 
@@ -215,13 +307,25 @@ module Mcl
         args.delete(radius) if radius
         radius ||= 10
         target = args.first || player
+        msg, cmd = nil, nil
 
-        msg, cmd = "Collected items", %{/execute #{target} ~ ~ ~ tp @e[type=Item}
-
-        if radius
-          cmd << %{,r=#{radius}}
-          msg << " in a #{radius} block radius around you"
+        version_switch do |v|
+          v.default do
+            msg, cmd = "Collected items", %{/execute #{target} ~ ~ ~ tp @e[type=Item}
+            if radius
+              cmd << %{,r=#{radius}}
+              msg << " in a #{radius} block radius around you"
+            end
+          end
+          v.since "1.13", "17w45a" do
+            msg, cmd = "Collected items", %{/execute as #{target} at #{target} run tp @e[type=item}
+            if radius
+              cmd << %{,distance=0..#{radius}}
+              msg << " in a #{radius} block radius around you"
+            end
+          end
         end
+
         cmd << %{] #{target}}
         msg << "!"
 

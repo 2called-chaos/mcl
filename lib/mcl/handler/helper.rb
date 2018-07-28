@@ -71,6 +71,27 @@ module Mcl
         Gem::Version.new(ver) rescue mc_numeric_version(ver)
       end
 
+      def version_switch &block
+        Server::VersionedSwitch.new(app, &block).compile($mcl.server.version)
+      end
+
+      def json_text *txt
+        res = [].tap do |r|
+          txt.each do |t|
+            if t.is_a?(String)
+              r << {text: t}
+            else
+              r << t
+            end
+          end
+        end
+        "[#{res.map(&:to_json).join(",")}]"
+      end
+
+      def json_etext *txt
+        json_text(*txt).gsub('"', '\"')
+      end
+
       def mc_version_compare v1, v2, meth = :==
         rv1 = mc_comparable_version(v1)
         rv2 = mc_comparable_version(v2)
