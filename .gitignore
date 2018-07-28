@@ -3,6 +3,7 @@
 vendor/handlers/*
 !vendor/handlers/_buildin/
 !vendor/handlers/_extras/
+!vendor/handlers/_legacy/
 /_server/
 /log
 /vendor/bundle

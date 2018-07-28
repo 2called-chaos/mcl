@@ -1,3 +1,9 @@
+# ========
+# = NOTE =
+# ========
+# This plugin is designed for Minecraft < 1.13 and will no longer be updated
+# since the game provides a dedicated command `/locate' which does a better job.
+# ========
 module Mcl
   Mcl.reloadable(:HMclNBTInspector)
   ## Inspector for server side NBT files
