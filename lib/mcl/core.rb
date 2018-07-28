@@ -40,6 +40,7 @@ module Mcl
     require "#{lib}/server/io"
     require "#{lib}/server/getters"
     require "#{lib}/server/ipc"
+    require "#{lib}/server/versioned_command"
     require "#{lib}/server"
     require "#{lib}/models/player"
     require "#{lib}/models/setting"
