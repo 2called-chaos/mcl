@@ -13,9 +13,17 @@ module Mcl
     end
 
     def sound_list
-      playsound_broken \
-      ? %w[entity.endermen.teleport entity.enderdragon.growl entity.ghast.shoot entity.ghast.hurt entity.donkey.angry entity.villager.hurt]
-      : %w[mob.endermen.portal mob.enderdragon.growl mob.ghast.scream mob.horse.donkey.angry mob.villager.hit]
+      version_switch do |v|
+        v.before "1.9", "16w02a" do
+          return %w[entity.endermen.teleport entity.enderdragon.growl entity.ghast.shoot entity.ghast.hurt entity.donkey.angry entity.villager.hurt]
+        end
+        v.default do
+          return %w[mob.endermen.portal mob.enderdragon.growl mob.ghast.scream mob.horse.donkey.angry mob.villager.hit]
+        end
+        v.since "1.13", "17w45a" do
+          return %w[entity.endermen.teleport entity.ender_dragon.growl entity.ghast.hurt entity.donkey.angry entity.villager.hurt]
+        end
+      end
     end
 
     def register_warp acl_level
@@ -37,7 +45,12 @@ module Mcl
               warp(player, warp)
               sleep 0.1
               sound = sound_list.sample(1)[0]
-              $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound #{sound} #{playsound_broken "ambient", nil} @a[r=25] #{warp.join(" ")} 3 1}
+
+              $mcl.server.invoke do |cmd|
+                cmd.before "1.9", "16w02a", %{/execute #{player} ~ ~ ~ playsound #{sound} @a[r=25] #{warp.join(" ")} 3 1}
+                cmd.default %{/execute #{player} ~ ~ ~ playsound #{sound} ambient @a[r=25] #{warp.join(" ")} 3 1}
+                cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run playsound #{sound} ambient @a[distance=0..25] #{warp.join(" ")} 3 1}
+              end
               $mcl.server.invoke %{/particle portal #{warp.join(" ")} 0 1 0 0.25 1000 force}
               tellm(player, {text: "Off you go...", color: "aqua"})
             else

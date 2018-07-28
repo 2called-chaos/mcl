@@ -27,7 +27,7 @@ module Mcl
 
     def register_clear acl_level
       register_command :clear, desc: "clears your inventory", acl: acl_level do |player, args|
-        $mcl.server.invoke %{/clear #{player}}
+        $mcl.server.invoke %{/clear #{args.first || player}}
       end
     end
 
@@ -64,12 +64,28 @@ module Mcl
 
           # etype
           entity = args.shift.to_s.underscore.presence
-          types = %w[area_effect_cloud armor_stand arrow bat blaze boat cave_spider chest_minecart chicken commandblock_minecart cow creeper donkey dragon_fireball egg elder_guardian ender_crystal ender_dragon ender_pearl enderman endermite evocation_fangs evocation_illager eye_of_ender_signal falling_block fireball fireworks_rocket furnace_minecart ghast giant guardian hopper_minecart horse husk illusion_illager item item_frame leash_knot lightning_bolt llama llama_spit magma_cube minecart mooshroom mule ocelot painting parrot pig polar_bear potion rabbit sheep shulker shulker_bullet silverfish skeleton skeleton_horse slime small_fireball snowball snowman spawner_minecart spectral_arrow spider squid stray tnt tnt_minecart vex villager villager_golem vindication_illager witch wither wither_skeleton wither_skull wolf xp_bottle xp_orb zombie zombie_horse zombie_pigman zombie_villager]
-          etype = types.grep(/#{entity}/i).first || entity
+          types = nil
+          version_switch do |v|
+            v.default do
+              types = %w[area_effect_cloud armor_stand arrow bat blaze boat cave_spider chest_minecart chicken commandblock_minecart cow creeper donkey dragon_fireball egg elder_guardian ender_crystal ender_dragon ender_pearl enderman endermite evocation_fangs evocation_illager eye_of_ender_signal falling_block fireball fireworks_rocket furnace_minecart ghast giant guardian hopper_minecart horse husk illusion_illager item item_frame leash_knot lightning_bolt llama llama_spit magma_cube minecart mooshroom mule ocelot painting parrot pig polar_bear potion rabbit sheep shulker shulker_bullet silverfish skeleton skeleton_horse slime small_fireball snowball snowman spawner_minecart spectral_arrow spider squid stray tnt tnt_minecart vex villager villager_golem vindication_illager witch wither wither_skeleton wither_skull wolf xp_bottle xp_orb zombie zombie_horse zombie_pigman zombie_villager]
+            end
+            v.since "1.13", "17w45a" do
+              types = %w[area_effect_cloud armor_stand arrow bat blaze boat cave_spider chest_minecart chicken cod command_block_minecart cow creeper dolphin donkey dragon_fireball drowned egg elder_guardian end_crystal ender_dragon ender_pearl enderman endermite evoker evoker_fangs experience_bottle experience_orb eye_of_ender falling_block fireball fireworks_rocket furnace_minecart ghast giant guardian hopper_minecart horse husk illusioner iron_golem item item_frame leash_knot lightning_bolt llama llama_spit magma_cube minecart mooshroom mule ocelot painting parrot phantom pig polar_bear potion pufferfish rabbit salmon sheep shulker shulker_bullet silverfish skeleton skeleton_horse slime small_fireball snow_golem snowball spawner_minecart spectral_arrow spider squid stray tnt tnt_minecart trident tropical_fish turtle vex villager vindicator witch wither wither_skeleton wither_skull wolf zombie zombie_horse zombie_pigman zombie_villager]
+            end
+          end
+          etype = types.include?(entity) ? entity : types.grep(/#{entity}/i).first || entity
 
           if !(!pmemo(player)[:danger_mode] && amount > 500 && require_danger_mode(player, "Summoning >500 entities require danger mode to be enabled!"))
             trawt(player, "summon", {text: "Summoned #{amount} entities of type #{etype}."})
-            amount.times { $mcl.server.invoke %{/execute #{target} ~ ~ ~ /summon #{etype} #{args.join(" ")}} }
+
+            version_switch do |v|
+              v.default do
+                amount.times { $mcl.server.invoke %{/execute #{target} ~ ~ ~ /summon #{etype} #{args.join(" ")}} }
+              end
+              v.since "1.13", "17w45a" do
+                amount.times { $mcl.server.invoke %{/execute as #{target} at #{target} run summon #{etype} #{args.join(" ")}}.strip }
+              end
+            end
           end
         else
           trawt(player, "summon", {text: "Usage: ", color: "gold"}, {text: "!summon <entity> [-c amount] [-t target] [x] [y] [z] [dataTag]", color: "aqua"})
@@ -79,7 +95,10 @@ module Mcl
 
     def register_setspawn acl_level
       register_command :setspawn, desc: "sets your spawnpoint to current position", acl: acl_level do |player, args|
-        $mcl.server.invoke %{/execute #{player} ~ ~ ~ spawnpoint #{player} ~ ~ ~}
+        $mcl.server.invoke do |cmd|
+          cmd.default "/execute #{args.first || player} ~ ~ ~ spawnpoint #{args.first || player} ~ ~ ~"
+          cmd.since "1.13", "17w45a", "/execute as #{args.first || player} at #{args.first || player} run spawnpoint #{args.first || player} ~ ~ ~"
+        end
         traw(player, "Your spawnpoint has been set!", color: "gold")
       end
     end
@@ -87,10 +106,16 @@ module Mcl
     def register_rec acl_level
       register_command :rec, desc: "plays music discs", acl: acl_level do |player, args|
         voice = args.delete("-v")
-        if args[0].present?
-          $mcl.server.invoke %{/execute #{player} ~ ~ ~ playsound #{playsound_broken "record", "records"}.#{args[0]} #{playsound_broken(voice ? "voice" : "record", nil)} #{player} ~ ~ ~ 10000 #{args[1] || 1} 1}
+        if args.delete("-s")
+          $mcl.server.invoke "/stopsound #{player} #{voice ? "voice" : "record"}"
+        elsif args[0].present?
+          $mcl.server.invoke do |cmd|
+            cmd.before "1.9", "16w02a", %{/execute as #{player} at #{player} ~ ~ ~ playsound records.#{args[0]} nil #{player} ~ ~ ~ 10000 #{args[1] || 1} 1}
+            cmd.default %{/execute #{player} ~ ~ ~ playsound record.#{args[0]} #{voice ? "voice" : "record"} #{player} ~ ~ ~ 10000 #{args[1] || 1} 1}
+            cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run playsound music_disc.#{args[0]} #{voice ? "voice" : "record"} #{player} ~ ~ ~ 10000 #{args[1] || 1} 1}
+          end
         else
-          trawm(player, {text: "Usage: ", color: "gold"}, {text: "!rec <track> [pitch] [-v]", color: "yellow"})
+          trawm(player, {text: "Usage: ", color: "gold"}, {text: "!rec <track/-s top> [pitch] [-v oice]", color: "yellow"})
           trawm(player, {text: "Tracks: ", color: "gold"}, {text: "11 13 blocks cat chirp far mall mellohi stal strad wait ward", color: "yellow"})
         end
       end
@@ -98,19 +123,28 @@ module Mcl
 
     def register_idea acl_level
       register_command :idea, desc: "you had an idea!", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ particle lava ~ ~2 ~ 0 0 0 1 1000 force"
+        $mcl.server.invoke do |cmd|
+          cmd.default %{/execute #{args.first || player} ~ ~ ~ particle lava ~ ~2 ~ 0 0 0 1 1000 force}
+          cmd.since "1.13", "17w45a", %{/execute as #{args.first || player} at #{args.first || player} run particle lava ~ ~2 ~ 0 0 0 1 1000 force}
+        end
       end
     end
 
     def register_strike acl_level
       register_command :strike, desc: "strikes you or a target with lightning", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ summon lightning_bolt"
+        $mcl.server.invoke do |cmd|
+          cmd.default %{/execute #{args.first || player} ~ ~ ~ summon lightning_bolt}
+          cmd.since "1.13", "17w45a", %{/execute as #{args.first || player} at #{args.first || player} run summon lightning_bolt}
+        end
       end
     end
 
     def register_longwaydown acl_level
       register_command :longwaydown, :alongwaydown, desc: "sends you or target to leet height!", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ tp @p ~ 1337 ~"
+        $mcl.server.invoke do |cmd|
+          cmd.default %{/execute #{args.first || player} ~ ~ ~ tp #{args.first || player} ~ 1337 ~}
+          cmd.since "1.13", "17w45a", %{/execute as #{args.first || player} at #{args.first || player} run tp #{args.first || player} ~ 1337 ~}
+        end
       end
     end
 
@@ -118,25 +152,26 @@ module Mcl
       register_command :muuhhh, desc: "muuuuhhhhhh.....", acl: acl_level do |player, args|
         async do
           target = args.first || player
-          cow(target, "~ ~50 ~")
+          drop = strbool(args.second || true)
+          cow(target, "~ ~50 ~", drop)
           sleep 3
 
-          cow(target, "~ ~50 ~")
+          cow(target, "~ ~50 ~", drop)
           sleep 0.2
-          cow(target, "~ ~50 ~")
+          cow(target, "~ ~50 ~", drop)
           sleep 3
 
 
-          cow(target, "~ ~50 ~")
+          cow(target, "~ ~50 ~", drop)
           sleep 0.2
-          cow(target, "~ ~50 ~")
+          cow(target, "~ ~50 ~", drop)
           sleep 0.2
-          cow(target, "~ ~50 ~")
+          cow(target, "~ ~50 ~", drop)
           sleep 3
 
           $mcl.sync do # aquire lock once to actually reduce lag
             100.times do
-              cow(target, "~ ~50 ~")
+              cow(target, "~ ~50 ~", drop, true)
               sleep 0.05
             end
           end
@@ -145,8 +180,14 @@ module Mcl
     end
 
     module Helper
-      def cow target, pos = "~ ~ ~"
-        $mcl.sync { $mcl.server.invoke "/execute #{target} ~ ~ ~ summon cow #{pos}" } # {DropChances:[0F,0F,0F,0F,0F]}
+      def cow target, pos = "~ ~ ~", drop = false, fire = false
+        $mcl.sync {
+          $mcl.server.invoke do |cmd|
+            drop = drop ? "#{" {Fire:1000}" if fire}" : " {DeathLootTable:empty}"
+            cmd.default %{/execute #{target} ~ ~ ~ summon cow #{pos}}
+            cmd.since "1.13", "17w45a", %{/execute as #{target} at #{target} run summon cow #{pos}#{drop}}
+          end
+        }
       end
     end
     include Helper

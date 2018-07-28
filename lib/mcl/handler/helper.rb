@@ -49,14 +49,6 @@ module Mcl
         { text: "[#{t}] ", color: color }
       end
 
-      def playsound_broken yes = true, no = false
-        if mc_snapshot?
-          mc_version_compare(server.version, "16w02a", :>=) ? yes : no
-        else
-          mc_version_compare(server.version, "1.9", :>=) ? yes : no
-        end
-      end
-
       def mc_numeric_version ver = nil
         ver ||= server.version
         ver.each_byte.with_index.inject(0) {|n, (c, i)| n + (255**(ver.length - i) * c) }
