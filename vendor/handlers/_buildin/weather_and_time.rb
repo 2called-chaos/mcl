@@ -4,6 +4,7 @@ module Mcl
   # !sun [duration=999999]
   # !rain [duration]
   # !thunder [duration]
+  # !weather <on/off>
   #
   # !time <val>
   # !morning
@@ -19,6 +20,7 @@ module Mcl
       register_sun(:member)
       register_rain(:member)
       register_thunder(:member)
+      register_weather(:admin)
 
       # time
       register_time(:member)
@@ -27,25 +29,31 @@ module Mcl
       register_evening(:member)
       register_midnight(:member)
       register_night(:member)
-      register_freeze(:member)
-      register_unfreeze(:member)
+      register_freeze(:admin)
+      register_unfreeze(:admin)
     end
 
     def register_sun acl_level
       register_command :sun, desc: "Clears the weather for 11 days or given duration", acl: acl_level do |player, args|
-        $mcl.server.invoke "/weather clear #{args.first || 999999}"
+        $mcl.server.invoke "/weather clear #{args.first || 999999}".strip
       end
     end
 
     def register_rain acl_level
       register_command :rain, desc: "Lets it rain, you may pass a duration in seconds", acl: acl_level do |player, args|
-        $mcl.server.invoke "/weather rain #{args.first}"
+        $mcl.server.invoke "/weather rain #{args.first}".strip
       end
     end
 
     def register_thunder acl_level
       register_command :thunder, desc: "Lets it thunder, you may pass a duration in seconds", acl: acl_level do |player, args|
-        $mcl.server.invoke "/weather thunder #{args.first}"
+        $mcl.server.invoke "/weather thunder #{args.first}".strip
+      end
+    end
+
+    def register_weather acl_level
+      register_command :weather, desc: "Enable or disable weather cycle", acl: acl_level do |player, args|
+        $mcl.server.invoke %{/gamerule doWeatherCycle #{!!strbool(args[0])}} if args.any?
       end
     end
 
