@@ -20,15 +20,22 @@ module Mcl
     end
 
     def setup_parser
+      register_parser(/^Can't keep up! Is the server overloaded\? Running ([\d]+)ms or ([\d]+) tick(?:s)? behind/i) do |res, r|
+        handle_incident(r)
+      end
       register_parser(/^Can't keep up! Did the system time change, or is the server overloaded\? Running ([\d]+)ms behind, skipping ([\d]+) tick\(s\)/i) do |res, r|
-        log = LagtrackLog.create!(delay: r[1].to_i, skipped_ticks: r[2].to_i, tracked_at: Time.current, world: $mcl.server.world)
-        $mcl.log.info "[Lagtrack] Running #{log.delay}ms behind, skipping #{log.skipped_ticks} tick(s)"
-        if @announce
-          tellm(@announce,
-            {text: "Running ", color: "red"}, {text: "#{log.delay}ms", color: "aqua"},
-            {text: " behind, skipping ", color: "red"}, {text: "#{log.skipped_ticks}", color: "aqua"}, {text: " tick(s)", color: "red"}
-          )
-        end
+        handle_incident(r)
+      end
+    end
+
+    def handle_incident r
+      log = LagtrackLog.create!(delay: r[1].to_i, skipped_ticks: r[2].to_i, tracked_at: Time.current, world: $mcl.server.world)
+      $mcl.log.info "[Lagtrack] Running #{log.delay}ms behind, skipping #{log.skipped_ticks} tick(s)"
+      if @announce
+        tellm(@announce,
+          {text: "Running ", color: "red"}, {text: "#{log.delay}ms", color: "aqua"},
+          {text: " behind, skipping ", color: "red"}, {text: "#{log.skipped_ticks}", color: "aqua"}, {text: " tick(s)", color: "red"}
+        )
       end
     end
 
