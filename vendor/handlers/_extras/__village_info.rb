@@ -137,12 +137,12 @@ module Mcl
           elsif p["S"] < -14
             ss = [l("#{p["S"]}", "red", hover: "Hostile (-30..15)")]
           elsif p["S"] < 0
-            ss = [l("#{p["S"]}", "yellow", hover: "Negative (-30..15)")]
+            ss = [l("#{p["S"]}", "gold", hover: "Negative (-30..15)")]
           elsif p["S"] > 0
             ss = [l("#{p["S"]}", "green", hover: "Positive (-30..15)")]
           end
           ss << l(" ")
-          ss << l("#{s}\\n", "black", hover: h)
+          ss << l("#{s}\n", "black", hover: h)
           bs << ss.to_json[1..-2]
           if x >= 13
             pages << bs.join("\n")
@@ -151,7 +151,7 @@ module Mcl
         end
         pages << bs.join("\n")
 
-        server.invoke book(player, "Village ##{} Players", pages, author: "MCL-VillageInfo")
+        server.invoke book(player, "Village ##{village["Players"].count} Players", pages, author: "MCL-VillageInfo")
       end
 
       def do_doorbook player, villages, opts = {}, args = []
@@ -175,7 +175,7 @@ module Mcl
           dc = [d["X"], d["Y"], d["Z"]]
           s = "Door ##{i+1}: #{dc.join(" ")}"
           x += s.to_s.length > 22 ? 2 : 1
-          bs << l("#{s}\\n", hover: "teleport to door ##{i+1} #{dc.join(" ")}", command: "!tp #{dc.join(" ")}").to_json
+          bs << l("#{s}\n", hover: "teleport to door ##{i+1} #{dc.join(" ")}", command: "!tp #{dc.join(" ")}").to_json
           if x >= 13
             pages << bs.join("\n")
             x, bs = 0, []
@@ -183,7 +183,7 @@ module Mcl
         end
         pages << bs.join("\n")
 
-        server.invoke book(player, "Village ##{} Doors", pages, author: "MCL-VillageInfo")
+        server.invoke book(player, "Village ##{doors.count} Doors", pages, author: "MCL-VillageInfo")
       end
 
       def do_stat player, villages, opts = {}, args = []
