@@ -9,7 +9,7 @@ module Mcl
 
       # player position detection (1.13)
       register_parser(/\ATeleported ([^\s]+) to ([\d\.,\-]+),(?:\s)?([\d\.,\-]+),(?:\s)?([\d\.,\-]+?)(?:\.)?\z/i) do |res, r|
-        pmemo(r[1])[:detected_pos] = [r[2].to_i, r[3].to_i, r[4].to_i]
+        pmemo(r[1])[:detected_pos] = [r[2].to_i, r[3].to_i, r[4].to_i - 1]
       end
     end
   end

@@ -54,12 +54,18 @@ module Mcl
         unless require_selection(player)
           if args.count > 0
             block = args.shift
-            bval  = args.shift || "0"
+            bval  = args.shift || "0" unless args[0].to_s.start_with?("{", "[")
             coord_32k_units(pram[:pos1], pram[:pos2], player) do |p1, p2|
-              $mcl.server.invoke %{/execute #{player} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{block} #{bval} replace #{args.join(" ")}}
+              $mcl.server.invoke do |cmd|
+                cmd.default %{/execute #{player} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{block} #{bval} replace #{args.join(" ")}}.strip
+                cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run fill #{p1.join(" ")} #{p2.join(" ")} #{[block, *args].join(" ")}}.strip
+              end
             end
           else
-            tellm(player, {text: "!!set <TileName> [dataValue] [dataTag]", color: "yellow"})
+            version_switch do |v|
+              v.default { tellm(player, {text: "!!set <block> [dataValue] [dataTag]", color: "yellow"}) }
+              v.since("1.13", "17w45a") { tellm(player, {text: "!!set <block>[data]{nbt}", color: "yellow"}) }
+            end
           end
         end
       end
@@ -69,10 +75,21 @@ module Mcl
       register_command "!outline", desc: "outlines selection with given block", acl: acl_level do |player, args|
         pram = memory(player)
         unless require_selection(player)
-          if args.count > 0
-            $mcl.server.invoke %{/execute #{player} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{args.shift} #{args.shift || "0"} outline #{args.join(" ")}}
-          else
-            tellm(player, {text: "!!outline <TileName> [dataValue] [dataTag]", color: "yellow"})
+          version_switch do |v|
+            v.default do
+              if args.count > 0
+                $mcl.server.invoke %{/execute #{player} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{args.shift} #{args.shift || "0"} outline #{args.join(" ")}}
+              else
+                tellm(player, {text: "!!outline <block> [dataValue] [dataTag]", color: "yellow"})
+              end
+            end
+            v.since "1.13", "17w45a" do
+              if args.count > 0
+                $mcl.server.invoke(%{/execute as #{player} at #{player} run fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{args.join(" ")}}.strip << " outline")
+              else
+                tellm(player, {text: "!!outline <block>[data]{nbt}", color: "yellow"})
+              end
+            end
           end
         end
       end
@@ -82,10 +99,21 @@ module Mcl
       register_command "!hollow", desc: "hollow selection with given block", acl: acl_level do |player, args|
         pram = memory(player)
         unless require_selection(player)
-          if args.count > 0
-            $mcl.server.invoke %{/execute #{player} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{args.shift} #{args.shift || "0"} hollow #{args.join(" ")}}
-          else
-            tellm(player, {text: "!!hollow <TileName> [dataValue] [dataTag]", color: "yellow"})
+          version_switch do |v|
+            v.default do
+              if args.count > 0
+                $mcl.server.invoke %{/execute #{player} ~ ~ ~ fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{args.shift} #{args.shift || "0"} hollow #{args.join(" ")}}
+              else
+                tellm(player, {text: "!!hollow <block> [dataValue] [dataTag]", color: "yellow"})
+              end
+            end
+            v.since "1.13", "17w45a" do
+              if args.count > 0
+                $mcl.server.invoke(%{/execute as #{player} at #{player} run fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{args.join(" ")}}.strip << " hollow")
+              else
+                tellm(player, {text: "!!hollow <block>[data]{nbt}", color: "yellow"})
+              end
+            end
           end
         end
       end
@@ -95,14 +123,25 @@ module Mcl
       register_command "!fill", desc: "fill air blocks in selection with given block", acl: acl_level do |player, args|
         pram = memory(player)
         unless require_selection(player)
-          if args.count > 0
-            block = args.shift
-            bval  = args.shift || "0"
-            coord_32k_units(pram[:pos1], pram[:pos2], player) do |p1, p2|
-              $mcl.server.invoke %{/execute #{player} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{block} #{bval} keep #{args.join(" ")}}
+          version_switch do |v|
+            v.default do
+              if args.count > 0
+                block = args.shift
+                bval  = args.shift || "0"
+                coord_32k_units(pram[:pos1], pram[:pos2], player) do |p1, p2|
+                  $mcl.server.invoke %{/execute #{player} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{block} #{bval} keep #{args.join(" ")}}
+                end
+              else
+                tellm(player, {text: "!!fill <TileName> [dataValue] [dataTag]", color: "yellow"})
+              end
             end
-          else
-            tellm(player, {text: "!!fill <TileName> [dataValue] [dataTag]", color: "yellow"})
+            v.since "1.13", "17w45a" do
+              if args.count > 0
+                $mcl.server.invoke(%{/execute as #{player} at #{player} run fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{args.join(" ")}}.strip << " keep")
+              else
+                tellm(player, {text: "!!fill <block>[data]{nbt}", color: "yellow"})
+              end
+            end
           end
         end
       end
@@ -113,13 +152,24 @@ module Mcl
         pram = memory(player)
         unless require_selection(player)
           is, should = args.join(" ").split(">").map(&:strip).reject(&:blank?)
-          if is && should && is.is_a?(String) && should.is_a?(String)
-            should = should.split(" ")
-            coord_32k_units(pram[:pos1], pram[:pos2], player) do |p1, p2|
-              $mcl.server.invoke %{/execute #{player} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{should[0]} #{should[1] || "1"} replace #{is}}
+          version_switch do |v|
+            v.default do
+              if is && should && is.is_a?(String) && should.is_a?(String)
+                should = should.split(" ")
+                coord_32k_units(pram[:pos1], pram[:pos2], player) do |p1, p2|
+                  $mcl.server.invoke %{/execute #{player} ~ ~ ~ fill #{p1.join(" ")} #{p2.join(" ")} #{should[0]} #{should[1] || "1"} replace #{is}}
+                end
+              else
+                tellm(player, {text: "!!replace <IS:TileName> [IS:dataValue] > <SHOULD:TileName> [SHOULD:dataValue]", color: "yellow"})
+              end
             end
-          else
-            tellm(player, {text: "!!replace <IS:TileName> [IS:dataValue] > <SHOULD:TileName> [SHOULD:dataValue]", color: "yellow"})
+            v.since "1.13", "17w45a" do
+              if is && should && is.is_a?(String) && should.is_a?(String)
+                $mcl.server.invoke %{/execute as #{player} at #{player} run fill #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{should} replace #{is}}
+              else
+                tellm(player, {text: "!!replace <IS:block>[data]{nbt} > <SHOULD:block>[data]{nbt}", color: "yellow"})
+              end
+            end
           end
         end
       end
@@ -230,7 +280,10 @@ module Mcl
 
       def sel_insert player, pos, *args
         pram = memory(player)
-        $mcl.server.invoke %{/execute #{player} ~ ~ ~ clone #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{pos.join(" ")} #{args.join(" ")}}
+        $mcl.server.invoke do |cmd|
+          cmd.default %{/execute #{player} ~ ~ ~ clone #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{pos.join(" ")} #{args.join(" ")}}.strip
+          cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run clone #{p1.join(" ")} #{p2.join(" ")} #{pos.join(" ")} #{args.join(" ")}}.strip
+        end
       end
 
       def insert_selection player, args
@@ -328,7 +381,7 @@ module Mcl
             amount    = chunks.any? ? [chunks.shift.to_i, 1].max : 1
             shift_sel = chunks.any? ? strbool(chunks.shift) : false
             mode      = chunks.any? ? chunks.shift : "replace"
-            tile_name = chunks.shift
+            tile_name = chunks.join(" ")
 
             # precheck
             if !pmemo(player)[:danger_mode] && amount > 50
@@ -349,7 +402,10 @@ module Mcl
               p2 = shift_frame_selection(p2, seldim, axis, operator)
 
               # clone source => working
-              $mcl.server.invoke %{/execute #{player} ~ ~ ~ /clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}
+              $mcl.server.invoke do |cmd|
+                cmd.default %{/execute #{player} ~ ~ ~ /clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}
+                cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}.strip
+              end
 
               # shift source position
               s1, s2 = p1, p2
