@@ -19,7 +19,7 @@ module Mcl
             tellm(player, {text: "Cleared ", color: "yellow"}, {text: "#{v[:variables].length}", color: "aqua"}, {text: " variables!", color: "yellow"})
           }[:variables] = {}
         elsif args.join == "list"
-          variables = memory(player)[:variables] || {}
+          variables = (memory(player)[:variables] ||= {})
           if variables.any?
             variables.each do |name, value|
               tellm(player, { text: "#{name}", color: "yellow" }, { text: " = ", color: "aqua" }, { text: "#{value}", color: "gold" })
@@ -28,13 +28,13 @@ module Mcl
             tellm(player, {text: "You have no variables set!", color: "yellow"})
           end
         elsif m = args.join.match(/\A([a-z0-9\-_]+)=(.*)\z/i)
-          variables = memory(player)[:variables] || {}
+          variables = (memory(player)[:variables] ||= {})
           variables[m[1]] = m[2]
           tellm(player, {text: "Set variable ", color: "aqua"}, { text: "#{m[1]}", color: "yellow" }, { text: " = ", color: "aqua" }, { text: "#{m[2]}", color: "gold" })
         elsif args.any?
           begin
             calc = Dentaku::Calculator.new
-            variables = memory(player)[:variables] || {}
+            variables = (memory(player)[:variables] ||= {})
             expression = args.join(" ")
             result = calc.evaluate!(expression, variables)
             tellm(player, { text: "#{expression}", color: "yellow" }, { text: " = ", color: "green" }, { text: "#{result}", color: "gold" })
