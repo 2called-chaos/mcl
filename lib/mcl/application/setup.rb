@@ -131,6 +131,7 @@ module Mcl
         @handlers = []
         @command_acls = {}
         @command_names = {}
+        @command_bindings = {}
         if load_files
           files = (Dir["#{ROOT}/lib/mcl/handlers/**{,/*/**}/*.rb"] + Dir["#{ROOT}/vendor/handlers/**{,/*/**}/*.rb"]).uniq.sort
           files.reject do |file|

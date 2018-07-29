@@ -1,6 +1,6 @@
 module Mcl
   class Application
-    attr_reader :async, :command_acls, :command_names, :config, :delayed, :eman, :pman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises, :booted_mcl_rev, :event_backlog, :console_server
+    attr_reader :async, :command_acls, :command_names, :command_bindings, :config, :delayed, :eman, :pman, :handlers, :instance, :log, :ram, :scheduler, :server, :promises, :booted_mcl_rev, :event_backlog, :console_server
 
     include Setup
 
@@ -142,6 +142,14 @@ module Mcl
     def get_handlers *klasses
       @handlers.select do |h|
         klasses.any?{|klass| h.is_a?(klass) }
+      end
+    end
+
+    def invoke_command user, cmd, args = nil, acl = nil
+      if cb = @command_bindings["#{cmd}"]
+        cb[2]["#{user}", ["!#{cmd}", args].flatten.join(" ").strip, acl]
+      else
+        false
       end
     end
 

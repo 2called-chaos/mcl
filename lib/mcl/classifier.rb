@@ -43,6 +43,12 @@ module Mcl
       # register handler
       cmds.each do |cmd|
         cmd = cmd.to_s
+        app.command_bindings[cmd] = [handler, b, ->(user, ucmd, acl = nil){
+          catch(:handler_exit) do
+            handler.acl_verify(user, acl) if acl
+            b[user, ucmd, handler, OptionParser.new]
+          end
+        }]
         app.devlog "[SETUP]   Registering command `#{cmd}'", scope: "command_register"
         [
           /\A<([^>]+)> \!(.+)\z/i,
@@ -51,11 +57,9 @@ module Mcl
         ].each do |pat|
           register(pat) do |res, r|
             if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
-              catch(:handler_exit) do
-                u = r[1].to_s.gsub(/[§]./, "")
-                handler.acl_verify(u, acl_lvl) if opts[:acl]
-                b[u, r[2].split(" ")[1..-1], handler, OptionParser.new]
-              end
+              user = r[1].to_s.gsub(/[§]./, "")
+              ucmd = r[2].split(" ")[1..-1]
+              app.command_bindings[cmd][2][user, ucmd, opts[:acl]]
             end
           end
         end
