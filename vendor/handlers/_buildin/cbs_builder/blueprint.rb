@@ -258,7 +258,7 @@ module Mcl
         end
       end
 
-      def compile start_pos
+      def compile start_pos, vcset
         [].tap do |container|
           case mode = grid_mode
           when "x"
@@ -266,7 +266,7 @@ module Mcl
             grid.each_with_index do |layer, yd|
               layer.each_with_index do |line, xd|
                 line.each_with_index do |token, zd|
-                  container << token.compile([x + xd, y + yd, z + zd], mode, options)
+                  container << token.compile([x + xd, y + yd, z + zd], vcset, mode, options)
                 end
               end
             end
@@ -275,7 +275,7 @@ module Mcl
             grid.each_with_index do |layer, xd|
               layer.reverse.each_with_index do |line, yd|
                 line.each_with_index do |token, zd|
-                  container << token.compile([x + xd, y + yd, z + zd], mode, options)
+                  container << token.compile([x + xd, y + yd, z + zd], vcset, mode, options)
                 end
               end
             end
@@ -284,7 +284,7 @@ module Mcl
             grid.each_with_index do |layer, yd|
               layer.each_with_index do |line, zd|
                 line.each_with_index do |token, xd|
-                  container << token.compile([x + xd, y + yd, z + zd], mode, options)
+                  container << token.compile([x + xd, y + yd, z + zd], vcset, mode, options)
                 end
               end
             end
@@ -293,14 +293,14 @@ module Mcl
             grid.each_with_index do |layer, xd|
               layer.each_with_index do |line, zd|
                 line.each_with_index do |token, yd|
-                  container << token.compile([x + xd, y + yd, z + zd], mode, options)
+                  container << token.compile([x + xd, y + yd, z + zd], vcset, mode, options)
                 end
               end
             end
           when "xc", "yc", "zc"
             pos = { "x" => start_pos[0], "y" => start_pos[1], "z" => start_pos[2] }
             grid.each do |token|
-              container << token.compile(pos.values, mode, options)
+              container << token.compile(pos.values, vcset, mode, options)
               pos[mode[0]] += 1
             end
           end

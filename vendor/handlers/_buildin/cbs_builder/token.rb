@@ -141,18 +141,18 @@ module Mcl
         end
       end
 
-      def compile coord, grid_mode, opts = {}
+      def compile coord, vcset, grid_mode, opts = {}
         res = payload.dup
         token_opts.each {|_, opt| opt.apply!(res) }
         opts.each {|_, opt| opt.apply!(res) }
         coord_opts(coord).each {|_, opt| opt.apply!(res) }
 
         [:command_block, :setblock, :command].detect do |m|
-          return __send__(:"_#{m}", coord, grid_mode, res) if __send__(:"#{m}?")
+          return __send__(:"_#{m}", coord, vcset, grid_mode, res) if __send__(:"#{m}?")
         end || res
       end
 
-      def _command_block coord, grid_mode, payload
+      def _command_block coord, vcset, grid_mode, payload
         cbopts = { block: "command_block", direction: relative_facing(grid_mode), conditional: false, always_active: false }
         modifiers.each do |mod|
           case mod
@@ -192,14 +192,24 @@ module Mcl
         datatag = data_tag.join(",")
         datatag << "#{"," if datatag.length > 0}#{ctags}" if ctags
 
-        %{ /setblock #{coord.join(" ")} minecraft:#{cbopts[:block]} #{bin.to_i(2)} replace {#{datatag}} }.strip
+        case vcset
+        when "1.13"
+          %{ /setblock #{coord.join(" ")} minecraft:#{cbopts[:block]}[facing=#{cbopts[:direction]},conditional=#{!!cbopts[:conditional]}]{#{datatag}} replace }.strip
+        else
+          %{ /setblock #{coord.join(" ")} minecraft:#{cbopts[:block]} #{bin.to_i(2)} replace {#{datatag}} }.strip
+        end
       end
 
-      def _setblock coord, grid_mode, payload
-        %{ /setblock #{coord.join(" ")} #{payload} }.strip
+      def _setblock coord, vcset, grid_mode, payload
+        case vcset
+        when "1.13"
+          %{ /setblock #{coord.join(" ")} #{payload} }.strip
+        else
+          %{ /setblock #{coord.join(" ")} #{payload} }.strip
+        end
       end
 
-      def _command coord, grid_mode, payload
+      def _command coord, vcset, grid_mode, payload
         %{ #{payload.strip[0] == "/" ? payload : "/#{payload}"} }.strip
       end
     end

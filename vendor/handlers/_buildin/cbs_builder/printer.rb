@@ -61,9 +61,9 @@ module Mcl
       end
       alias_method :_, :blueprint
 
-      def compile
+      def compile vcset
         return false unless @pos
-        _.compile(start_pos)
+        _.compile(start_pos, vcset)
       end
 
       def cancel &callback
@@ -86,6 +86,13 @@ module Mcl
         @stopped = false
         @building = true
 
+        # versions
+        vcset = nil
+        handler.version_switch do |v|
+          v.default { vcset = "1.12" }
+          v.since("1.13", "17w45a") { vcset = "1.13" }
+        end
+
         handler.async do
           begin
             cdata, compiletime, buildtime = nil, nil, nil
@@ -94,7 +101,7 @@ module Mcl
             begin
               compiletime = Benchmark.realtime do
                 @on_compile_start.try(:call)
-                cdata = compile || raise("no position defined, abort compile")
+                cdata = compile(vcset) || raise("no position defined, abort compile")
               end
               @on_compile_end.try(:call, compiletime)
             rescue StandardError => ex
@@ -120,7 +127,7 @@ module Mcl
                       ci = cdata.shift
                       next if ci.blank?
 
-                      if !air? || ci =~ /\A\/setblock ([0-9~]+) ([0-9~]+) ([0-9~]+) (minecraft:)?air\z/i
+                      if !air? || ci =~ /\A\/setblock ([0-9~]+) ([0-9~]+) ([0-9~]+) (minecraft:)?(cave_|void_)?air\z/i
                         @stats[:blocks_ignored] += 1
                       else
                         # invoke

@@ -262,7 +262,10 @@ module Mcl
             if args[0] == "clear"
               # clear area
               coord_32k_units(bp.start_pos, bp.end_pos) do |p1, p2|
-                $mcl.server.invoke %{/fill #{p1.join(" ")} #{p2.join(" ")} air}
+                $mcl.server.invoke do |cmd|
+                  cmd.default %{/fill #{p1.join(" ")} #{p2.join(" ")} air}
+                  cmd.since "1.13", "17w45a", %{/fill #{p1.join(" ")} #{p2.join(" ")} void_air}
+                end
               end
               tellm(player, {text: "Build area cleared!", color: "yellow"})
             else
