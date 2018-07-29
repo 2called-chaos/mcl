@@ -47,7 +47,7 @@ module Mcl
         case args.count
         when 0 # usage
           trawt(player, "SPROP", {text: "Usage: ", color: "gold"}, {text: "!sprop book", color: "aqua"})
-          trawt(player, "SPROP", {text: "Usage: ", color: "gold"}, {text: "!sprop <property> [value] [force]", color: "aqua"})
+          trawt(player, "SPROP", {text: "Usage: ", color: "gold"}, {text: "!sprop [-f orce] [-r estart] <property> [value]", color: "aqua"})
         when 1 # read / book
           if args.first == "book"
             book_data = [].tap do |b|
@@ -70,20 +70,22 @@ module Mcl
             if $mcl.server.properties.key?(args.first)
               sval = $mcl.server.properties[args.first]
               val = sval.blank? ? {text: "-blank-", color: "gray", italic: true} : {text: "#{sval}", color: "aqua"}
-              trawt(player, "SPROP", {text: "Value of property ", color: "gold"}, {text: "#{args.first}", color: "dark_aqua"}, {text: " is ", color: "gold"}, val)
+              trawt(player, "SPROP", {text: "Value of property ", color: "gold"}, {text: "#{args.first}", color: "dark_aqua"}, {text: " is ", color: "gold"}, val, " ", {text: "(change)", color: "light_purple", clickEvent:{action: "suggest_command", value: "!sprop #{args.first} "}})
             else
-              trawt(player, "SPROP", {text: "Property ", color: "red"}, {text: "#{args.first}", color: "dark_aqua"}, {text: " does not exist.", color: "red"})
+              trawt(player, "SPROP", {text: "Property ", color: "red"}, {text: "#{args.first}", color: "dark_aqua"}, {text: " does not exist. ", color: "red"}, {text: "(add)", color: "light_purple", clickEvent:{action: "suggest_command", value: "!sprop -f #{args.first} VALUE"}})
             end
           end
         else # update
           prop = args.shift
-          force = args.pop if args.last == "force"
+          force = args.delete("-f") || args.last == "force"
+          restart = args.delete("-r")
+          args.pop if args.last == "force"
           val = args.join(" ")
           pwas = $mcl.server.properties[prop]
 
-          if !pwas && !force
+          if !$mcl.server.properties.key?(prop) && !force
             trawt(player, "SPROP", {text: "Property ", color: "red"}, {text: "#{prop}", color: "dark_aqua"}, {text: " does not exist.", color: "red"})
-            trawt(player, "SPROP", {text: "If you want to add this property use force!", color: "red"})
+            trawt(player, "SPROP", {text: "If you want to add this property use force (-f)!", color: "red"})
           else
             $mcl.server.update_property(prop, val)
             if pwas
@@ -95,7 +97,11 @@ module Mcl
             else
               trawt(player, "SPROP", {text: "Added new property ", color: "gold"}, {text: "#{prop}", color: "dark_aqua"}, {text: " with value ", color: "gold"}, {text: "#{val}", color: "aqua"} )
             end
-            trawt(player, "SPROP", {text: "Changes require a server restart to take effect!", color: "yellow"})
+            if restart
+              app.invoke_command(player, :stopmc)
+            else
+              trawt(player, "SPROP", {text: "Changes require a server restart to take effect! ", color: "yellow",hoverEvent:{action: "show_text", value: "click to restart server now"},clickEvent:{action: "suggest_command", value: "!stopmc"}})
+            end
           end
         end
       end
