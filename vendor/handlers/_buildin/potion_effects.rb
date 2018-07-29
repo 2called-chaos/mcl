@@ -129,39 +129,40 @@ module Mcl
         player_effect player, target, :water_breathing, 6000, 255
         player_effect player, target, :night_vision, 6000, 255
         player_effect player, target, :speed, 6000, 10
-        replace_item  target, "armor.head",  "diamond_helmet 1 0     {ench:[{id:0,lvl:1337},{id:6,lvl:1337}],Unbreakable:1}"
-        replace_item  target, "armor.chest", "diamond_chestplate 1 0 {ench:[{id:0,lvl:1337},{id:7,lvl:1337}],Unbreakable:1}"
-        replace_item  target, "armor.legs",  "diamond_leggings 1 0   {ench:[{id:0,lvl:1337},{id:7,lvl:1337}],Unbreakable:1}"
-        replace_item  target, "armor.feet",  "diamond_boots 1 0      {ench:[{id:0,lvl:1337},{id:7,lvl:1337},{id:8,lvl:3}],Unbreakable:1}"
+        replace_item  target, "armor.head",  "diamond_helmet", "{ench:[{id:0,lvl:1337},{id:6,lvl:1337}],Unbreakable:1}"
+        replace_item  target, "armor.chest", "diamond_chestplate", "{ench:[{id:0,lvl:1337},{id:7,lvl:1337}],Unbreakable:1}"
+        replace_item  target, "armor.legs",  "diamond_leggings", "{ench:[{id:0,lvl:1337},{id:7,lvl:1337}],Unbreakable:1}"
+        replace_item  target, "armor.feet",  "diamond_boots", "{ench:[{id:0,lvl:1337},{id:7,lvl:1337},{id:8,lvl:3}],Unbreakable:1}"
       end
       register_command(:gimme, desc: "gives you or target a perfect outfit", acl: ph_acl) do |player, args|
         target = args.first || player
         # weapons / tools
-        $mcl.server.invoke %{/give #{target} diamond_sword 1 0 {display:{Name:"The Butcher",Lore:["Kills everything"]},ench:[{id:16,lvl:5},{id:21,lvl:3},{id:22,lvl:3},{id:34,lvl:3},{id:70,lvl:1}]}}
-        $mcl.server.invoke %{/give #{target} bow 1 0 {display:{Name:"AK47",Lore:["Not really as good"]},ench:[{id:34,lvl:3},{id:48,lvl:5},{id:49,lvl:2},{id:50,lvl:1},{id:51,lvl:1}]}}
-        $mcl.server.invoke %{/give #{target} diamond_pickaxe 1 0 {display:{Name:"PickMuch",Lore:["with luck!"]},ench:[{id:32,lvl:5},{id:34,lvl:3},{id:35,lvl:3},{id:70,lvl:1}]}}
-        $mcl.server.invoke %{/give #{target} diamond_pickaxe 1 0 {display:{Name:"PickGood",Lore:["with silk!"]},ench:[{id:32,lvl:5},{id:34,lvl:3},{id:33,lvl:1},{id:70,lvl:1}]}}
-        $mcl.server.invoke %{/give #{target} diamond_shovel 1 0 {display:{Name:DigIt,Lore:["dig it?"]},ench:[{id:32,lvl:5},{id:33,lvl:1},{id:34,lvl:3},{id:70,lvl:1}]}}
-        $mcl.server.invoke %{/give #{target} diamond_axe 1 0 {display:{Name:"ChopChop",Lore:["Suey!"]},ench:[{id:16,lvl:5},{id:32,lvl:5},{id:34,lvl:3},{id:35,lvl:3},{id:70,lvl:1}]}}
+        give_item target, "diamond_sword", 1, %{{display:{Name:"The Butcher",Lore:["Kills everything"]},ench:[{id:16,lvl:5},{id:21,lvl:3},{id:22,lvl:3},{id:22,lvl:3},{id:70,lvl:1}]}}
+        give_item target, "bow", 1, %{{display:{Name:"AK47",Lore:["Not really as good"]},ench:[{id:48,lvl:5},{id:49,lvl:2},{id:50,lvl:1},{id:51,lvl:1}]}}
+        give_item target, "diamond_pickaxe", 1, %{{display:{Name:"PickMuch",Lore:["with luck!"]},ench:[{id:32,lvl:5},{id:35,lvl:3},{id:70,lvl:1}]}}
+        give_item target, "diamond_pickaxe", 1, %{{display:{Name:"PickGood",Lore:["with silk!"]},ench:[{id:32,lvl:5},{id:33,lvl:1},{id:70,lvl:1}]}}
+        give_item target, "diamond_shovel", 1, %{{display:{Name:"DigIt",Lore:["dig it?"]},ench:[{id:32,lvl:5},{id:33,lvl:1},{id:70,lvl:1}]}}
+        give_item target, "diamond_axe", 1, %{{display:{Name:"ChopChop",Lore:["Suey!"]},ench:[{id:16,lvl:5},{id:32,lvl:5},{id:35,lvl:3},{id:70,lvl:1}]}}
 
         # items
         2.times {
-          $mcl.server.invoke %{/give #{target} ender_pearl 16}
-          $mcl.server.invoke %{/give #{target} fireworks 64 0 {Fireworks:{Flight:15}}}
-          $mcl.server.invoke %{/give #{target} cooked_beef 64 0}
+          give_item target, "ender_pearl", 16
+          version_switch do |v|
+            v.default { give_item target, "fireworks", 64, %{{Fireworks:{Flight:15}}} }
+            v.since("1.13", "17w45a") { give_item target, "firework_rocket", 64, %{{Fireworks:{Flight:15}}} }
+          end
+          give_item target, "cooked_beef", 64
         }
-        $mcl.server.invoke %{/give #{target} arrow 1 0}
-        $mcl.server.invoke %{/give #{target} flint_and_steel 1 0}
-        $mcl.server.invoke %{/give #{target} torch 64 0}
+        give_item target, "arrow", 1
+        give_item target, "flint_and_steel", 1
+        give_item target, "torch", 64
 
         # armor
-        $mcl.server.invoke %{/give #{target} diamond_helmet 1 0 {display:{Name:"AntiBrainZ",Lore:["Don't let the zombies get your brain","Also works underwater"]},ench:[{id:4,lvl:4},{id:5,lvl:3},{id:6,lvl:1},{id:7,lvl:2},{id:34,lvl:3},{id:70,lvl:3}]}}
-        $mcl.server.invoke %{/give #{target} diamond_chestplate 1 0 {display:{Name:"AntiPainZ",Lore:["Don't let them rip your heart!","No refund!"]},ench:[{id:0,lvl:4},{id:7,lvl:2},{id:34,lvl:3},{id:70,lvl:3}]}}
-        $mcl.server.invoke %{/give #{target} diamond_leggings 1 0 {display:{Name:"AntiHotZ",Lore:["Protects you from hot incidents.","Doesn't work for chilli!"]},ench:[{id:1,lvl:4},{id:7,lvl:2},{id:34,lvl:3},{id:70,lvl:3}]}}
-        $mcl.server.invoke %{/give #{target} diamond_boots 1 0 {display:{Name:"AntiSlowZ",Lore:["Run like you never did before!","With new slime technology!"]},ench:[{id:2,lvl:4},{id:3,lvl:4},{id:7,lvl:2},{id:8,lvl:3},{id:34,lvl:3},{id:70,lvl:3}]}}
-        $mcl.server.invoke %{/give #{target} elytra 1 0 {display:{Name:"Jetpack",Lore:["Not really a jetpack!"]},ench:[{id:0,lvl:4},{id:7,lvl:2},{id:34,lvl:3},{id:70,lvl:3}]}}
-
-
+        give_item target, "diamond_helmet", 1, %{{display:{Name:"AntiBrainZ",Lore:["Don't let the zombies get your brain","Also works underwater"]},ench:[{id:4,lvl:4},{id:5,lvl:3},{id:6,lvl:1},{id:7,lvl:2},{id:70,lvl:3}]}}
+        give_item target, "diamond_chestplate", 1, %{{display:{Name:"AntiPainZ",Lore:["Don't let them rip your heart!","No refund!"]},ench:[{id:0,lvl:4},{id:7,lvl:2},{id:70,lvl:3}]}}
+        give_item target, "diamond_leggings", 1, %{{display:{Name:"AntiHotZ",Lore:["Protects you from hot incidents.","Doesn't work for chilli!"]},ench:[{id:1,lvl:4},{id:7,lvl:2},{id:70,lvl:3}]}}
+        give_item target, "diamond_boots", 1, %{{display:{Name:"AntiSlowZ",Lore:["Run like you never did before!","With new slime technology!"]},ench:[{id:2,lvl:4},{id:3,lvl:4},{id:7,lvl:2},{id:8,lvl:3},{id:70,lvl:3}]}}
+        give_item target, "elytra", 1, %{{display:{Name:"Jetpack",Lore:["Not really a jetpack!"]},ench:[{id:0,lvl:4},{id:7,lvl:2},{id:70,lvl:3}]}}
       end
     end
 
@@ -174,8 +175,47 @@ module Mcl
         register_command(*[*names], desc: desc, acl: ph_acl) {|player, args| player_effect(player, args.first || player, *[*effect]) }
       end
 
+      # >1.13 dirty fix :D
+      def fix_nbt nbt
+        return unless nbt
+        nbt = nbt.gsub("ench:[{", "Enchantments:[{")
+        nbt = nbt.gsub(/display:{Name:"([^"]+)",/, 'display:{Name:"\"\1\"",')
+        nbt = nbt.gsub("id:33", "id:silk_touch")
+        nbt = nbt.gsub("id:35", "id:fortune")
+        nbt = nbt.gsub("id:32", "id:efficiency")
+        nbt = nbt.gsub("id:51", "id:infinity")
+        nbt = nbt.gsub("id:50", "id:flame")
+        nbt = nbt.gsub("id:49", "id:punch")
+        nbt = nbt.gsub("id:48", "id:power")
+        nbt = nbt.gsub("id:70", "id:mending")
+        nbt = nbt.gsub("id:22", "id:sweeping_edge")
+        nbt = nbt.gsub("id:21", "id:looting")
+        nbt = nbt.gsub("id:22", "id:sweeping_edge")
+        nbt = nbt.gsub("id:16", "id:sharpness")
+        nbt = nbt.gsub("id:8", "id:depth_strider")
+        nbt = nbt.gsub("id:7", "id:thorns")
+        nbt = nbt.gsub("id:6", "id:aqua_infinity")
+        nbt = nbt.gsub("id:5", "id:respiration")
+        nbt = nbt.gsub("id:4", "id:projectile_protection")
+        nbt = nbt.gsub("id:3", "id:blast_protection")
+        nbt = nbt.gsub("id:2", "id:feather_falling")
+        nbt = nbt.gsub("id:1", "id:fire_protection")
+        nbt = nbt.gsub("id:0", "id:protection")
+        nbt
+      end
+
       def player_effect source, target, effect, seconds = nil, amplifier = nil, particles = false
-        cmd = "/execute #{source} ~ ~ ~ effect #{target} #{effect}"
+        if effect.to_s == "clear"
+          return $mcl.server.invoke do |cmd|
+            cmd.default "/execute #{source} ~ ~ ~ effect #{target} clear"
+            cmd.since "1.13", "17w45a", "/execute as #{source} at #{target} run effect clear #{target}"
+          end
+        end
+        cmd = nil
+        version_switch do |v|
+          v.default { cmd = "/execute #{source} ~ ~ ~ effect #{target} #{effect}" }
+          v.since("1.13", "17w45a") { cmd = "/execute as #{source} at #{target} run effect give #{target} #{effect}" }
+        end
         if seconds
           cmd << " #{seconds}"
           if amplifier
@@ -185,8 +225,18 @@ module Mcl
         $mcl.server.invoke(cmd)
       end
 
-      def replace_item target, slot, item
-        $mcl.server.invoke("/replaceitem entity #{target} slot.#{slot} #{item}")
+      def replace_item target, slot, item, nbt = nil
+        $mcl.server.invoke do |cmd|
+          cmd.default "/replaceitem entity #{target} slot.#{slot} #{item} 1 0 #{nbt}".strip
+          cmd.since "1.13", "17w45a", "/replaceitem entity #{target} #{slot} #{item}#{fix_nbt nbt}".strip
+        end
+      end
+
+      def give_item target, item, amount, nbt = nil
+        $mcl.server.invoke do |cmd|
+          cmd.default "/give #{target} #{item} #{amount} 0 #{nbt}".strip
+          cmd.since "1.13", "17w45a", "/give #{target} #{item}#{fix_nbt nbt} #{amount}".strip
+        end
       end
     end
     include Helper

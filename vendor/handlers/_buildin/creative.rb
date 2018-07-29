@@ -20,19 +20,28 @@ module Mcl
 
     def register_skull acl_level
       register_command :skull, desc: "gives you a player's head", acl: acl_level do |player, args|
-        $mcl.server.invoke "/give #{player} skull 1 3 {SkullOwner:#{args.first || player}}"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/give #{player} skull 1 3 {SkullOwner:#{args.first || player}}"
+          cmd.since "1.13", "17w45a", "/give #{player} player_head{SkullOwner:#{args.first || player}}"
+        end
       end
     end
 
     def register_head acl_level
       register_command :head, desc: "replaces your helm with a player's head", acl: acl_level do |player, args|
-        $mcl.server.invoke "/replaceitem entity #{player} slot.armor.head skull 1 3 {SkullOwner:#{args.first || player}}"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/replaceitem entity #{player} slot.armor.head skull 1 3 {SkullOwner:#{args.first || player}}"
+          cmd.since "1.13", "17w45a", "/replaceitem entity #{player} armor.head player_head{SkullOwner:#{args.first || player}}"
+        end
       end
     end
 
     def register_airblock acl_level
       register_command :airblock, desc: "setblocks the block below you or target to dirt", acl: acl_level do |player, args|
-        $mcl.server.invoke "/execute #{args.first || player} ~ ~ ~ setblock ~ ~-1 ~ dirt"
+        $mcl.server.invoke do |cmd|
+          cmd.default "/execute #{args.first || player} ~ ~ ~ setblock ~ ~-1 ~ dirt"
+          cmd.since "1.13", "17w45a", "/execute as #{args.first || player} at #{args.first || player} run setblock ~ ~-1 ~ dirt"
+        end
       end
     end
 
@@ -61,8 +70,12 @@ module Mcl
           item, amount = item.split("/")
           slots = args.join(",").sub(",,", ",") if item
           all_slots = StringExpandRange.expand("[#{slots}]")
+
           all_slots.each do |slot|
-            $mcl.server.invoke "/execute #{player} ~ ~ ~ /replaceitem entity #{selector} slot.villager.#{slot} #{item || "air"} #{amount}"
+            $mcl.server.invoke do |cmd|
+              cmd.default "/execute #{player} ~ ~ ~ /replaceitem entity #{selector} slot.villager.#{slot} #{item || "air"} #{amount}"
+              cmd.since "1.13", "17w45a", "/execute as #{player} at #{player} run replaceitem entity #{selector} slot.villager.#{slot} #{item || "air"} #{amount}"
+            end
           end
           trawt(player, "VillagerInv", {text: "executed #{all_slots.length} commands", color: "green"})
         end
@@ -82,12 +95,5 @@ module Mcl
         $mcl.server.invoke "/give #{target} diamond_sword"
       end
     end
-
-    module Helper
-      def gm mode, target
-        $mcl.server.invoke "/gamemode #{mode} #{target}"
-      end
-    end
-    include Helper
   end
 end
