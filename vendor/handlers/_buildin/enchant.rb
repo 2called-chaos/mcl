@@ -31,7 +31,11 @@ module Mcl
             enchants.each do |enchant|
               name, level = enchant.split(":")
               resolved_name = enchantments.include?(name.downcase) ? name : enchantments.grep(/#{name}/i).first
-              $mcl.server.invoke %{/execute #{player} ~ ~ ~ enchant #{target} #{resolved_name} #{level.presence || 1}}
+
+              $mcl.server.invoke do |cmd|
+                cmd.default %{/execute #{player} ~ ~ ~ enchant #{target} #{resolved_name} #{level.presence || 1}}.strip
+                cmd.since "1.13", "17w45a", %{/execute as #{player} at @s run enchant #{target} #{resolved_name} #{level.presence || 1}}.strip
+              end
             end
           else
             tellm(player, {text: "examples", color: "gold"}, {text: " examples for partial enchantment names", color: "reset"})
@@ -53,6 +57,7 @@ module Mcl
           bane_of_arthropods
           binding_curse
           blast_protection
+          channeling
           depth_strider
           efficiency
           feather_falling
@@ -61,9 +66,11 @@ module Mcl
           flame
           fortune
           frost_walker
+          impaling
           infinity
           knockback
           looting
+          loyalty
           luck_of_the_sea
           lure
           mending
@@ -72,6 +79,7 @@ module Mcl
           protection
           punch
           respiration
+          riptide
           sharpness
           silk_touch
           smite
