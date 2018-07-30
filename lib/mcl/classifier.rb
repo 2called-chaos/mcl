@@ -56,10 +56,10 @@ module Mcl
           /(.+) issued server command: \/\!(.+)/i,
         ].each do |pat|
           register(pat) do |res, r|
-            if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ")
+            if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ") || opts[:wildcard]
               user = r[1].to_s.gsub(/[§]./, "")
               ucmd = r[2].split(" ")[1..-1]
-              app.command_bindings[cmd][2][user, ucmd, opts[:acl]]
+              app.command_bindings[cmd][2][user, opts[:wildcard] ? r : ucmd, opts[:acl]]
             end
           end
         end
