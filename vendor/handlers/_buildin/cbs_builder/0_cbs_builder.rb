@@ -529,7 +529,9 @@ module Mcl
               if url.start_with?("ex:")
                 content = File.read("#{File.dirname(__FILE__)}/_examples/#{url[3..-1].gsub(/[^a-z0-9_\-]/i, "")}.yml")
               else
+                url = "http://#{url}" unless url.start_with?("http")
                 content = HTTParty.get(url)
+                raise "Failed to load blueprint, HTTP Status: #{content.code}" if [404, 500, 502].include?(content.code)
               end
             rescue StandardError => ex
               sync { callback.call(false, ex) }
