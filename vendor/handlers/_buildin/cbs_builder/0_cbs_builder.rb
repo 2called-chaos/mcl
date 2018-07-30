@@ -379,9 +379,10 @@ module Mcl
                   txt["Text3"] = {text: bp._.src.to_s.gsub(/http(s)?:\/\//, ""), color: "dark_gray"}.to_json.gsub('"', '\"') if bp._.src
                 end
                 txt["Text4"] = {text: "» click 2 update «", color: "dark_red", clickEvent: {action: "run_command", value: "/say #{command.gsub("\\", "\\\\\\")}"}}.to_json.gsub('"', '\\"')
-                $mcl.server.invoke %{
-                  /blockdata #{npos.join(" ")} {#{txt.map{|k,v| %{#{k}:"#{v}"} }.join(",")}}
-                }.gsub("\n", "").squeeze(" ")
+                $mcl.server.invoke do |cmd|
+                  cmd.default %{ /blockdata #{npos.join(" ")} {#{txt.map{|k,v| %{#{k}:"#{v}"} }.join(",")}} }.strip
+                  cmd.since "1.13", "17w45a", %{ /data merge block #{npos.join(" ")} {#{txt.map{|k,v| %{#{k}:"#{v}"} }.join(",")}} }.strip
+                end
               end
             else
               tellm(player, {text: "Insertion point required!", color: "red"})
@@ -421,6 +422,7 @@ module Mcl
           else
             valid = false
           end
+          c << "-c" # 1.13 decided to not update blocks with different NBT so we always clear
           c << "-a" unless bp.air?
           c << "-s" if bp._.strict
           c << "-g #{bp._.forced_grid_mode}" if bp._.forced_grid_mode
