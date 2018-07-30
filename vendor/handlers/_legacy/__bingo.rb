@@ -1,3 +1,9 @@
+# ========
+# = NOTE =
+# ========
+# This plugin is designed for MCL 1.0 and currently has no plans
+# to get ported, most parts will be included in !world command
+# ========
 module Mcl
   Mcl.reloadable(:HMclBingo)
   ## Simple bingo manager
