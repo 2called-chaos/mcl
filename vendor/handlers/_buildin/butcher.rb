@@ -29,13 +29,14 @@ module Mcl
           acl_verify(player, :admin)
           msg = "all players except you"
           butch_p(player, radius)
+          types = %w[]
         when "h", "hostile"
           msg = "hostile mobs"
-          butch_e(player, radius, %w[blaze cave_spider creeper elder_guardian enderman endermite evocation_illager ghast giant guardian husk illusion_illager magma_cube shulker silverfish skeleton slime spider stray vex vindication_illager witch wither wither_skeleton zombie zombie_pigman zombie_villager])
+          butch_e(player, radius, %w[blaze cave_spider creeper drowned elder_guardian enderman endermite evocation_illager evoker ghast giant guardian husk illusion_illager illusioner magma_cube phantom shulker silverfish skeleton slime spider stray vex vindication_illager vindicator witch wither wither_skeleton zombie zombie_pigman zombie_villager])
         when "m", "mob", "mobs"
           acl_verify(player, :admin)
           msg = "mobs"
-          butch_e(player, radius, %w[bat donkey horse llama mule ocelot parrot polar_bear skeleton_horse snowman squid villager_golem wolf zombie_horse])
+          butch_e(player, radius, %w[bat cod dolphin donkey horse iron_golem llama mule ocelot parrot polar_bear pufferfish salmon skeleton_horse snow_golem snowman squid turtle tropical_fish villager_golem wolf zombie_horse])
         when "an", "animal", "animals"
           acl_verify(player, :mod)
           msg = "animals"
@@ -44,6 +45,10 @@ module Mcl
           acl_verify(player, :mod)
           msg = "armor stands"
           butch_e(player, radius, %w[armor_stand])
+        when "aec", "area_effect_cloud"
+          acl_verify(player, :mod)
+          msg = "area effect clouds"
+          butch_e(player, radius, %w[area_effect_clouds])
         when "b", "boat", "boats"
           acl_verify(player, :mod)
           msg = "boats"
@@ -51,7 +56,7 @@ module Mcl
         when "mi", "minecart", "minecarts"
           acl_verify(player, :mod)
           msg = "minecarts"
-          butch_e(player, radius, %w[minecart chest_minecart furnace_minecart hopper_minecart commandblock_minecart spawner_minecart tnt_minecart])
+          butch_e(player, radius, %w[minecart chest_minecart furnace_minecart hopper_minecart commandblock_minecart command_block_minecart spawner_minecart tnt_minecart])
         when "i", "item", "items", "drops"
           acl_verify(player, :mod)
           msg = "items"
@@ -59,7 +64,7 @@ module Mcl
         when "x", "xp", "orbs"
           acl_verify(player, :mod)
           msg = "xp orbs"
-          butch_e(player, radius, %w[xp_orb])
+          butch_e(player, radius, %w[xp_orb experience_orb])
         when "t", "tnt"
           acl_verify(player, :mod)
           msg = "primed TNT"
@@ -75,7 +80,7 @@ module Mcl
         when "pr", "projectile", "projectiles"
           acl_verify(player, :mod)
           msg = "projectiles"
-          butch_e(player, radius, %w[arrow dragon_fireball egg ender_pearl evocation_fangs eye_of_ender_signal fireball fireworks_rocket llama_spit potion shulker_bullet small_fireball snowball spectral_arrow wither_skull xp_bottle])
+          butch_e(player, radius, %w[arrow dragon_fireball egg ender_pearl evocation_fangs evoker_fangs experience_bottle eye_of_ender eye_of_ender_signal fireball fireworks_rocket lightning_bolt llama_spit potion shulker_bullet small_fireball snowball spectral_arrow trident wither_skull xp_bottle])
         else
           tellm(player, {text: "p/players [rad]", color: "gold"}, {text: " kills players", color: "reset"})
           tellm(player, {text: "h/hostile [rad]", color: "gold"}, {text: " kills hostile mobs", color: "reset"})
@@ -105,13 +110,34 @@ module Mcl
       end
 
       def butch_e player, radius, which
-        which.each do |w|
-          $mcl.server.invoke %{/execute #{player} ~ ~ ~ kill @e[type=#{w}#{",r=#{radius}" if radius}]}
+        version_switch do |v|
+          v.default do
+            which.each do |w|
+              $mcl.server.invoke %{/execute #{player} ~ ~ ~ kill @e[type=#{w}#{",r=#{radius}" if radius}]}
+            end
+          end
+          v.since "1.13", "17w45a" do
+            which.each do |w|
+              $mcl.server.invoke %{/execute as #{player} at @s run kill @e[type=#{w}#{",distance=..#{radius}" if radius}]}
+            end
+          end
         end
       end
 
       def butch_p player, radius
-        $mcl.server.invoke %{/execute #{player} ~ ~ ~ kill @p[name=!#{player}#{",r=#{radius}" if radius}]}
+        $mcl.server.invoke %{/execute #{player} ~ ~ ~ kill }
+        version_switch do |v|
+          v.default do
+            which.each do |w|
+              $mcl.server.invoke %{/execute #{player} ~ ~ ~ kill @p[name=!#{player}#{",r=#{radius}" if radius}]}
+            end
+          end
+          v.since "1.13", "17w45a" do
+            which.each do |w|
+              $mcl.server.invoke %{/execute as #{player} at @s run @p[name=!#{player}#{",distance=..#{radius}" if radius}]}
+            end
+          end
+        end
       end
     end
     include Helper
