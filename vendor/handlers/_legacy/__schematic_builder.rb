@@ -1,3 +1,9 @@
+# ========
+# = NOTE =
+# ========
+# This plugin is designed for Minecraft < 1.13 and MCL 1.0 and will no longer be updated
+# in favor for ingame structure blocks and/or CBS builder
+# ========
 module Mcl
   Mcl.reloadable(:HMclSchematicBuilder)
   ## World Edit light (it's almost as good, not)
