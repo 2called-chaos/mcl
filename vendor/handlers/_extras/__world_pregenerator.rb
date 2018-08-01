@@ -4,6 +4,7 @@ module Mcl
   # !pregen start [autostop_at_radius] [-z]
   #   -z  start from 0/0 instead of your current position
   # !pregen doit [radius_offset]
+  # !pregen delay [new_delay]
   # !pregen stop [at_radius]
   class HMclWorldPregenerator < Handler
     def setup
@@ -172,7 +173,7 @@ module Mcl
           end
         when "stop"
           if pram[:trx] && pram[:trx][:running]
-            if args[1] && args[1].to_i != 0 || args[1] == ""
+            if args[1] && args[1].to_i != 0
               pram[:trx][:max_radius] = args[1].to_i
               tellm(player, l("Aborting after reaching radius #{pram[:trx][:max_radius]}...", :gold))
             else
@@ -181,6 +182,17 @@ module Mcl
             end
           else
             tellm(player, l("Not running!", :red))
+          end
+        when "delay"
+          if pram[:trx]
+            if args[1] && args[1].to_f != 0
+              pram[:trx][:delay] = args[1].to_f
+              tellm(player, l("Teleport every #{pram[:trx][:delay]} seconds...", :gold))
+            else
+              tellm(player, l("Teleport delay is #{pram[:trx][:delay]} seconds...", :gold))
+            end
+          else
+            tellm(player, l("Not prepared! (run '!pregen start' first)", :red))
           end
         else
           tellm(player, l("!pregen start|stop [autostop_at_radius] [-z]", color: "red"))
