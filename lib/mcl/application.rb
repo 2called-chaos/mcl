@@ -82,8 +82,12 @@ module Mcl
       @mutex.synchronize(&b)
     end
 
-    def graceful &block
-      @graceful.unshift block
+    def graceful del = nil, &block
+      if block
+        @graceful.unshift block
+      elsif del
+        @graceful.delete_if{|b| b == del }
+      end
     end
 
     def graceful_shutdown

@@ -45,6 +45,7 @@ module Mcl
                   [:z, :-],
                   [:x, :+],
                 ]
+                app.graceful(&sdproc)
 
                 x = catch(:stop_pregen) do
                   loop do
@@ -52,12 +53,14 @@ module Mcl
                     maxb = pram[:trx][:max_radius]
 
                     sync do
-                      if pram[:trx][:abort]
-                        pram[:trx][:abort] = false
-                        tellm(player, l("Generation aborted after #{Player.fseconds(Time.now - pram[:trx][:started_at])}!", :green))
-                        server.invoke %{/title #{player} reset}
-                        server.invoke %{/title #{player} title [{"text":"Pregenerating...", "color": "green"}]}
-                        server.invoke %{/title #{player} subtitle [{"text":"ABORTED", "color": "red"}]}
+                      if pram[:trx][:abort] || !prec(player).online?
+                        if pram[:trx][:abort]
+                          pram[:trx][:abort] = false
+                          tellm(player, l("Generation aborted after #{Player.fseconds(Time.now - pram[:trx][:started_at])}!", :green))
+                          server.invoke %{/title #{player} reset}
+                          server.invoke %{/title #{player} title [{"text":"Pregenerating...", "color": "green"}]}
+                          server.invoke %{/title #{player} subtitle [{"text":"ABORTED", "color": "red"}]}
+                        end
                         throw :stop_pregen, :done
                       end
 
@@ -124,6 +127,8 @@ module Mcl
                   end
                 end
 
+                app.graceful(sdproc) # delete
+
                 if x == :done
                   server.invoke %{/tp #{player} #{pram[:trx][:original_position].join(" ")}}
 
@@ -131,6 +136,8 @@ module Mcl
                     h.player_effect player, player, :clear
                   end
                 end
+              rescue Errno::EPIPE, IOError
+                app.log.error "[WorldPregenerator] Server gone? Stopped."
               ensure
                 sync do
                   pram[:trx][:running] = false
@@ -198,6 +205,8 @@ module Mcl
           tellm(player, l("!pregen start|stop [autostop_at_radius] [-z]", color: "red"))
           tellm(player, l("  -z  start from 0/0 instead of your current position", color: "aqua"))
           tellm(player, l("  radius is given in teleports/grid not ingame blocks", color: "yellow"))
+          tellm(player, l("!pregen delay [seconds]", color: "green"))
+          tellm(player, l("  change delay between teleports (def: 10)", color: "yellow"))
         end
       end
     end
