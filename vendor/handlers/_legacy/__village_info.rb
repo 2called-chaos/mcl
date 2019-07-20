@@ -1,6 +1,7 @@
 module Mcl
   Mcl.reloadable(:HMclVillageInfo)
   ## Village info by using server side NBT files
+  # ONLY WORKS UP TO 1.13
   # !villages
   # !villages stat
   # !villages doorbook
