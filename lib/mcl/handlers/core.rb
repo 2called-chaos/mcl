@@ -76,9 +76,9 @@ module Mcl
             end
           end
         else # update
-          prop = args.shift
           force = args.delete("-f") || args.last == "force"
           restart = args.delete("-r")
+          prop = args.shift
           args.pop if args.last == "force"
           val = args.join(" ")
           pwas = $mcl.server.properties[prop]
