@@ -101,7 +101,7 @@ module Mcl
           $mcl.sync do
             $mcl.log.info "[Bingo] Swapping world..."
             sleep 1
-            $mcl.server.update_property "level-name", seed
+            $mcl.server.properties.update("level-name" => seed)
           end
         end
 

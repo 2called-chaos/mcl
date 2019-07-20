@@ -37,6 +37,7 @@ module Mcl
     require "#{lib}/handler/shortcuts"
     require "#{lib}/handler"
     require "#{lib}/server/helper"
+    require "#{lib}/server/properties"
     require "#{lib}/server/io"
     require "#{lib}/server/getters"
     require "#{lib}/server/ipc"

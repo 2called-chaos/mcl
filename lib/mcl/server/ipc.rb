@@ -115,9 +115,7 @@ module Mcl
           # writing properties
           if sprops.any?
             app.log.info "[IPC] applying server properties from bootstrap..."
-            File.open("#{root}/server.properties", "a+") do |f|
-              f.puts *sprops
-            end
+            properties.update(sprops)
           end
 
           # link & remove bsfile

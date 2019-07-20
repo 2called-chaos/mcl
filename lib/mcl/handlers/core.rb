@@ -87,7 +87,7 @@ module Mcl
             trawt(player, "SPROP", {text: "Property ", color: "red"}, {text: "#{prop}", color: "dark_aqua"}, {text: " does not exist.", color: "red"})
             trawt(player, "SPROP", {text: "If you want to add this property use force (-f)!", color: "red"})
           else
-            $mcl.server.update_property(prop, val)
+            $mcl.server.properties.update(prop => val)
             if pwas
               trawt(player, "SPROP",
                 {text: "Set property ", color: "gold"},
