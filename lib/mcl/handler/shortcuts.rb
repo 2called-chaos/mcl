@@ -50,6 +50,19 @@ module Mcl
         $mcl.async_call(&block)
       end
 
+      def async_safe &block
+        $mcl.async_call do
+          begin
+            block.call
+          rescue
+            app.log.debug $!.message
+            $!.backtrace.each {|m| app.log.debug(m) }
+            app.server.traw("@a", "[ERROR] #{$!.message}", color: "red")
+            app.server.traw("@a", "        #{$!.backtrace[0].to_s.gsub(ROOT, "%")}", color: "red")
+          end
+        end
+      end
+
       def sync &block
         $mcl.sync(&block)
       end
