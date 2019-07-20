@@ -9,6 +9,10 @@ module Mcl
         # called when all handlers have went through their setup
       end
 
+      def srvrdy
+        # called when server signals readyness (might not fire if you use a custom server)
+      end
+
       def tick!
         # called on every tick (should be fast)
       end

@@ -21,6 +21,11 @@ module Mcl
         $mcl.log.info "[CORE] Recognized SRVRDY after #{srvrdy}s on tick #{$mcl.eman.tick}"
         $mcl_server_boottime = $mcl.server.boottime = srvrdy.to_f
         $mcl.server.update_status :running
+
+        app.handlers.each do |handler|
+          app.devlog "[SETUP] Signaling SRVRDY to handler `#{handler.class.name}'", scope: "plugin_load"
+          handler.srvrdy
+        end
       end
 
       # EULA
