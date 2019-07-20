@@ -54,7 +54,7 @@ module Mcl
           c = fn[0..-5].split("-")[-4..-1].join("-").split("_")
           date = Time.parse("#{c[0]} #{c[1].gsub("-", ":")}:00")
           [dir, fn, date, with_size && File.size(dir)]
-        end.sort_by{|i| i[3] }.reverse
+        end.sort_by{|i| i[2] }.reverse
       end
 
       def world_hash world = nil
