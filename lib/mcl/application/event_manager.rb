@@ -29,13 +29,18 @@ module Mcl
 
         @collector = Thread.new do
           Thread.current.abort_on_exception = true
-          sleep 1 until ready? # wait for system to boot up
+          Thread.current[:ready] = false
+          sleep 0.5 until ready? # wait for system to boot up
+          Thread.current[:ready] = true
           app.server.ipc_spawn
-          sleep 1 # don't mess with the logger
+          #sleep 1 # don't mess with the logger
 
           loop do
             begin
-              app.server.ipc_read {|line| @spool << line }
+              app.server.ipc_read do |line|
+                Thread.current.kill if line.nil? && app.server.died?
+                @spool << line
+              end
             rescue Exception => e
               app.devlog "[Collector] #{e.class}: #{e.message}"
               sleep 1
@@ -76,6 +81,14 @@ module Mcl
         def detect_died_minecraft_server
           if app.server.died?
             app.log.fatal "[IPC] connection to minecraft server lost after tick ##{@tick - 1}, rebooting..."
+            if @collector && @collector[:ready]
+              app.log.debug "[IPC] Waiting up to 10 seconds for the collector to spool down"
+              Timeout::timeout(10) {
+                @collector.join
+              } rescue false
+              app.eman.tick!(false) until @spool.empty?
+            end
+
             raise Application::Reboot, "server connection lost after tick ##{@tick - 1}"
           end
         end
