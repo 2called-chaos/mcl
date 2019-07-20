@@ -45,6 +45,10 @@ module Mcl
           $mcl.server.update_status :stopping
         end
       end
+
+      # world saving
+      register_parser(/^Saving the (?:key => "value", world|game)/i) { $world_saved = false }
+      register_parser(/^Saved the (?:key => "value", world|game)/i) { $world_saved = true }
     end
   end
 end
