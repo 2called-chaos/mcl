@@ -28,7 +28,7 @@ module Mcl
         $mcl.log.info "[CORE] Recognized EULA halt on tick #{$mcl.eman.tick}, patching..."
         eula = File.read("#{$mcl.server.root}/eula.txt")
         File.open("#{$mcl.server.root}/eula.txt", "wb") {|f| f.write(eula.gsub("eula=false", "eula=true")) }
-        $mcl.server.invoke("/stop")
+        $mcl.server.invoke("/stop") rescue Errno::EPIPE
       end
 
       # Portfail
