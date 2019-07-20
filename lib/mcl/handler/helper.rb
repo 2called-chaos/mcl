@@ -21,7 +21,11 @@ module Mcl
         parts = coord.split(" ").map(&:to_f)
         case type.to_s.strip
           when "p", "particle" then $mcl.server.invoke "/particle reddust #{coord} 0 0 0 1 100 force"
-          when "b", "barrier" then $mcl.server.invoke "/particle barrier #{coord} 0 0 0 1 1 force"
+          when "b", "barrier"
+            $mcl.server.invoke do |v|
+              v.default %{/particle barrier #{coord} 0 0 0 1 1 force}
+              v.since "1.14", "18w43a", %{/particle barrier #{parts[0].to_i} #{parts[1] + 0.5} #{parts[2].to_i} 0 0 0 1 1 force}
+            end
           when "crystal" then $mcl.server.invoke "/summon ender_crystal #{parts[0] - 0.5} #{parts[1] - 0.5} #{parts[2] + 0.5}"
           when "c", "cross"
             $mcl.server.invoke "/particle reddust #{coord} 1 0 0 1 100 force"
