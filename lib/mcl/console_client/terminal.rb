@@ -60,7 +60,7 @@ module Mcl
               begin
                 clear_buffer
               ensure
-                save_client_options(@opts.except(:dispatch)) if respond_to?(:save_client_options) && !$cc_forced_settings
+                save_client_options(@opts.except(:dispatch)) if respond_to?(:save_client_options) && !$cc_forced_settings && !@authentication
               end
             end
           end
@@ -167,13 +167,21 @@ module Mcl
           clear_buffer
         end
         sleep 0.05 while $cc_acknowledged
+        sleep 0.05 while handle_authentication == :skip_tick
 
         sync do
           $cc_client_critical = false
           $cc_client_receiving = true
           clear_buffer
         end
-        buf = Readline.readline(cprompt, true)
+
+        if $readline_noecho
+          buf = IO::console.getpass(cprompt)
+          $readline_noecho = false
+        else
+          buf = Readline.readline(cprompt, !!!@authentication)
+        end
+
         sync do
           history_reject(buf)
           $cc_client_receiving = false
@@ -199,23 +207,73 @@ module Mcl
         end
         str = str.chomp
 
-        if str.start_with?(TCOM_PREF)
-          # terminal command
-          begin
-            str << "help" if str == TCOM_PREF
-            fw = str[1..-1].split(" ").first
-            if respond_to?("_tc_#{fw}")
-              send("_tc_#{fw}", str[1..-1].split(" ")[1..-1], str)
-            else
-              print_line c("Unknown terminal command `#{TCOM_PREF+fw}`, try `#{TCOM_PREF}help`...", :red), refresh: false
-            end
-          ensure
-            $cc_acknowledged = nil
-          end
+        handle_tcompref(str) || handle_authentication(str) || handle_send(str)
+      end
+
+      def handle_tcompref str
+        return false unless str.start_with?(TCOM_PREF)
+        str << "help" if str == TCOM_PREF
+        fw = str[1..-1].split(" ").first
+        if respond_to?("_tc_#{fw}")
+          send("_tc_#{fw}", str[1..-1].split(" ")[1..-1], str)
         else
-          $cc_client_exiting = true if ["exit", "quit"].include?(str)
-          transport_write "#{str}\r\n"
+          print_line c("Unknown terminal command `#{TCOM_PREF+fw}`, try `#{TCOM_PREF}help`...", :red), refresh: false
         end
+        return true
+      ensure
+        $cc_acknowledged = nil
+      end
+
+      def handle_send str
+        $cc_client_exiting = true if ["exit", "quit"].include?(str)
+        transport_write "#{str}\r\n"
+      end
+
+      def handle_authentication str = false
+        sync do
+          return false unless a = @authentication
+          if str
+            case a[:state]
+            when :user
+              a[:user] = str
+              a[:state] = :password
+              $cc_acknowledged = nil
+            when :password
+              a[:password] = str
+              a[:state] = :pending
+              protocol "session/authenticate:#{a.slice(:user, :password).to_json}"
+            when :autologin
+              a[:password] = str
+              a[:state] = :pending
+              protocol "session/authenticate:#{a.slice(:user, :password).to_json}"
+            end
+          else
+            case a[:state]
+            when :new, :user
+              a[:old_prompt] ||= @opts[:prompt]
+              @opts[:prompt] = "%{yellow}LOGIN (user)> "
+              a[:state] = :user
+              $cc_acknowledged = nil
+            when :password
+              @opts[:prompt] = "%{yellow}LOGIN (password)> "
+              $readline_noecho = true
+              $cc_acknowledged = nil
+            when :pending
+              return :skip_tick
+            when :autologin
+              return :skip_tick
+            when :success
+              @opts[:prompt] = @authentication[:old_prompt] if @authentication[:old_prompt]
+              @authentication = false
+            when :failed
+              @authentication = @authentication.except(:user, :password).merge(state: :user)
+              return :skip_tick
+            end
+          end
+          return true
+        end
+      ensure
+        @cprompt = nil
       end
     end
   end

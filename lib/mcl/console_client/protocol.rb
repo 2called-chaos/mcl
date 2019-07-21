@@ -55,8 +55,37 @@ module Mcl
       end
 
       def _pt_session_state_authentication_required msg, data
-        print_line c("Connection terminated: authentication required!", :red)
-        _pt_ack_input_exit
+        sync do
+          $cc_authentication_counter ||= 0
+          unless @authentication
+            if $cc_authentication_counter.zero? && @opts[:login]
+              @authentication = { state: :autologin, user: @opts[:login][0] }
+              handle_authentication(@opts[:login][1])
+            else
+              @authentication = { state: :new }
+            end
+          end
+          $cc_acknowledged = nil
+        end
+      end
+
+      def _pt_session_state_authentication_success msg, data
+        sync do
+          @authentication[:state] = :success
+          print_line c("Login succeeded!", :green)
+        end
+      end
+
+      def _pt_session_state_authentication_failed msg, data
+        sync do
+          $cc_authentication_counter += 1
+          @authentication[:state] = :failed
+          print_line c("Login failed!", :red)
+          if $cc_authentication_counter >= 3
+            print_line c("Too many login attempts...", :red)
+            exit
+          end
+        end
       end
 
       def _pt_ack_input msg, data

@@ -69,6 +69,15 @@ MCL supports multiple instances. Create a new configuration and start/stop the i
 MCLI=config_name mcld start
 ```
 
+## Console access
+MCL is designed to run as a daemon. Since it wraps the process you lose the server console (unless you have the GUI console ofc). We have an experimental console server that you can configure in your instance yml config file. To access the console run something like this:
+```
+MCLI=config_name mcld console # (also check out `-h`)
+```
+If you are in, try `?help` and `commands`. I know `help` and explanations are missing but you will figure it out. Or ask :D Oh and everything starting with a `/` will be send as command to your Minecraft server. Inputs starting with a `.*` equal `/say *` (e.g. `.hi, wassup?` => `/say hi, wassup?`)
+
+**NOTE:** While there is a simple authentication the whole thing is not encrypted! It's only recommended to use this locally. You may use SSH port tunnels to access it but since you need MCL, your config and the autoconfig file it's very annoying, rather SSH and run the console ;)
+
 ## ACL - what?
 ACL stands for Access Control List and it's not really that but think about it as permissions. Each player has a permission
 level which is a number starting from 0. Each command also has a permission level and if the player has equal or more points

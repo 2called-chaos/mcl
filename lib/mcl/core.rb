@@ -2,6 +2,7 @@ module Mcl
   # core dependencies
   require "benchmark"
   require "digest/sha1"
+  require "io/console"
   require "fileutils"
   require "find"
   require "monitor"

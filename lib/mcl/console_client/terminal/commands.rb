@@ -9,6 +9,7 @@ module Mcl
             _print_line c("  #{TCOM_PREF}exit                        ", :cyan) << c("closes connection and console", :yellow)
             _print_line c("  #{TCOM_PREF}reconnect                   ", :cyan) << c("reconnect to the console server", :yellow)
             _print_line c("  #{TCOM_PREF}autoretry                   ", :cyan) << c("enable or disable auto reconnect on connection loss", :yellow)
+            _print_line c("  #{TCOM_PREF}login                       ", :cyan) << c("set autologin credentials", :yellow)
             _print_line c("  #{TCOM_PREF}colorize                    ", :cyan) << c("enable or disable colored output", :yellow)
             _print_line c("  #{TCOM_PREF}snoop [on/off]              ", :cyan) << c("shows or controls protocol snoop", :yellow)
             _print_line c("  #{TCOM_PREF}debug [on/off]              ", :cyan) << c("shows or controls debug output", :yellow)
@@ -131,6 +132,24 @@ module Mcl
             print_line c("# ?prompt [prompt-expression]", :magenta)
             print_line c("Type `?prompt help' for prompt-expression help.", :yellow)
             print_line c("Your current prompt is ", :yellow) << (prompt.present? ? c(prompt, :green) : c("empty", :red))
+          end
+        end
+
+        def _tc_login args, str
+          xargs = Shellwords.shellsplit(args.join(" "))
+          if xargs.length != 2
+            print_line c("# ?login <user> <password>", :magenta)
+          else
+            @opts[:login] = *xargs
+            print_line c("Credentials saved!", :green)
+            print_line c("Warning: config file will not be updated! (CLI settings passed)", :red) if $cc_forced_settings
+            sync do
+              if @authentication
+                @authentication[:state] = :autologin
+                @authentication[:user] = xargs[0]
+                handle_authentication(xargs[1])
+              end
+            end
           end
         end
 

@@ -33,7 +33,7 @@ module Mcl
       begin
         prov = providers.shift
 
-        if prov == "none"
+        if prov == "none" || prov == "disabled"
           spawn_none(prov)
         elsif prov == "unix"
           spawn_unix(prov)

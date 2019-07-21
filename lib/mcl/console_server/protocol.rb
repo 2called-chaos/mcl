@@ -32,6 +32,17 @@ module Mcl
         app.devlog "                #{e.message}", scope: "console_server"
       end
 
+      def _pt_session_authenticate msg, data
+        creds = JSON.parse(data) rescue {}
+        if authenticate!(creds["user"], creds["password"])
+          protocol "session/state:authentication_success", true
+          hello
+        else
+          protocol "session/state:authentication_failed", true
+          protocol "session/state:authentication_required", true
+        end
+      end
+
       def _pt_session_identify msg, data
         session.client_app = data
         protocol "srv_req_env_from_client:#{@app.instance}", true

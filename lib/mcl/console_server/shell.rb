@@ -20,8 +20,11 @@ module Mcl
         @mem = {}
       end
 
-      def authenticate!
-        @authenticated = true
+      def authenticate! user, password
+        if @app.config["console_accounts"] && @app.config["console_accounts"][user] == password
+          return @authenticated = true
+        end
+        false
       end
 
 
@@ -87,8 +90,11 @@ module Mcl
         str = str.chomp
         app.devlog "[ConsoleServer] #{session.client_id} invoked `#{str}'", scope: "console_server"
 
-        if !@authenticated
-
+        unless @authenticated
+          if str.start_with?("\0@PROTOCOL@1#session/authenticate:")
+            @protocol = true
+            _handle_protocol(str)
+          end
           return # do not remove this or I kill you!
         end
 
@@ -179,7 +185,8 @@ module Mcl
           banner
           protocol "session/state:ready", true
         else
-          print c("login: ", :cyan)
+          protocol "session/state:authentication_required", true
+          #session.terminate "session/state:authentication_required"
         end
         @started = true
       end
