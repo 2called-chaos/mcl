@@ -10,6 +10,7 @@ module Mcl
   # !!replace <IS:TileName> [IS:dataValue] > <SHOULD:TileName> [SHOULD:dataValue]
   # !!insert [-f] <x> <y> <z> [mode] [tilename]
   # !!stack <direction> [amount] [shift_selection] [masked|filtered <TileName>]
+  # !!move <direction> [amount]
   # !!pos <x> <y> <z>
   # !!pos <x1> <y1> <z1> <x2> <y2> <z2>
   # !!pos1 <x> <y> <z>
@@ -31,6 +32,7 @@ module Mcl
       register_replace(:builder)
       register_insert(:builder)
       register_stack(:builder)
+      register_move(:builder)
       register_pos(:builder)
       register_spos(:builder)
       register_ipos(:builder)
@@ -182,7 +184,7 @@ module Mcl
     end
 
     def register_stack acl_level
-      register_command "!stack", desc: "NotImplemented: stacks selection", acl: acl_level do |player, args|
+      register_command "!stack", desc: "stacks selection", acl: acl_level do |player, args|
         stack_selection(player, args)
       end
     end
@@ -206,6 +208,19 @@ module Mcl
       [1,2].each do |num|
         register_command "!spos#{num}", desc: "shifts pos#{num} by given values", acl: acl_level do |player, args|
           shift_pos(num, player, args)
+        end
+      end
+    end
+
+    def register_move acl_level
+      register_command "!move", desc: "move selection by its own volume", acl: acl_level do |player, args|
+        if args.empty? || args.length > 2
+          tellm(player, {text: "!!move <direction> [amount]", color: "aqua"})
+        else
+          xargs = args.dup
+          xargs << "1" if xargs.length == 1
+          xargs << "true"
+          stack_selection(player, xargs, false)
         end
       end
     end
@@ -368,7 +383,7 @@ module Mcl
         end
       end
 
-      def stack_selection player, args
+      def stack_selection player, args, doclone = true
         chunks = args.map(&:strip).map{|i| i.to_s =~ /^-?[0-9]+$/ ? i.to_i : i}
         pram = memory(player)
 
@@ -405,7 +420,7 @@ module Mcl
               $mcl.server.invoke do |cmd|
                 cmd.default %{/execute #{player} ~ ~ ~ /clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}
                 cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}.strip
-              end
+              end if doclone
 
               # shift source position
               s1, s2 = p1, p2
