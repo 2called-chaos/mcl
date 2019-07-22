@@ -55,6 +55,10 @@ module Mcl
           @_ipc_stdin, @_ipc_stdouterr, @_ipc_thread = $_ipc_reattach
           $_ipc_reattach = nil
           app.log.debug "[IPC] server running with pid #{@_ipc_thread.pid}"
+          app.handlers.each do |handler|
+            app.devlog "[SETUP] Signaling SRVRDY to handler `#{handler.class.name}'", scope: "plugin_load"
+            handler.srvrdy
+          end
           traw("@a", "[MCL] is back!", color: "green")
         else
           app.log.info "[IPC] starting minecraft server..."
