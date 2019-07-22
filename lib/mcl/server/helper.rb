@@ -38,6 +38,11 @@ module Mcl
           'TB' => 1024 * 1024 * 1024 * 1024 * 1024
         }.each_pair { |e, s| return "#{(bytes.to_f / (s / 1024)).round(2)} #{e}" if bytes < s }
       end
+
+      def uniqid prefix = ''
+        t = Time.now.to_f
+        sprintf("%s%8x%05x", prefix, t.floor, (t - t.floor) * 1000000)
+      end
     end
   end
 end

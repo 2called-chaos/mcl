@@ -14,17 +14,36 @@ module Mcl
         world ||= @world
         $mcl.async_call do
           begin
-            if @world == world
-              $world_saved = false
-              $mcl.sync { $mcl.server.invoke %{/save-off} }
-              $mcl.sync { $mcl.server.invoke %{/save-all} }
-              sleep 1 until $world_saved # wait for server to save data
+            rt = Benchmark.realtime do
+              if @world == world
+                $world_saved = false
+                $mcl.sync { $mcl.server.invoke %{/save-off} }
+                $mcl.sync { $mcl.server.invoke %{/save-all} }
+                sleep 1 until $world_saved # wait for server to save data
+              end
+              world_chunks = world.split("/")
+              world_cdir = world_chunks.pop
+              world_infix = world_chunks.join("/")
+              puts %{
+                cd "#{root}" && mkdir#{" -p" unless Mcl.windows?} "#{app.config["backup_infix"]}" && tar -cf "#{app.config["backup_infix"]}backup-#{fs_safe_name(world)}-#{Time.now.strftime("%Y-%m-%d_%H-%M")}.tar" #{%{-C "#{root}/#{world_infix}"}} #{world}
+              }
+              `cd "#{root}" && mkdir#{" -p" unless Mcl.windows?} "#{app.config["backup_infix"]}" && tar -cf "#{app.config["backup_infix"]}backup-#{fs_safe_name(world)}-#{Time.now.strftime("%Y-%m-%d_%H-%M")}.tar" #{%{-C "#{root}/#{world_infix}"}} #{world_cdir}`
             end
-            `cd "#{root}" && mkdir#{" -p" unless Mcl.windows?} "#{app.config["backup_infix"]}" && tar -cf #{app.config["backup_infix"]}backup-#{fs_safe_name(world)}-#{Time.now.strftime("%Y-%m-%d_%H-%M")}.tar #{world}`
           ensure
             $mcl.sync { $mcl.server.invoke %{/save-on} } if @world == world
           end
-          $mcl.sync { callback.try(:call) }
+          $mcl.sync { callback.try(:call, rt) }
+        end
+      end
+
+      def decompress_backup destdir, tarfile, &callback
+        id = uniqid
+        rdest = "#{destdir}.restore-#{id}"
+        $mcl.async_call do
+          rt = Benchmark.realtime do
+            `mkdir#{" -p" unless Mcl.windows?} "#{rdest}" && tar -xf "#{tarfile}" -C "#{rdest}" --strip-components=1`
+          end
+          $mcl.sync { callback.try(:call, rdest, rt) }
         end
       end
 
