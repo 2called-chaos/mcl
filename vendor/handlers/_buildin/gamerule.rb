@@ -1,27 +1,43 @@
 module Mcl
   Mcl.reloadable(:HMclGamerule)
   ## Gamerule shortcuts
+  # !showadv
+  # !hideadv !noadv !advspam !cbnospam
   # !cbspam
   # !nocbspam !cbnospam
-  # !grief
-  # !nogrief
+  # !checkelytra
+  # !nocheckelytra
+  # !edrops
+  # !noedrops
   # !firetick !firespread
   # !nofiretick !nofirespread !firealarm
+  # !limitedcrafting
+  # !fullcrafting
   # !loot
   # !noloot
-  # !drops !nodrops
-  # !edrops !noedrops
-  # !keepinv
-  # !loseinv
-  # !foodregen
-  # !nofoodregen
   # !mobspawn !mobspawning !mobspawns
   # !nomobspawn !nomobspawning !nomobspawns
-  # !deathmsg !deathmessages
-  # !nodeathmsg !nodeathmessages
+  # !drops
+  # !nodrops
+  # !keepinv
+  # !loseinv
+  # !dolog
+  # !nolog
+  # !maxentities !maxent !maxents [num]
+  # !grief
+  # !nogrief
+  # !foodregen
+  # !nofoodregen
+  # !tickspeed [ticks]
   # !reducedebug !nodebug
   # !showdebug !expanddebug
-  # !tickspeed [ticks]
+  # !sendfeedback
+  # !nofeedback
+  # !deathmsg !deathmessages
+  # !nodeathmsg !nodeathmessages
+  # !spawnradius [radius]
+  # !specgen
+  # !nospecgen
   # !peace
   # !pussymode
   # !diehard
@@ -99,8 +115,8 @@ module Mcl
       register_command(:showdebug, :expanddebug, desc: "deactivates reduceDebugInfo", acl: acl_level) { gamerule("reduceDebugInfo", false) }
 
       # sendCommandFeedback
-      register_command(:sendfeedback, :nodebug, desc: "activates sendCommandFeedback", acl: acl_level) { gamerule("sendCommandFeedback", true) }
-      register_command(:nofeedback, :expanddebug, desc: "deactivates sendCommandFeedback", acl: acl_level) { gamerule("sendCommandFeedback", false) }
+      register_command(:sendfeedback, desc: "activates sendCommandFeedback", acl: acl_level) { gamerule("sendCommandFeedback", true) }
+      register_command(:nofeedback, desc: "deactivates sendCommandFeedback", acl: acl_level) { gamerule("sendCommandFeedback", false) }
 
       # showDeathMessages
       register_command(:deathmsg, :deathmessages, desc: "activates showDeathMessages", acl: acl_level) { gamerule("showDeathMessages", true) }

@@ -33,6 +33,9 @@ module Mcl
         when "h", "hostile"
           msg = "hostile mobs"
           butch_e(player, radius, %w[blaze cave_spider creeper drowned elder_guardian enderman endermite evocation_illager evoker ghast giant guardian husk illusion_illager illusioner magma_cube phantom shulker silverfish skeleton slime spider stray vex vindication_illager vindicator witch wither wither_skeleton zombie zombie_pigman zombie_villager])
+        when "b", "bat", "bats"
+          msg = "bats"
+          butch_e(player, radius, %w[bat])
         when "m", "mob", "mobs"
           acl_verify(player, :admin)
           msg = "mobs"
@@ -45,7 +48,7 @@ module Mcl
           acl_verify(player, :mod)
           msg = "armor stands"
           butch_e(player, radius, %w[armor_stand])
-        when "aec", "area_effect_cloud"
+        when "aec", "area_effect_cloud", "area_effect_clouds"
           acl_verify(player, :mod)
           msg = "area effect clouds"
           butch_e(player, radius, %w[area_effect_clouds])
@@ -84,9 +87,11 @@ module Mcl
         else
           tellm(player, {text: "p/players [rad]", color: "gold"}, {text: " kills players", color: "reset"})
           tellm(player, {text: "h/hostile [rad]", color: "gold"}, {text: " kills hostile mobs", color: "reset"})
+          tellm(player, {text: "b/bats [rad]", color: "gold"}, {text: " kills bats", color: "reset"})
           tellm(player, {text: "m/mobs [rad]", color: "gold"}, {text: " kills passive but no farm mobs", color: "reset"})
           tellm(player, {text: "an/animals [rad]", color: "gold"}, {text: " kills animals", color: "reset"})
           tellm(player, {text: "as/armor_stands [rad]", color: "gold"}, {text: " kills armor stands", color: "reset"})
+          tellm(player, {text: "aec/area_effect_cloud [rad]", color: "gold"}, {text: " kills effect clouds", color: "reset"})
           tellm(player, {text: "b/boats [rad]", color: "gold"}, {text: " kills boats", color: "reset"})
           tellm(player, {text: "mi/minecart [rad]", color: "gold"}, {text: " kills all kinds of minecarts", color: "reset"})
           tellm(player, {text: "i/items [rad]", color: "gold"}, {text: " kills dropped items", color: "reset"})
