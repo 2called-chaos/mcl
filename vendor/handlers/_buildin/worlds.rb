@@ -20,6 +20,7 @@ module Mcl
     end
 
     def srvrdy
+      spawn_backup_scheduler
       unless File.exist?(kwf)
         app.log.info "[MCLiverse] scanning worlds once, this might take a while..."
         server.invoke "save-all"
@@ -31,6 +32,69 @@ module Mcl
           scan_worlds
           sync { app.log.info "[MCLiverse] found #{known_worlds.length} worlds" }
         end
+      end
+    end
+
+    def spawn_backup_scheduler
+      # stop if existing (shouldnt happen?)
+      if @backup_scheduler && @backup_scheduler.alive?
+        app.log.warn "[MCLiverse] stopping stale backup scheduler"
+        @backup_scheduler.stop!
+      end
+
+      # check if enabled
+      if !app.config["buildin_worlds"] || app.config["buildin_worlds"]["interval"].to_i.zero?
+        app.log.info "[MCLiverse] automatic backups are disabled"
+        return
+      end
+
+      # world blacklist
+      bl = app.config["buildin_worlds"]["world_blacklist"]
+      if bl.respond_to?(:each) && bl.include?(server.world)
+        app.log.info "[MCLiverse] automatic backups are disabled for this world"
+        return
+      end
+
+      @backup_scheduler = app.spawn_signalled_thread do |thr|
+        interval = app.config["buildin_worlds"]["interval"].to_i
+        app.log.info "[MCLiverse] creating automatic backup every #{interval} minutes"
+        loop do
+          break if thr[:stop]
+          thr.wait(interval * 60)
+          break if thr[:stop]
+
+          # create backup
+          app.log.info "[MCLiverse] creating automatic backup..."
+          com_backup("@a", []) do |rt|
+            app.log.info "[MCLiverse] automatic backup created in #{rt.to_i}s"
+          end
+
+          # purge backups
+          keep = app.config["buildin_worlds"]["keep"].to_i
+          unless keep.zero?
+            blist = current_world.backups
+            if blist.length > keep
+              blist[keep..-1].each do |f, fn, t, s|
+                app.log.info "[MCLiverse] purging excessive backup #{fn}"
+                File.unlink(f)
+              end
+            end
+          end
+
+          # wait for users if server is empty
+          if app.config["buildin_worlds"]["pause_empty"] && Player.online.count.zero?
+            app.log.info "[MCLiverse] pausing automatic backups (server empty)"
+            while Player.online.count.zero?
+              break if thr[:stop]
+              thr.wait(10)
+            end
+            app.log.info "[MCLiverse] resuming automatic backups (every #{interval} minutes)" unless thr[:stop]
+          end
+        end
+      end
+      app.graceful do
+        app.log.info "[MCLiverse] stopping automatic backups..."
+        @backup_scheduler&.stop!
       end
     end
 
@@ -136,12 +200,13 @@ module Mcl
       end
     end
 
-    def com_backup player, args
+    def com_backup player, args, &callback
       if world = iknown_worlds[args[0] || server.world]
         tellm(player, l("Starting backup!", :gold))
         world.create_backup! do |rt|
           tellm(player, l("Backup done (", :gold), l(Player.fseconds(rt), :aqua), l(")!", :gold))
-        end
+          callback&.call(rt)
+        end.tap{|t| t.join if callback }
       else
         tellm(player, l("Unknown world!", :red))
       end

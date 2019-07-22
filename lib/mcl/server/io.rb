@@ -24,10 +24,7 @@ module Mcl
               world_chunks = world.split("/")
               world_cdir = world_chunks.pop
               world_infix = world_chunks.join("/")
-              puts %{
-                cd "#{root}" && mkdir#{" -p" unless Mcl.windows?} "#{app.config["backup_infix"]}" && tar -cf "#{app.config["backup_infix"]}backup-#{fs_safe_name(world)}-#{Time.now.strftime("%Y-%m-%d_%H-%M")}.tar" #{%{-C "#{root}/#{world_infix}"}} #{world}
-              }
-              `cd "#{root}" && mkdir#{" -p" unless Mcl.windows?} "#{app.config["backup_infix"]}" && tar -cf "#{app.config["backup_infix"]}backup-#{fs_safe_name(world)}-#{Time.now.strftime("%Y-%m-%d_%H-%M")}.tar" #{%{-C "#{root}/#{world_infix}"}} #{world_cdir}`
+              `cd "#{root}" && mkdir#{" -p" unless Mcl.windows?} "#{app.config["backup_infix"]}" && tar -cf "#{app.config["backup_infix"]}backup-#{fs_safe_name(world)}-#{Time.now.strftime("%Y-%m-%d_%H-%M")}.tar" #{%{-C "#{root}/#{world_infix}"}} "#{world_cdir}"`
             end
           ensure
             $mcl.sync { $mcl.server.invoke %{/save-on} } if @world == world

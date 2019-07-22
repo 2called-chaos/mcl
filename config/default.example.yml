@@ -32,6 +32,28 @@ launch_cmd: java -jar minecraft_server.jar
 
 
 
+# ===========================
+# = Automatic world backups =
+# ===========================
+
+# Note: Requires the buildin handler "worlds"
+buildin_worlds:
+  # amount in minutes between backups, false or 0 disables automatic backups
+  interval: 120
+
+  # amount of backups to keep per world, false or 0 will keep ALL backups
+  # WARNING: will remove any excess backups, automatically made or not!
+  keep: 12
+
+  # pause the backup timer when the server is empty
+  pause_empty: true
+
+  # a list of world names to exempt from automatic backups (and purging)
+  world_blacklist:
+    # - massive_world
+    # - another_one
+
+
 # =====================
 # = Advanced settings =
 # =====================

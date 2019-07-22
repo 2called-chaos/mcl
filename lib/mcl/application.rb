@@ -210,5 +210,44 @@ module Mcl
     def delay &block
       @delayed << block
     end
+
+    def spawn_signalled_thread &block
+      waitlock = Queue.new
+      sync do
+        Thread.new do
+          waitlock.pop
+          block.call(Thread.current)
+        end.tap do |thr|
+          thr.abort_on_exception = true
+          signalify_thread(thr)
+          waitlock << true
+        end
+      end
+    end
+
+    def signalify_thread thr
+      # set lock and signal
+      thr[:monitor] = Monitor.new
+      thr[:signal] = thr[:monitor].new_cond
+
+      # define helper methods
+      def thr.signal
+        self[:monitor].synchronize{ self[:signal].broadcast } ; self
+      end
+      def thr.stop
+        self[:stop] = true
+        signal
+      end
+      def thr.stop!
+        stop
+        join
+      end
+      def thr.wait(*a)
+        self[:monitor].synchronize{ self[:signal].wait(*a) }
+      end
+      def thr.sync(&b)
+        self[:monitor].synchronize(&b)
+      end
+    end
   end
 end
