@@ -5,13 +5,14 @@ MCL is a ruby script which acts as a **wrapper** for your vanilla Minecraft serv
 It should be somewhat easy to write custom commands but there are some gotchas to it. If you can't figure it out from
 the shipped handlers just ask your question in the issues.
 
+MCL is aimed at linux users with a basic knowledge of how servers work but feel free to try :) I haven't tested the Windows installer in a while.
+
 ### [» https://mcl.breitzeit.de <small>(read this with TOC / documentation)</small>](https://mcl.breitzeit.de)
 
 ---
 
 ## Help
-If you need help or have problems [open an issue](https://github.com/2called-chaos/mcl/issues/new) or [chat with me](http://webchat.esper.net/?channels=mcl). Please note that I'm not always there so either be patient, stubborn or just create an issue (I won't bite you). Also make sure to _highlight_ me in IRC by including my full nickname _soahccc_ in your message.
-
+If you need help or have problems [open an issue](https://github.com/2called-chaos/mcl/issues/new) or [chat with me](http://discord.gg/2vDfU4C). Please note that I'm not always there so either be patient, stubborn or just create an issue (I won't bite you). Also make sure to _highlight_ me in Discord (`@2called-chaos`).
 
 ## Features
   * Monitors itself and your minecraft server and restarts both when they crash
@@ -20,20 +21,16 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
     Just to name a few (or the coolest):
       * **[Butcher](https://mcl.breitzeit.de/handlers/buildin/butcher)** Kill entities with convenience.
       * **[Lagtrack](https://mcl.breitzeit.de/handlers/buildin/lagtrack)** Keeps track of (and optionally notifies players about) minecraft server lag.
-      * **[Schematic Builder](https://mcl.breitzeit.de/handlers/buildin/schematic_builder)** Sounds crazy? It is!
+      * **[CBS builder](https://mcl.breitzeit.de/handlers/buildin/cbs_builder)** Write command block stuff (or pixel art) in a text editor and put it into the game by rightclicking a sign (or typing a command)
       * **[Snap2date](https://mcl.breitzeit.de/handlers/buildin/snap2date)** Update to new snapshots automatically or just get notified.
       * **[Warps](https://mcl.breitzeit.de/handlers/buildin/warps)** Save coordinates (per world or global/per player or all), share them or just teleport there.
       * **[WorldEdit light](https://mcl.breitzeit.de/handlers/buildin/world_edit_light)** selections, stacking and more (using 1.8 commands)
-      * **[Worlds](https://mcl.breitzeit.de/handlers/buildin/worlds)** Worldbook (switch between, create new, backup worlds)
+      * **[Worlds](https://mcl.breitzeit.de/handlers/buildin/worlds)** Switch between worlds (restarts the server), make or restore backups, have per-world server.properties
 
 
 
 ## Upcoming features
-  * **ConsoleClient** - a way to access MCL and the console from a CLI environment (actually done, but no documentation)
-  * **Backups** - backup and restore your worlds (scheduled or when you need it)
-  * **Flagbook** - Easy access to flags
-  * **Bannerbook** - Easy access to banners
-  * generally, add **more** books. books are good!
+
   * [**» add something to the list**](https://github.com/2called-chaos/mcl/issues/new)
 
 
@@ -45,11 +42,13 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
   * Unixoid OS (such as Ubuntu/Debian, OS X, maybe others) or Windows 7/8 (not recommended)
   * local minecraft server(s)
     * **WARNING:** Some feature require the gamerule `logAdminCommands` to be set to true!
-    * MCL heavily relies on server commands and implement snapshot features. If things don't work your minecraft server version is probably outdated.
+    * MCL heavily relies on server commands and implement snapshot features. If things don't work your minecraft server version is probably outdated or I screwed up something.
 
 
 
 ## Installation
+  **NOTE: If you plan on using MCL for <= 1.12 servers you can try using the master branch but we recommend to use the `stable_upto_1.12` tag or `v1.0.0` release**
+
   **NOTE: MCL is currently in BETA stage!**
 
   <big>**[» Installation instructions (Debian/Ubuntu/OS X)](https://mcl.breitzeit.de/install_nix)**</big><br>
@@ -60,8 +59,9 @@ If you need help or have problems [open an issue](https://github.com/2called-cha
 
 
 ## Deactivate handlers
-If you want to deactivate buildin/extra handlers (or 3rd party ones) just rename the file to start with two underscores (e.g.: `__warps.rb`).
-
+If you want to deactivate buildin handlers (or 3rd party ones) just rename the file to start with two underscores (e.g.: `__warps.rb`).
+If you want to activate/deactivate extra/legacy handlers we recommend you to symlink them instead of renaming (on linux). This way you
+won't get issues when updating via git. E.g. `cd vendor/handlers/_extras; ln -s __horsecars.rb horsecars.rb` and to deactivate just `rm horsecars.rb`
 
 ## Use MCL for multiple servers
 MCL supports multiple instances. Create a new configuration and start/stop the instance like this:
@@ -106,17 +106,12 @@ Note: `!help` only shows you commands you have the permission for.
 - Roll the Dice
 - disable/choose handlers (instance config)
 - disable/choose commands (instance config)
-- per user aliases
-  - !alias list/remove/?
-  - !alias add <name> <command>
-  - !alias add foo !tp Troubi
-  - !alias add killall /kill @a
 - dynamic groups / permissions
   - ability to make some commands available through playtime
 
 
 ## Why is this useful?
-Normal modifications usually break on new releases and/or don't get updates for snapshot versions. Most other wrappers work by intercepting network data packets but this also tends to break sooner or later when things change. MCL on the other hand just parses console output and responds with commands. Unless the log output changes (which happened only once in Minecraft history as far as I know) or commands get removed MCL will continue to work. The drawback is obviously that MCL is much more limited.
+Normal modifications usually break on new releases and/or don't get updates for snapshot versions. Most other wrappers work by intercepting network data packets but this also tends to break sooner or later when things change. MCL on the other hand just parses console output and responds with commands. Unless the log output changes (~~which happened only once in Minecraft history as far as I know~~ 1.13 screwed everything) or commands get removed MCL will continue to work. The drawback is obviously that MCL is much more limited.
 
 In addition, Ruby makes it really easy to communicate and work with external services and that's where I see it's strengths and uses. Things which require really fast ticking checks are overkill for MCLs model.
 
@@ -147,7 +142,7 @@ In addition, Ruby makes it really easy to communicate and work with external ser
 
 
 ## Legal
-* © 2014, Sven Pachnit (www.bmonkeys.net)
+* © 2014-2019, Sven Pachnit (www.bmonkeys.net)
 * MCL is licensed under the MIT license.
 * MCL is **not** affiliated with Mojang but if you use MCL you also agree to the [Minecraft EULA](https://account.mojang.com/documents/minecraft_eula).
-* "Minecraft" is a trademark of Notch Development AB/Mojang.
+* "Minecraft" is a trademark of ~~Notch Development AB/Mojang~~ Mojang Synergies AB.
