@@ -45,6 +45,7 @@ module Mcl
                   [:z, :-],
                   [:x, :+],
                 ]
+                sdproc = ->{ pram[:trx][:abort] = true }
                 app.graceful(&sdproc)
 
                 x = catch(:stop_pregen) do
