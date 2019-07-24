@@ -7,13 +7,23 @@ module Mcl
 
         $mcl.server.invoke do |v|
           v.default %{/execute #{p} ~ ~ ~ testforblock #{opts[:pos]} #{opts[:block]}}
-          v.since "1.13", "17w45a", %{/execute as #{p} at #{p} run tp #{p} ~ ~ ~}
+          #v.since "1.13", "17w45a", %{/execute as #{p} at #{p} run tp #{p} ~ ~ ~}
+          v.since "1.13", "17w45a", %{/data get entity #{p}}
 
           promise do |pr|
             pr.condition { pmemo(p)[:detected_pos] }
-            pr.callback { block.call(pmemo(p).delete(:detected_pos)) }
+            pr.callback { block.call(pmemo(p).delete(:detected_pos), pmemo(p).delete(:detected_rot)) }
           end
         end
+      end
+
+      def detect_player_rotation p, opts = {}, &block
+        pmemo(p).delete(:detected_rot)
+        promise do |pr|
+          pr.condition { pmemo(p)[:detected_rot] }
+          pr.callback { block.call(pmemo(p).delete(:detected_rot), pmemo(p).delete(:detected_pos)) }
+        end
+        server.invoke %{/data get entity #{p}}
       end
 
       def indicate_coord p, coord, type = nil

@@ -15,6 +15,29 @@ module Mcl
         z -= 1 if z < 0
         pmemo(r[1])[:detected_pos] = [x.to_i, y.to_i, z.to_i]
       end
+
+      # player position (and more) detection (1.13) based on "/data" information
+      register_parser(/\A([^\s]+) has the following entity data: (.+)\z/i) do |res, r|
+        begin
+          nbt = pmemo(r[1])[:latest_nbt] = Mnhnp.parse!(r[2])
+
+          # update position
+          x, y, z = *nbt["Pos"]
+          x -= 1 if x < 0
+          y -= 1 if y < 0
+          z -= 1 if z < 0
+          pmemo(r[1])[:detected_pos] = [x.to_i, y.to_i, z.to_i]
+
+          # update rotation
+          pmemo(r[1])[:detected_rot] = nbt["Rotation"]
+        rescue StandardError => ex
+          # fallback to teleport method if NBT parsing fails
+          app.log.warn "Player detection via /data failed, falling back to teleporting ONCE"
+          app.log.debug "\t#{ex.class}: #{ex.message}"
+          ex.backtrace.each {|l| app.log.debug "\t\t#{l}" }
+          server.invoke %{/execute as #{r[1]} at #{r[1]} run tp #{r[1]} ~ ~ ~}
+        end
+      end
     end
   end
 end

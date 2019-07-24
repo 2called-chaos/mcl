@@ -30,6 +30,7 @@ module Mcl
     require "#{lib}/id2mcn"
     require "#{lib}/multi_io"
     require "#{lib}/promise"
+    require "#{lib}/mnhnp"
     require "#{lib}/player_manager"
     require "#{lib}/handler/helper"
     require "#{lib}/handler/api"
