@@ -297,7 +297,7 @@ module Mcl
         pram = memory(player)
         $mcl.server.invoke do |cmd|
           cmd.default %{/execute #{player} ~ ~ ~ clone #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{pos.join(" ")} #{args.join(" ")}}.strip
-          cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run clone #{p1.join(" ")} #{p2.join(" ")} #{pos.join(" ")} #{args.join(" ")}}.strip
+          cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run clone #{pram[:pos1].join(" ")} #{pram[:pos2].join(" ")} #{pos.join(" ")} #{args.join(" ")}}.strip
         end
       end
 
