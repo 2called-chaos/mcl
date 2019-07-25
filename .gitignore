@@ -8,5 +8,7 @@ vendor/handlers/*
 /log
 /vendor/bundle
 /vendor/data
+/vendor/datapacks/*
+!vendor/datapacks/.gitkeep
 /config
 /tmp
