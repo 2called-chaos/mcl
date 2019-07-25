@@ -5,6 +5,7 @@ module Mcl
   # !id [block_id]
   # !colors
   # !rec [rec] [pitch]
+  # !compass [target] [--purge]
   # !summon <entity> [-c count] [-t target] [x] [y] [z] [dataTag]
   # !setspawn
   # !idea [target]
@@ -17,6 +18,7 @@ module Mcl
       register_id(:guest)
       register_colors(:guest)
       register_rec(:guest)
+      register_compass(:guest, acl_level_purge = :mod)
       register_summon(:admin)
       register_setspawn(:mod)
       register_idea(:member)
@@ -117,6 +119,51 @@ module Mcl
         else
           trawm(player, {text: "Usage: ", color: "gold"}, {text: "!rec <track/-s top> [pitch] [-v oice]", color: "yellow"})
           trawm(player, {text: "Tracks: ", color: "gold"}, {text: "11 13 blocks cat chirp far mall mellohi stal strad wait ward", color: "yellow"})
+        end
+      end
+    end
+
+    def register_compass acl_level, acl_level_purge
+      register_command :compass, desc: "projects a compass around you or a target for a few seconds", acl: acl_level do |player, args|
+        if args.delete("--purge")
+          acl_verify(player, acl_level_purge)
+          server.invoke %{/kill @e[tag=mcl_misc_compass_i]}
+          trawm(player, {text: "Cleared all loaded compass indicators!", color: "green"})
+          throw :handler_exit, :exit
+        end
+
+        target = args.first || player
+        detect_player_position(target) do |pos|
+          if pos
+            id = server.uniqid
+            x, y, z = pos
+            summon_indicator = ->(id, x, y, z, name, block = "white_concrete"){
+              data = []
+              data << %{Fire:32767}
+              data << %{Marker:1b}
+              data << %{Invulnerable:1b}
+              data << %{Invisible:1b}
+              data << %{NoGravity:1b}
+              data << %{CustomName:'{"text":"#{name}"}',CustomNameVisible:1}
+              data << %{Tags:["mcl_misc_compass_i", "mcl_misc_compass_i_#{id}"]}
+              data << %{ArmorItems:[{},{},{},{id:"#{block}",Count:1b}]}
+              server.invoke %{/summon armor_stand #{x} #{y} #{z} {#{data.join(",")}}}
+            }
+            summon_indicator[id, x, y, z - 2, "North", "red_concrete"]
+            summon_indicator[id, x + 2, y, z, "East"]
+            summon_indicator[id, x, y, z + 2, "South"]
+            summon_indicator[id, x - 2, y, z, "West"]
+            async_safe do
+              sleep 5
+              sync { server.invoke %{/kill @e[tag=mcl_misc_compass_i_#{id}]} }
+            end
+          else
+            if args.first == player
+              trawm(player, {text: "Couldn't determine your position :/ Is your head underwater?", color: "red"})
+            else
+              trawm(player, {text: "Couldn't determine position of #{target} :/ Maybe the target is underwater.", color: "red"})
+            end
+          end
         end
       end
     end
