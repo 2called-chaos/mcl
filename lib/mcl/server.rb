@@ -1,7 +1,7 @@
 module Mcl
   class Server
     attr_reader :app, :status, :players
-    attr_accessor :version, :boottime, :world
+    attr_accessor :version, :boottime, :world, :datapacks
     include Helper
     include Getters
     include IPC
@@ -12,6 +12,7 @@ module Mcl
       @version = $mcl_server_version
       @boottime = $mcl_server_boottime
       @world = $mcl_server_world
+      @datapacks = $mcl_server_datapacks
       @status = $mcl_server_status || :stopped # booting, running, stalled, stopping
       ipc_setup
     end

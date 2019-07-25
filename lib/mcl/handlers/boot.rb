@@ -51,6 +51,12 @@ module Mcl
         end
       end
 
+      # active datapacks
+      register_parser(/Reloading ResourceManager: (.*)/i) do |res, r|
+        $mcl.log.info "[CORE] Recognized active datapacks: `#{r[1]}'"
+        $mcl_server_datapacks = $mcl.server.datapacks = r[1].split(", ")
+      end
+
       # world saving
       register_parser(/^Saving the (?:key => "value", world|game)/i) { $world_saved = false }
       register_parser(/^Saved the (?:key => "value", world|game)/i) { $world_saved = true }
