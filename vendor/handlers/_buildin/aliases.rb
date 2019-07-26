@@ -2,7 +2,7 @@ module Mcl
   Mcl.reloadable(:HMclAliases)
   ## Aliases (custom commands/macros)
   # !alias <name>
-  # !alias list    [-u user] [-s] [-a] [page|filter] [page]
+  # !alias list    [-u user] [-s] [page|filter] [page]
   # !alias add     [-u user] [-s] <name> <command>
   # !alias info    [-u user] [-s] <name>
   # !alias delete  [-u user] [-s] <name> [index]
