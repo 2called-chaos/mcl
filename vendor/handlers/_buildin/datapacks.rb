@@ -17,6 +17,11 @@ module Mcl
           src: "https://github.com/mclistener/mcl-dp-recipe-notch_apple",
         },
         {
+          name: "Gameplay: No Phantoms",
+          zip: "mcl://gameplay-no_phantoms",
+          src: "https://github.com/mclistener/mcl-dp-gameplay-no_phantoms",
+        },
+        {
           name: "FunAdv: Wait. That's illegal.",
           zip: "mcl://funadv-thats_illegal",
           src: "https://github.com/mclistener/mcl-dp-funadv-thats_illegal",
