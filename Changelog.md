@@ -1,3 +1,37 @@
+## 2.1.0
+
+### Features
+
+* Added (buildin) datapack handler
+  (centralize your datapacks across worlds and instances, easily install and uninstall to worlds, cookbook with a selection of nice2have datapacks)
+
+
+### Updates
+
+* Player position detection now uses `/data get` and allows for all player NBT values to be accessible (e.g. Rotation, Inventory)
+
+* (buildin) handler "world" is now able to create regular backups automatically, configuration required
+
+* (buildin) handler "world_edit_light"
+  * New command `!!move`: basically !!stack but without actually cloning blocks (move selection by its volume)
+
+* (buildin) handler "misc"
+  * New command `!compass`: projects a compass around you (or a target) for a few seconds
+
+
+### Fixes
+
+* (buildin) handler "world_edit_light": `!!insert` fixed for >=1.13
+* (extra) handler "world_pregenerator": Fixed an issue that prevented execution of the teleport loop
+
+
+#### Notes
+
+* dependency `httparty` got updated from 0.15.5 to 0.17.0
+* Handlers will now get their srvrdy method called after reattaching the IPC handle (mclreboot)
+
+-------------------
+
 ## 2.0.0
 
 ### Features
@@ -15,6 +49,7 @@
 
 * Added CBS builder (not really new but now documented), see CBS handler docs for more details
 
+
 ### Updates
 
 * Completely reworked the buildin handler "worlds" which now supports per-world server.properties
@@ -29,6 +64,7 @@
 * (buildin) handler "butcher" got it's entity lists updated
 * (buildin) handler "gamerules" got new commands to accommodate for new gamerules in the game
 
+
 ### Removals
 
 **NOTE:** These handlers are still available in `vendor/handlers/_legacy`
@@ -37,6 +73,7 @@
 * Removed (extra) handler "bingo" to control minecraft bingos in favor of new world handler and other improvements
 * Removed (extra) handler "nbt_inspector" which allowed locating generated strongholds in favor of /locate command
 * Removed (extra) handler "village_info" which allowed access to villages NBT info but it only works up to 1.13
+
 
 ### Fixes
 
