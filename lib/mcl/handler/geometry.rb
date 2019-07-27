@@ -124,6 +124,92 @@ module Mcl
         end
       end
 
+      def yaw2facing yaw
+        [].tap do |r|
+          if yaw > 315 || yaw < 45
+            r << :south
+            r << :east if yaw > 315 && yaw <= 330
+            r << :west if yaw < 45 && yaw >= 30
+          elsif yaw >= 45 && yaw < 135
+            r << :west
+            r << :south if yaw <= 60
+            r << :north if yaw >= 120
+          elsif yaw >= 225 && yaw <= 315
+            r << :east
+            r << :south if yaw >= 300
+            r << :north if yaw <= 240
+          else
+            r << :north
+            r << :east if yaw >= 210 && yaw <= 225
+            r << :west if yaw >= 135 && yaw <= 150
+          end
+        end
+      end
+
+      def pitch2facing pitch
+        [].tap do |r|
+          if pitch < -45
+            r << :up
+            r << :straight if pitch >= -60
+          elsif pitch >= -45 && pitch <= 45
+            r << :straight
+            r << :up if pitch <= -30
+            r << :down if pitch >= 30
+          elsif pitch > 45
+            r << :down
+            r << :straight if pitch <= 60
+          end
+        end
+      end
+
+      def rotation2facing yaw, pitch = nil
+        yaw, pitch = yaw if yaw.is_a?(Array)
+        [yaw2facing(yaw), pitch2facing(pitch)]
+      end
+
+      def facing_inverse facing
+        {
+          up: :down,
+          down: :up,
+          north: :south,
+          south: :north,
+          west: :east,
+          east: :west,
+        }[facing]
+      end
+
+      def facing_left facing
+        {
+          north: :west,
+          south: :east,
+          west: :south,
+          east: :north,
+        }[facing]
+      end
+
+      def facing_right facing
+        {
+          north: :east,
+          south: :west,
+          west: :north,
+          east: :south,
+        }[facing]
+      end
+
+      def facing2relatives yawface, pitchface = nil
+        yawface, pitchface = yawface if !pitchface && yawface[0].is_a?(Array)
+        {}.tap do |r|
+          if pitchface && pitchface[0] != :straight
+            r[:forward] = pitchface[0]
+          else
+            r[:forward] = yawface[0]
+          end
+          r[:backward] = facing_inverse(r[:forward])
+          r[:left] = facing_left(yawface[0])
+          r[:right] = facing_right(yawface[0])
+        end
+      end
+
       def direction_indicator_points coord, directions, num = 10, spacing = 0
         [].tap do |points|
           x, y, z = coord

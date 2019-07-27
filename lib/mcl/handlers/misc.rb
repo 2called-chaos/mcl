@@ -29,7 +29,9 @@ module Mcl
           pmemo(r[1])[:detected_pos] = [x.to_i, y.to_i, z.to_i]
 
           # update rotation
-          pmemo(r[1])[:detected_rot] = nbt["Rotation"]
+          yaw, pitch = nbt["Rotation"]
+          yaw += 360 if yaw < 0
+          pmemo(r[1])[:detected_rot] = [yaw, pitch]
         rescue StandardError => ex
           # fallback to teleport method if NBT parsing fails
           app.log.warn "Player detection via /data failed, falling back to teleporting ONCE"
