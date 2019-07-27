@@ -21,6 +21,7 @@ module Mcl
   # !!ipos [mode]
   # !!ipos1 [mode]
   # !!ipos2 [mode]
+  # !!facing
   class HMclWorldEditLight < Handler
     def setup
       register_sel(:builder)
@@ -36,6 +37,7 @@ module Mcl
       register_pos(:builder)
       register_spos(:builder)
       register_ipos(:builder)
+      register_facing(:builder)
     end
 
     def register_sel acl_level
@@ -241,6 +243,19 @@ module Mcl
           else
             indicate_pos(num, player, args)
           end
+        end
+      end
+    end
+
+    def register_facing acl_level
+      register_command "!facing", desc: "(debug) shows your facing", acl: acl_level do |player, args|
+        detect_player_rotation(player) do |(yaw, pitch)|
+          facing = rotation2facing(yaw, pitch)
+          tellm(player, { text: "Yaw: ", color: "yellow" }, { text: "%.2f" % yaw, color: "aqua"}, { text: " Pitch: ", color: "yellow" }, { text: "%.2f" % pitch, color: "aqua"})
+          tellm(player, { text: "Facing: ", color: "yellow" }, { text: facing[0].join("-"), color: "aqua" }, { text: " / ", color: "yellow" }, { text: facing[1].join("-"), color: "aqua" })
+          tellm(player, *facing2relatives(facing).map.with_index {|(k, f), i|
+            [{ text: "#{k.to_s.capitalize}: ", color: "yellow" }, { text: f.to_s, color: "aqua"}].tap {|r| r.unshift({text: " "}) unless i.zero? }
+          }.flatten)
         end
       end
     end
