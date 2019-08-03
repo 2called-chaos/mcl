@@ -140,6 +140,12 @@ module Mcl
         end
 
         Mcl::Handler.descendants.uniq.each do |klass|
+          # disabled handlers
+          if (config["disable_handlers"] || []).include?(klass.name.to_s)
+            log.warn "[SETUP] Prevented handler `#{klass.name}' from registering (disabled by config)"
+            next
+          end
+
           devlog "[SETUP] Setting up handler `#{klass.name}'", scope: "plugin_load"
           @handlers << klass.new(self)
         end

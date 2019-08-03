@@ -8,6 +8,7 @@ admins:
   - 93cc6d87-776e-459f-b40a-530a5670c07c # UUID of 2called_chaos
 
 
+
 # =============
 # = Minecraft =
 # =============
@@ -54,6 +55,7 @@ buildin_worlds:
     # - another_one
 
 
+
 # =====================
 # = Advanced settings =
 # =====================
@@ -67,6 +69,21 @@ backup_infix: backups/
 # Relative to the Minecraft server root, MUST end with a slash! The directory will be created automatically
 # shouldn't it already exist. Can be left blank to not use any infix.
 mcv_infix: versions/
+
+# List handler class names (!) if you want to deactivate a handler for this instance only.
+# Note: The handler `Mcl::HMclSnap2Date` is required for server bootstrapping.
+disable_handlers:
+  # - Mcl::HMclCheats
+
+# List of commands to disable for this instance only (will be prevented from registering).
+# Do NOT include the exclamation mark!
+# NOTE: Be aware that you have to disable potential command aliases as well (e.g. !creative has an alias !c)
+disable_commands:
+  # - c
+  # - creative
+  # - !stack
+
+
 
 # ============
 # = Database =

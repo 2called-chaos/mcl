@@ -43,6 +43,13 @@ module Mcl
       # register handler
       cmds.each do |cmd|
         cmd = cmd.to_s
+
+        # disabled commands
+        if (app.config["disable_commands"] || []).include?(cmd)
+          app.log.warn "[SETUP] Prevented command `#{cmd}' from registering (disabled by config)"
+          next
+        end
+
         app.command_bindings[cmd] = [handler, b, ->(user, ucmd, acl = nil){
           catch(:handler_exit) do
             handler.acl_verify(user, acl) if acl
