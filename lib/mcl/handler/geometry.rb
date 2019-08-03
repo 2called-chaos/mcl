@@ -124,6 +124,26 @@ module Mcl
         end
       end
 
+      def relative_direction? dir
+        {
+          "f" => :forward, "forward" => :forward,
+          "b" => :backward, "backward" => :backward,
+          "l" => :left, "left" => :left,
+          "r" => :right, "right" => :right,
+        }[dir]
+      end
+
+      def resolve_relative_direction player, dir, &block
+        if rdir = relative_direction?(dir)
+          detect_player_rotation(player) do |(yaw, pitch)|
+            rel = facing2relatives(rotation2facing(yaw, pitch))
+            block.call(rel[rdir].to_s)
+          end
+        else
+          block.call(dir)
+        end
+      end
+
       def yaw2facing yaw
         [].tap do |r|
           if yaw > 315 || yaw < 45
