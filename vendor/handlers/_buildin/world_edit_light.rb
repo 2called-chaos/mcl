@@ -406,48 +406,55 @@ module Mcl
           tellm(player, {text: "!!stack <direction> [amount] [shift_selection] [masked|filtered <TileName>]", color: "aqua"})
         else
           unless require_selection(player)
-            # vars
-            direction = chunks.shift
-            amount    = chunks.any? ? [chunks.shift.to_i, 1].max : 1
-            shift_sel = chunks.any? ? strbool(chunks.shift) : false
-            mode      = chunks.any? ? chunks.shift : "replace"
-            tile_name = chunks.join(" ")
-
-            # precheck
-            if !pmemo(player)[:danger_mode] && amount > 50
-              return require_danger_mode(player, "Stacking >50 times require danger mode to be enabled!")
-            end
-
-            # prepare
-            cube                = sel_explode_selection(player)       # corners
-            s1, s2              = cube[:xyz], cube[:XYZ]              # source selection
-            p1, p2              = cube[:xyz], cube[:XYZ]              # frame selection
-            seldim              = selection_dimensions(player)        # selection dimensions
-            dir, axis, operator = coord_shifting_direction(direction) # coord shifting instructions
-
-            # stack
-            amount.times do
-              # shift frame position
-              p1 = shift_frame_selection(p1, seldim, axis, operator)
-              p2 = shift_frame_selection(p2, seldim, axis, operator)
-
-              # clone source => working
-              $mcl.server.invoke do |cmd|
-                cmd.default %{/execute #{player} ~ ~ ~ /clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}
-                cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}.strip
-              end if doclone
-
-              # shift source position
-              s1, s2 = p1, p2
-            end
-
-            # move selection
-            if shift_sel
-              pram[:pos1] = p1
-              pram[:pos2] = p2
-              current_selection(player, true, true, false, false)
+            resolve_relative_direction(player, chunks[0]) do |dir|
+              chunks[0] = dir
+              _stack_selection(player, chunks, doclone)
             end
           end
+        end
+      end
+
+      def _stack_selection player, chunks, doclone
+        # vars
+        direction = chunks.shift
+        amount    = chunks.any? ? [chunks.shift.to_i, 1].max : 1
+        shift_sel = chunks.any? ? strbool(chunks.shift) : false
+        mode      = chunks.any? ? chunks.shift : "replace"
+        tile_name = chunks.join(" ")
+
+        # precheck
+        if !pmemo(player)[:danger_mode] && amount > 50
+          return require_danger_mode(player, "Stacking >50 times require danger mode to be enabled!")
+        end
+
+        # prepare
+        cube                = sel_explode_selection(player)       # corners
+        s1, s2              = cube[:xyz], cube[:XYZ]              # source selection
+        p1, p2              = cube[:xyz], cube[:XYZ]              # frame selection
+        seldim              = selection_dimensions(player)        # selection dimensions
+        dir, axis, operator = coord_shifting_direction(direction) # coord shifting instructions
+
+        # stack
+        amount.times do
+          # shift frame position
+          p1 = shift_frame_selection(p1, seldim, axis, operator)
+          p2 = shift_frame_selection(p2, seldim, axis, operator)
+
+          # clone source => working
+          $mcl.server.invoke do |cmd|
+            cmd.default %{/execute #{player} ~ ~ ~ /clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}
+            cmd.since "1.13", "17w45a", %{/execute as #{player} at #{player} run clone #{s1.join(" ")} #{s2.join(" ")} #{p1.join(" ")} #{mode} normal #{tile_name}}.strip
+          end if doclone
+
+          # shift source position
+          s1, s2 = p1, p2
+        end
+
+        # move selection
+        if shift_sel
+          pram[:pos1] = p1
+          pram[:pos2] = p2
+          current_selection(player, true, true, false, false)
         end
       end
     end
