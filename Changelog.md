@@ -1,3 +1,22 @@
+## 2.1.1
+
+### Features
+
+  * Added `disable_handlers` and `disable_commands` to instance configuration (yml) to allow disabling commands/handlers for a given instance only
+
+
+### Updates
+
+  * New (debug) command `!!facing`: tells you your facing
+  * Command `!!stack` and `!!move` now support additional (relative) directions: f/forward, b/backward, l/left, r/right (note that forward and backwark can be up/down, use `!!facing` if you are unsure)
+
+
+#### Notes
+
+  * Added some facing helpers to geometry, yaw will be normalized to be between 0-360 (game pretends to act between -180-180 but actually uses -360-360)
+
+-------------------
+
 ## 2.1.0
 
 ### Features
