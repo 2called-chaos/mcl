@@ -22,11 +22,11 @@ module Mcl
         $mcl.pman.prec(p)
       end
 
-      def acl_verify p, level = 13337
-        $mcl.pman.acl_verify(p, level)
+      def acl_verify p, level = :admin, silent = false
+        $mcl.pman.acl_verify(p, level, silent)
       end
 
-      def acl_permitted p, level = 13337
+      def acl_permitted p, level = :admin
         $mcl.pman.acl_permitted(p, level)
       end
 

@@ -45,12 +45,12 @@ module Mcl
       end
     end
 
-    def acl_verify p, level = :admin
+    def acl_verify p, level = :admin, silent = false
       level = lvlval(level)
       perm = acl[p] || 0
       diff = level - perm
       if diff > 0
-        app.server.trawm(p, {text: "[ACL] ", color: "light_purple"}, {text: "#{diff} more magic orbs required!", color: "red"})
+        app.server.trawm(p, {text: "[ACL] ", color: "light_purple"}, {text: "#{diff} more magic orbs required!", color: "red"}) unless silent
         throw :handler_exit, :acl
       end
       true

@@ -50,11 +50,12 @@ module Mcl
           next
         end
 
-        app.command_bindings[cmd] = [handler, b, ->(user, ucmd, acl = nil){
-          catch(:handler_exit) do
-            handler.acl_verify(user, acl) if acl
+        app.command_bindings[cmd] = [handler, b, ->(user, ucmd, acl = nil, wildcard = false){
+          cres = catch(:handler_exit) do
+            handler.acl_verify(user, acl, wildcard) if acl
             b[user, ucmd, handler, OptionParser.new]
           end
+          cres == :acl && wildcard ? false : cres
         }]
         app.devlog "[SETUP]   Registering command `#{cmd}'", scope: "command_register"
         [
@@ -66,7 +67,7 @@ module Mcl
             if r[2] == "#{cmd}" || r[2].start_with?("#{cmd} ") || opts[:wildcard]
               user = r[1].to_s.gsub(/[§]./, "")
               ucmd = r[2].split(" ")[1..-1]
-              app.command_bindings[cmd][2][user, opts[:wildcard] ? r : ucmd, opts[:acl]]
+              app.command_bindings[cmd][2][user, opts[:wildcard] ? r : ucmd, opts[:acl], opts[:wildcard]]
             end
           end
         end
