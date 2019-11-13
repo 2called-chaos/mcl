@@ -1,3 +1,19 @@
+## 2.1.2
+
+### Fixes
+
+  * Silently ignore ACL errors in wildcard command (aliases handler prevented guest commands)
+  * Permission fix for `!clear` command (don't allow guests to clear other players inventories)
+  * Fix activesupport version constraint (>= 5.2 doesn't have a usable migrator anymore)
+
+
+### Updates
+
+  * Updated bundled Gemfile.lock to install more up2date dependencies if you just do `bundle install`
+
+
+-------------------
+
 ## 2.1.1
 
 ### Features
