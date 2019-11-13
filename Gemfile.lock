@@ -51,7 +51,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord
+  activerecord (< 5.2)
   daemons
   file-tail
   httparty
