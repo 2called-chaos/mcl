@@ -36,6 +36,15 @@ module Mcl
       cmds = [*cmds].flatten
       acl_lvl = app.pman.lvlval(opts[:acl] || :admin)
 
+      # remove disabled commands
+      cmds.select! do |cmd|
+        if disabled = (app.config["disable_commands"] || []).include?(cmd.to_s)
+          app.log.warn "[SETUP] Prevented command `#{handler.class}/#{cmd}' from registering (disabled by config)"
+        end
+        !disabled
+      end
+      return if cmds.empty?
+
       # register name
       app.command_names["!" << cmds.join(" !")] = opts[:desc]
       app.command_acls["!" << cmds.join(" !")] = acl_lvl
@@ -43,12 +52,6 @@ module Mcl
       # register handler
       cmds.each do |cmd|
         cmd = cmd.to_s
-
-        # disabled commands
-        if (app.config["disable_commands"] || []).include?(cmd)
-          app.log.warn "[SETUP] Prevented command `#{cmd}' from registering (disabled by config)"
-          next
-        end
 
         app.command_bindings[cmd] = [handler, b, ->(user, ucmd, acl = nil, wildcard = false){
           cres = catch(:handler_exit) do
