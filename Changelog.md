@@ -1,3 +1,11 @@
+## 2.1.3
+
+### Fixes
+
+  * Disabled commands no longer show up in `!help`
+
+-------------------
+
 ## 2.1.2
 
 ### Fixes
@@ -10,7 +18,6 @@
 ### Updates
 
   * Updated bundled Gemfile.lock to install more up2date dependencies if you just do `bundle install`
-
 
 -------------------
 
