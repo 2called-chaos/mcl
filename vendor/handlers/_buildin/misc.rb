@@ -14,7 +14,7 @@ module Mcl
   # !muuhhh [target]
   class HMclMisc < Handler
     def setup
-      register_clear(:guest)
+      register_clear(:guest, :mod)
       register_id(:guest)
       register_colors(:guest)
       register_rec(:guest)
@@ -27,8 +27,9 @@ module Mcl
       register_muuhhh(:mod)
     end
 
-    def register_clear acl_level
+    def register_clear acl_level, acl_level_others
       register_command :clear, desc: "clears your inventory", acl: acl_level do |player, args|
+        acl_verify(player, acl_level_others) if args.first && args.first != player
         $mcl.server.invoke %{/clear #{args.first || player}}
       end
     end
