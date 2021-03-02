@@ -9,7 +9,7 @@ gem 'httparty' # cause I got sick of stdlib
 gem 'nbtfile', git: "https://github.com/2called-chaos/nbtfile.git"
 
 # database
-gem 'activerecord', '< 5.2'
+gem 'activerecord', '< 5.3'
 gem 'sqlite3', group: :sqlite
 gem 'mysql2', group: :mysql
 
