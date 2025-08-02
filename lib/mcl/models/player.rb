@@ -34,7 +34,7 @@ module Mcl
 
     # ------
 
-    serialize :data, Hash
+    serialize :data, type: Hash, coder: YAML
     scope :online, -> { where(online: true) }
     scope :offline, -> { where(online: false) }
 

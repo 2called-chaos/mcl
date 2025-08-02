@@ -1,6 +1,6 @@
 class AddPlaytimeToPlayers < ActiveRecord::Migration[5.1]
   class Player < ActiveRecord::Base # Stub
-    serialize :data, Hash
+    serialize :data, type: Hash, coder: YAML
   end
 
   def change

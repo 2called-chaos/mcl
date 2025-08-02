@@ -3,9 +3,12 @@ module Mcl
     module DbSchema
       def define_database_schema
         ActiveRecord::Migration.verbose = true
-        migrator = ActiveRecord::Migrator.open(Dir["#{ROOT}/**/migrations"])
-        missing = migrator.pending_migrations
-        log.debug "[Migrator] found #{migrator.migrations.count} migrations, #{missing.count} yet to migrate."
+        connection_pool = ActiveRecord::Base.connection_pool
+        schema_migration = ActiveRecord::SchemaMigration.new(connection_pool)
+        internal_metadata = ActiveRecord::InternalMetadata.new(connection_pool)
+        migration_context = ActiveRecord::MigrationContext.new(Dir["#{ROOT}/**/migrations"], schema_migration, internal_metadata)
+        missing = migration_context.open.pending_migrations
+        log.debug "[Migrator] found #{migration_context.migrations.count} migrations, #{missing.count} yet to migrate."
 
         if missing.any?
           # create backup of sqlite DB
@@ -15,7 +18,7 @@ module Mcl
           end
 
           log.debug "[Migrator] migrating #{missing.count} migrations..."
-          migrator.migrate
+          migration_context.up
         end
       end
 
