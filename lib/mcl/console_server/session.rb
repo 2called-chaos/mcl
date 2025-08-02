@@ -33,11 +33,18 @@ module Mcl
       end
 
       def peer
-        @peer ||= Socket.unpack_sockaddr_in(@socket.getpeername).reverse
+        @peer ||= begin
+          peername = @socket.getpeername
+          if peername[0] == "\x01"
+            Socket.unpack_sockaddr_un(peername).presence || "anon-unix-socket"
+          else
+            Socket.unpack_sockaddr_in(peername).reverse.join(":")
+          end
+        end
       end
 
       def client_id
-        "#{peer.join(":")}#{"[#{nick}]" if nick.present?}"
+        "#{peer}#{"[#{nick}]" if nick.present?}"
       end
 
       def max_wait
