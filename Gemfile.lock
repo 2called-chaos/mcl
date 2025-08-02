@@ -46,7 +46,6 @@ GEM
     logger (1.7.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
     minitest (5.25.5)
     multi_xml (0.7.2)
       bigdecimal (~> 3.1)
@@ -55,9 +54,8 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     rake (13.3.0)
+    readline-ext (0.2.0)
     securerandom (0.4.1)
-    sqlite3 (2.7.3)
-      mini_portile2 (~> 2.8.0)
     sqlite3 (2.7.3-aarch64-linux-gnu)
     sqlite3 (2.7.3-aarch64-linux-musl)
     sqlite3 (2.7.3-arm-linux-gnu)
@@ -83,7 +81,6 @@ PLATFORMS
   arm-linux-gnu
   arm-linux-musl
   arm64-darwin
-  ruby
   x86-linux-gnu
   x86-linux-musl
   x86_64-darwin
@@ -99,6 +96,7 @@ DEPENDENCIES
   nbtfile!
   pry
   rake
+  readline-ext
   sqlite3
 
 BUNDLED WITH
