@@ -462,7 +462,7 @@ module Mcl
 
     module Helper
       def spacer
-        {text: " / ", color: "reset"}
+        {text: " / "}
       end
 
       def tellm player, *msg

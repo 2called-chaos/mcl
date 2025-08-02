@@ -17,15 +17,15 @@ module Mcl
         r = msgs.map do |msg|
           msg.is_a?(Hash) ? msg : {text: msg}
         end
-        invoke %{/tellraw #{player} [#{r.map(&:to_json).join(",")}]}
+        invoke %{/tellraw #{player} ["", #{r.map(&:to_json).join(",")}]}
       end
 
       def trawt player, tit, *msgs
-        r = [{text: "[#{tit}] ", color: "light_purple"}, {text:"", color: "reset"}]
+        r = [{text: "[#{tit}] ", color: "light_purple"}]
         msgs.each do |msg|
           r << (msg.is_a?(Hash) ? msg : {text: msg})
         end
-        invoke %{/tellraw #{player} [#{r.map(&:to_json).join(",")}]}
+        invoke %{/tellraw #{player} ["", #{r.map(&:to_json).join(",")}]}
       end
 
       def human_bytes bytes
@@ -46,4 +46,3 @@ module Mcl
     end
   end
 end
-

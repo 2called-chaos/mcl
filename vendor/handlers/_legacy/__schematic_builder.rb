@@ -43,17 +43,17 @@ module Mcl
           acl_verify(player, acl_levels[args[0].to_sym])
           send("com_#{args[0]}", player, args[1..-1])
         else
-          tellm(player, {text: "book", color: "gold"}, {text: " gives you a book with more info", color: "reset"})
-          # tellm(player, {text: "add <name> <url>", color: "gold"}, {text: " add a remote schematic", color: "reset"})
-          tellm(player, {text: "list [filter]", color: "gold"}, {text: " list available schematics", color: "reset"})
-          tellm(player, {text: "load <name>", color: "gold"}, {text: " load schematic from library", color: "reset"})
-          tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic", color: "reset"})
-          tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no", color: "reset"})
-          tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
-          tellm(player, {text: "ipos [indicator]", color: "gold"}, {text: " indicate build area", color: "reset"})
-          tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
-          tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
-          tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it", color: "reset"})
+          tellm(player, {text: "book", color: "gold"}, {text: " gives you a book with more info"})
+          # tellm(player, {text: "add <name> <url>", color: "gold"}, {text: " add a remote schematic"})
+          tellm(player, {text: "list [filter]", color: "gold"}, {text: " list available schematics"})
+          tellm(player, {text: "load <name>", color: "gold"}, {text: " load schematic from library"})
+          tellm(player, {text: "rotate <±90deg>", color: "gold"}, {text: " rotate the schematic"})
+          tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no"})
+          tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position"})
+          tellm(player, {text: "ipos [indicator]", color: "gold"}, {text: " indicate build area"})
+          tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings"})
+          tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings"})
+          tellm(player, {text: "build", color: "gold"}, {text: " parse schematic and build it"})
         end
       end
     end
@@ -116,7 +116,7 @@ module Mcl
 
         if sfiles.any?
           tellm(player, {text: "--- Showing page #{page}/#{pages} (#{sfiles.count} schematics) ---", color: "aqua"})
-          page_contents[page-1].each {|schem| tellm(player, {text: schem, color: "reset", clickEvent: {action: "suggest_command", value: "!schebu load #{schem}"}}) }
+          page_contents[page-1].each {|schem| tellm(player, {text: schem, clickEvent: {action: "suggest_command", value: "!schebu load #{schem}"}}) }
           tellm(player, {text: "Use ", color: "aqua"}, {text: "!schembu list [str] <page>", color: "light_purple"}, {text: " to [filter] and/or <paginate>.", color: "aqua"})
         else
           tellm(player, {text: "No schematics found for that filter/page!", color: "red"})
@@ -151,7 +151,7 @@ module Mcl
               r[:blocks_processed] = 0
             end
             pram[:current_schematic] = new_schematic
-            tellm(player, {text: "Schematic loaded ", color: "green"}, {text: "(#{new_schematic[:dimensions].join("x")} = #{new_schematic[:size]})", color: "reset"})
+            tellm(player, {text: "Schematic loaded ", color: "green"}, {text: "(#{new_schematic[:dimensions].join("x")} = #{new_schematic[:size]})"})
           rescue
             tellm(player, {text: "Error loading schematic!", color: "red"})
             tellm(player, {text: "#{$!.message}", color: "red"})
@@ -261,7 +261,7 @@ module Mcl
             size = schem[:build_size]
             proc = schem[:blocks_processed]
             perc = ((proc / size.to_f) * 100).round(2)
-            tellm(player, {text: "BUILDING: ", color: "green"}, {text: proc, color: "yellow"}, spacer, {text: size, color: "gold"}, {text: " (#{perc}%)", color: "reset"})
+            tellm(player, {text: "BUILDING: ", color: "green"}, {text: proc, color: "yellow"}, spacer, {text: size, color: "gold"}, {text: " (#{perc}%)"})
           end
         end
       end
@@ -369,7 +369,7 @@ module Mcl
       end
 
       def spacer
-        {text: " / ", color: "reset"}
+        {text: " / "}
       end
 
       def tellm player, *msg

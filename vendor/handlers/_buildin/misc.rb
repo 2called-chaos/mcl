@@ -50,7 +50,7 @@ module Mcl
         chunks = %w[black dark_blue dark_green dark_aqua dark_red dark_purple gold gray dark_gray blue green aqua red light_purple yellow white].in_groups_of(4, false)
 
         chunks.each do |cl|
-          trawm(player, *cl.map{|c| {text: c, color: c} }.zip([{text: " / ", color: "reset"}] * (cl.count-1)).flatten.compact)
+          trawm(player, *cl.map{|c| {text: c, color: c} }.zip([{text: " / "}] * (cl.count-1)).flatten.compact)
         end
       end
     end

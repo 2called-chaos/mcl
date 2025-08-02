@@ -36,10 +36,10 @@ module Mcl
               com_tp(args[0], args[1])
             end
           else
-            tellm(player, {text: "!tp book [>|<]", color: "gold"}, {text: " gives you a teleport book for both or given direction", color: "reset"})
-            tellm(player, {text: "!tp <target> [>|<]", color: "gold"}, {text: " teleports you to target or target to you", color: "reset"})
-            tellm(player, {text: "!tp <p1> <p2>", color: "gold"}, {text: " teleports p1 to p2", color: "reset"})
-            tellm(player, {text: "!tp [target] <x> <y> <z> [<y-rot> <x-rot>]", color: "gold"}, {text: " teleports you or target to position", color: "reset"})
+            tellm(player, {text: "!tp book [>|<]", color: "gold"}, {text: " gives you a teleport book for both or given direction"})
+            tellm(player, {text: "!tp <target> [>|<]", color: "gold"}, {text: " teleports you to target or target to you"})
+            tellm(player, {text: "!tp <p1> <p2>", color: "gold"}, {text: " teleports p1 to p2"})
+            tellm(player, {text: "!tp [target] <x> <y> <z> [<y-rot> <x-rot>]", color: "gold"}, {text: " teleports you or target to position"})
           end
         end
       end

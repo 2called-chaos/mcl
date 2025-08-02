@@ -38,9 +38,9 @@ module Mcl
               end
             end
           else
-            tellm(player, {text: "examples", color: "gold"}, {text: " examples for partial enchantment names", color: "reset"})
-            tellm(player, {text: "list [query]", color: "gold"}, {text: " list enchantments (test lookup with query argument)", color: "reset"})
-            tellm(player, {text: "[target] <enchantment:level> …", color: "gold"}, {text: " enchant held item for you or target with given enchantments", color: "reset"})
+            tellm(player, {text: "examples", color: "gold"}, {text: " examples for partial enchantment names"})
+            tellm(player, {text: "list [query]", color: "gold"}, {text: " list enchantments (test lookup with query argument)"})
+            tellm(player, {text: "[target] <enchantment:level> …", color: "gold"}, {text: " enchant held item for you or target with given enchantments"})
           end
         end
       end

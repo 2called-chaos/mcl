@@ -130,7 +130,7 @@ module Mcl
         if gcoms.any?
           trawm(player, title("help", "gold"), {text: "--- Showing page #{page}/#{pages} (#{gcoms.count} commands) ---", color: "aqua"})
           page_contents[page-1].each do |com|
-            desc = com[1] ? {text: " #{com[1]}", color: "reset"} : {text: " no description", color: "gray", italic: true}
+            desc = com[1] ? {text: " #{com[1]}"} : {text: " no description", color: "gray", italic: true}
             trawm(player, title("help", "gold"), {text: com[0], color: "light_purple"}, desc)
           end
           trawm(player, title("help", "gold"), {text: "Use ", color: "aqua"}, {text: "!help [str] <page>", color: "light_purple"}, {text: " to [filter] and/or <paginate>.", color: "aqua"})
@@ -216,9 +216,9 @@ module Mcl
 
     def register_version acl_level
       register_command :version, desc: "shows you the MC and MCL version", acl: acl_level do |player, args|
-        trawm(player, title("MC", "gold"), {text: "#{$mcl.server.version || "unknown"}", color: "light_purple"}, {text: " (booted in #{($mcl.server.boottime||-1).round(2)}s)", color: "reset"})
-        trawm(player, title("MCL", "gold"), {text: "git: ", color: "light_purple"}, {text: "#{$mcl.booted_mcl_rev}", color: "reset"})
-        trawm(player, title("RB", "gold"), {text: RUBY_DESCRIPTION, color: "reset"})
+        trawm(player, title("MC", "gold"), {text: "#{$mcl.server.version || "unknown"}", color: "light_purple"}, {text: " (booted in #{($mcl.server.boottime||-1).round(2)}s)"})
+        trawm(player, title("MCL", "gold"), {text: "git: ", color: "light_purple"}, {text: "#{$mcl.booted_mcl_rev}"})
+        trawm(player, title("RB", "gold"), {text: RUBY_DESCRIPTION})
       end
     end
 

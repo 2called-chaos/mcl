@@ -55,9 +55,9 @@ module Mcl
               clickEvent: { action: "open_url", value: "https://github.com/rubysolo/dentaku" }
             }
           )
-          tellm(player, {text: "!= list|clear", color: "gold"}, { text: " list/clear all variables", color: "reset" })
-          tellm(player, {text: "!= variable = expression", color: "gold"}, { text: " set variable (expression can be omitted to unset variable)", color: "reset" })
-          tellm(player, {text: "!= <expression>", color: "gold"}, { text: " calculate expression", color: "reset" })
+          tellm(player, {text: "!= list|clear", color: "gold"}, { text: " list/clear all variables" })
+          tellm(player, {text: "!= variable = expression", color: "gold"}, { text: " set variable (expression can be omitted to unset variable)" })
+          tellm(player, {text: "!= <expression>", color: "gold"}, { text: " calculate expression" })
         end
       end
     end

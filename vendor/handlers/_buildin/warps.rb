@@ -58,12 +58,12 @@ module Mcl
             end
           else
             tellm(player, {text: "Warp names may start with $ to be avail. in all worlds.", color: "aqua"})
-            tellm(player, {text: "<name>", color: "gold"}, {text: " beam to given warp", color: "reset"})
-            tellm(player, {text: "set <name> [<x> <y> <z>]", color: "gold"}, {text: " add/update warp to current or given position", color: "reset"})
-            tellm(player, {text: "delete <name>", color: "gold"}, {text: " delete warp", color: "reset"})
-            tellm(player, {text: "share <name> [target]", color: "gold"}, {text: " reveal warp to target (@a by default)", color: "reset"})
-            tellm(player, {text: "whereis <name>", color: "gold"}, {text: " shows you how far and in which direction the warp is", color: "reset"})
-            tellm(player, {text: "list [-a] [-s] [-u user] [page|filter] [page]", color: "gold"}, {text: " list/search warps", color: "reset"})
+            tellm(player, {text: "<name>", color: "gold"}, {text: " beam to given warp"})
+            tellm(player, {text: "set <name> [<x> <y> <z>]", color: "gold"}, {text: " add/update warp to current or given position"})
+            tellm(player, {text: "delete <name>", color: "gold"}, {text: " delete warp"})
+            tellm(player, {text: "share <name> [target]", color: "gold"}, {text: " reveal warp to target (@a by default)"})
+            tellm(player, {text: "whereis <name>", color: "gold"}, {text: " shows you how far and in which direction the warp is"})
+            tellm(player, {text: "list [-a] [-s] [-u user] [page|filter] [page]", color: "gold"}, {text: " list/search warps"})
           end
         end
       end

@@ -63,8 +63,8 @@ module Mcl
         case args[0]
         when "status"
           acl_verify(player, acl_levels[:status])
-          tellm(player, {text: "watched versions ", color: "gold"}, {text: watched_versions.join(" ").presence || "none", color: "reset"})
-          tellm(player, {text: "watcher enabled? ", color: "gold"}, {text: cron.to_s, color: "reset"})
+          tellm(player, {text: "watched versions ", color: "gold"}, {text: watched_versions.join(" ").presence || "none"})
+          tellm(player, {text: "watcher enabled? ", color: "gold"}, {text: cron.to_s})
         when "check"
           acl_verify(player, acl_levels[:check])
           async do
@@ -73,7 +73,7 @@ module Mcl
             vs.each do |ver|
               ve = StringExpandRange.expand(ver)
               if ve.count > 30
-                tellm(player, {text: "Expression result in too many items (#{ve.count}>30)...", color: "reset"})
+                tellm(player, {text: "Expression result in too many items (#{ve.count}>30)..."})
               else
                 ve.each do |v|
                   if hit = released?(v)
@@ -97,11 +97,11 @@ module Mcl
             args[1..-1].each do |v|
               ve = StringExpandRange.expand(v)
               if ve.count > 30
-                tellm(player, {text: "Expression result in too many items (#{ve.count}>30)...", color: "reset"})
+                tellm(player, {text: "Expression result in too many items (#{ve.count}>30)..."})
               else
                 ve.each do |v|
                   watch_version v.downcase
-                  tellm(player, {text: "Watching version #{v.downcase}...", color: "reset"})
+                  tellm(player, {text: "Watching version #{v.downcase}..."})
                 end
               end
             end
@@ -119,36 +119,36 @@ module Mcl
           vel.each do |v|
             ve = StringExpandRange.expand(v)
             if ve.count > 30
-              tellm(player, {text: "Expression result in too many items (#{ve.count}>30)...", color: "reset"})
+              tellm(player, {text: "Expression result in too many items (#{ve.count}>30)..."})
             else
               ve.each do |v|
                 unwatch_version v.downcase
-                tellm(player, {text: "Stop watching version #{v.downcase}...", color: "reset"})
+                tellm(player, {text: "Stop watching version #{v.downcase}..."})
               end
             end
           end
         when "update"
           acl_verify(player, acl_levels[:update])
-          tellm(player, {text: "Attempting update...", color: "reset"})
+          tellm(player, {text: "Attempting update..."})
           update(args[1].try(:downcase), args[2] == "force")
         when "cron"
           acl_verify(player, acl_levels[:cron])
           Setting.set("snap2date.cron", "true")
           @cron = true
-          tellm(player, {text: "Watcher enabled", color: "reset"})
+          tellm(player, {text: "Watcher enabled"})
         when "uncron", "decron", "nocron"
           acl_verify(player, acl_levels[:uncron])
           Setting.set("snap2date.cron", "false")
           @cron = false
-          tellm(player, {text: "Watcher disabled", color: "reset"})
+          tellm(player, {text: "Watcher disabled"})
         else
-          tellm(player, {text: "status", color: "gold"}, {text: " list watched versions and watch status", color: "reset"})
-          tellm(player, {text: "check [ver]", color: "gold"}, {text: " check for [ver] or all watched versions", color: "reset"})
-          tellm(player, {text: "watch <ver>", color: "gold"}, {text: " start watching <ver>", color: "reset"})
-          tellm(player, {text: "unwatch <ver>", color: "gold"}, {text: " stop watching <ver>", color: "reset"})
-          tellm(player, {text: "update <ver>", color: "gold"}, {text: " update to <ver>", color: "reset"})
-          tellm(player, {text: "cron", color: "gold"}, {text: " check versions all 250 ticks", color: "reset"})
-          tellm(player, {text: "uncron", color: "gold"}, {text: " stop checking versions all 250 ticks", color: "reset"})
+          tellm(player, {text: "status", color: "gold"}, {text: " list watched versions and watch status"})
+          tellm(player, {text: "check [ver]", color: "gold"}, {text: " check for [ver] or all watched versions"})
+          tellm(player, {text: "watch <ver>", color: "gold"}, {text: " start watching <ver>"})
+          tellm(player, {text: "unwatch <ver>", color: "gold"}, {text: " stop watching <ver>"})
+          tellm(player, {text: "update <ver>", color: "gold"}, {text: " update to <ver>"})
+          tellm(player, {text: "cron", color: "gold"}, {text: " check versions all 250 ticks"})
+          tellm(player, {text: "uncron", color: "gold"}, {text: " stop checking versions all 250 ticks"})
         end
       end
     end
@@ -261,16 +261,16 @@ module Mcl
                 end
 
                 # symlink
-                $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(linking)", color: "reset"}) }
+                $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(linking)"}) }
                 FileUtils.rm("#{$mcl.server.root}/minecraft_server.jar", force: true) rescue nil if Mcl.windows?
                 FileUtils.ln_s "#{version_path}#{hit[:jar_name]}", "#{$mcl.server.root}/minecraft_server.jar", force: true
 
                 # backup
-                tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(creating backup)", color: "reset"})
+                tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(creating backup)"})
                 $mcl.server.backup_world do
                   # restart
                   tellm("@a", {text: "Backup done!", color: "gold"})
-                  $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(restarting)", color: "reset"}) }
+                  $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(restarting)"}) }
                   sleep 1
                   announce_server_restart
                   $mcl.sync { tellm("@a", {text: "SERVER IS ABOUT TO RESTART!", color: "red"}) }
@@ -294,9 +294,9 @@ module Mcl
           loop do
             Thread.current.kill if Thread.current[:mcl_halting]
             if @bytes_total
-              $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download #{((@bytes_transferred / @bytes_total.to_f) * 100).round(0)}%)", color: "reset"}) }
+              $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download #{((@bytes_transferred / @bytes_total.to_f) * 100).round(0)}%)"}) }
             else
-              $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download init)", color: "reset"}) }
+              $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download init)"}) }
             end
             sleep 3
           end
@@ -316,7 +316,7 @@ module Mcl
               end
             end
           end
-          $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download 100%)", color: "reset"}) }
+          $mcl.sync { tellm("@a", {text: "Updating... ", color: "gold"}, {text: "(download 100%)"}) }
         ensure
           announcer.try(:kill)
         end

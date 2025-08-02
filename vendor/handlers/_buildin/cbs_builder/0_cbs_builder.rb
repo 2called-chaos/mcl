@@ -28,19 +28,19 @@ module Mcl
         when "load", "info", "opt", "air", "pos", "pc", "ipos", "reset", "status", "cancel", "build", "one", "sign"
           send("com_#{args[0]}", player, args[1..-1])
         else
-          tellm(player, {text: "load <url> [-s] [-g mode]", color: "gold"}, {text: " load a remote CBS script", color: "reset"})
-          tellm(player, {text: "one [<url> <x> <y> <z> [-acglops]]", color: "gold"}, {text: " all in one command", color: "reset"})
-          tellm(player, {text: "sign <x> <y> <z> [-i]", color: "gold"}, {text: " set all-in-one sign (-i alters sign text)", color: "reset"})
-          tellm(player, {text: "info", color: "gold"}, {text: " show details about current script", color: "reset"})
-          tellm(player, {text: "opt <option> [value|-]", color: "gold"}, {text: " show/set/unset script options", color: "reset"})
-          tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no (default: true)", color: "reset"})
-          tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position", color: "reset"})
-          tellm(player, {text: "pc <xyz-XYZ>", color: "gold"}, {text: " define position corner", color: "reset"})
-          tellm(player, {text: "ipos [indicator] [o|c]", color: "gold"}, {text: " indicate build area", color: "reset"})
-          tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings", color: "reset"})
-          tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings", color: "reset"})
-          tellm(player, {text: "cancel", color: "gold"}, {text: " cancel a build process", color: "reset"})
-          tellm(player, {text: "build [clear]", color: "gold"}, {text: " parse blueprint and build it", color: "reset"})
+          tellm(player, {text: "load <url> [-s] [-g mode]", color: "gold"}, {text: " load a remote CBS script"})
+          tellm(player, {text: "one [<url> <x> <y> <z> [-acglops]]", color: "gold"}, {text: " all in one command"})
+          tellm(player, {text: "sign <x> <y> <z> [-i]", color: "gold"}, {text: " set all-in-one sign (-i alters sign text)"})
+          tellm(player, {text: "info", color: "gold"}, {text: " show details about current script"})
+          tellm(player, {text: "opt <option> [value|-]", color: "gold"}, {text: " show/set/unset script options"})
+          tellm(player, {text: "air <t/f>", color: "gold"}, {text: " copy air yes or no (default: true)"})
+          tellm(player, {text: "pos <x> <y> <z>", color: "gold"}, {text: " set build start position"})
+          tellm(player, {text: "pc <xyz-XYZ>", color: "gold"}, {text: " define position corner"})
+          tellm(player, {text: "ipos [indicator] [o|c]", color: "gold"}, {text: " indicate build area"})
+          tellm(player, {text: "reset", color: "gold"}, {text: " clear your current build settings"})
+          tellm(player, {text: "status", color: "gold"}, {text: " show info about the current build settings"})
+          tellm(player, {text: "cancel", color: "gold"}, {text: " cancel a build process"})
+          tellm(player, {text: "build [clear]", color: "gold"}, {text: " parse blueprint and build it"})
         end
       end
     end
@@ -247,7 +247,7 @@ module Mcl
             {text: proc, color: "yellow"},
             spacer,
             {text: size, color: "gold"},
-            {text: " (#{perc}%)", color: "reset"}
+            {text: " (#{perc}%)"}
           )
         end
       end
@@ -339,13 +339,13 @@ module Mcl
           end
         else
           tellm(player, {text: "!cbs one [<url> <x> <y> <z> [-acglops]]", color: "gold"})
-          tellm(player, {text: "  -a", color: "aqua"}, {text: " don't copy air (!cbs air false)", color: "reset"})
-          tellm(player, {text: "  -c", color: "aqua"}, {text: " clear area before build (!cbs build clear)", color: "reset"})
-          tellm(player, {text: "  -g gm", color: "aqua"}, {text: " force grid mode", color: "reset"})
-          tellm(player, {text: "  -l", color: "aqua"}, {text: " load only (doesn't build, does (-c)lear)", color: "reset"})
-          tellm(player, {text: "  -p xyz", color: "aqua"}, {text: " define xyz corner (!cbs pc)", color: "reset"})
-          tellm(player, {text: "  -o \"name=value\"", color: "aqua"}, {text: " set options (!cbs opt)", color: "reset"})
-          tellm(player, {text: "  -s", color: "aqua"}, {text: " load with strict mode", color: "reset"})
+          tellm(player, {text: "  -a", color: "aqua"}, {text: " don't copy air (!cbs air false)"})
+          tellm(player, {text: "  -c", color: "aqua"}, {text: " clear area before build (!cbs build clear)"})
+          tellm(player, {text: "  -g gm", color: "aqua"}, {text: " force grid mode"})
+          tellm(player, {text: "  -l", color: "aqua"}, {text: " load only (doesn't build, does (-c)lear)"})
+          tellm(player, {text: "  -p xyz", color: "aqua"}, {text: " define xyz corner (!cbs pc)"})
+          tellm(player, {text: "  -o \"name=value\"", color: "aqua"}, {text: " set options (!cbs opt)"})
+          tellm(player, {text: "  -s", color: "aqua"}, {text: " load with strict mode"})
           if bp = current_blueprint(player)
             tellm(player, {text: "Command for your settings:", color: "yellow"})
             valid, command = one_command(bp)
@@ -388,7 +388,7 @@ module Mcl
               tellm(player, {text: "Insertion point required!", color: "red"})
             end
           else
-            tellm(player, {text: "!cbs sign <x> <y> <z> [-i]", color: "red"}, {text: " (-i write info to sign)", color: "reset"})
+            tellm(player, {text: "!cbs sign <x> <y> <z> [-i]", color: "red"}, {text: " (-i write info to sign)"})
           end
         end
       end
@@ -405,7 +405,7 @@ module Mcl
       end
 
       def spacer
-        { text: " / ", color: "reset" }
+        { text: " / " }
       end
 
       def tellm player, *msg

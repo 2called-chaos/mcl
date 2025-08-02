@@ -44,10 +44,10 @@ module Mcl
           tellm(player, {text: "Unknown alias!", color: "red"})
         end
       elsif !silent
-        tellm(player, {text: "add [-s] [-u user] <name> <command>", color: "gold"}, {text: " add command to alias", color: "reset"})
-        tellm(player, {text: "delete [-s] [-u user] <name>", color: "gold"}, {text: " delete alias", color: "reset"})
-        tellm(player, {text: "info [-s] [-u user] <name>", color: "gold"}, {text: " show commands", color: "reset"})
-        tellm(player, {text: "list [-s] [-u user] [page|filter] [page]", color: "gold"}, {text: " list/search aliases", color: "reset"})
+        tellm(player, {text: "add [-s] [-u user] <name> <command>", color: "gold"}, {text: " add command to alias"})
+        tellm(player, {text: "delete [-s] [-u user] <name>", color: "gold"}, {text: " delete alias"})
+        tellm(player, {text: "info [-s] [-u user] <name>", color: "gold"}, {text: " show commands"})
+        tellm(player, {text: "list [-s] [-u user] [page|filter] [page]", color: "gold"}, {text: " list/search aliases"})
       end
     end
 

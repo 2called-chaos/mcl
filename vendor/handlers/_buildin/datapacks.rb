@@ -72,12 +72,12 @@ module Mcl
         when "list", "fetch", "cookbook", "install", "uninstall", "purge"
           handler.send("com_#{args[0]}", player, args[1..-1])
         else
-          tellm(player, l("list [-i nstalled] [-u ninstalled] [filter] [page]", :gold), l(" list DPs", :reset))
-          tellm(player, l("fetch <zipurl>", :gold), l(" download a DP zip file (must be direct URL)", :reset))
-          tellm(player, l("cookbook", :gold), l(" fetch useful DPs at a glance", :reset))
-          tellm(player, l("install <pack>", :gold), l(" install a DP from the pool into the current world", :reset))
-          tellm(player, l("uninstall <pack>", :gold), l(" uninstalls a DP from the current world", :reset))
-          tellm(player, l("purge <pack>", :gold), l(" remove a pack from the pool, will not uninstall from worlds!", :reset))
+          tellm(player, l("list [-i nstalled] [-u ninstalled] [filter] [page]", :gold), l(" list DPs"))
+          tellm(player, l("fetch <zipurl>", :gold), l(" download a DP zip file (must be direct URL)"))
+          tellm(player, l("cookbook", :gold), l(" fetch useful DPs at a glance"))
+          tellm(player, l("install <pack>", :gold), l(" install a DP from the pool into the current world"))
+          tellm(player, l("uninstall <pack>", :gold), l(" uninstalls a DP from the current world"))
+          tellm(player, l("purge <pack>", :gold), l(" remove a pack from the pool, will not uninstall from worlds!"))
         end
       end
     end

@@ -57,9 +57,9 @@ module Mcl
           acl_verify(player, acl_levels[:log])
           logbook(player, args.dup)
         when "help"
-          tellm(player, {text: "log [-w <world>] [-m <max_entries=42>]", color: "gold"}, {text: " give you an incident logbook", color: "reset"})
-          tellm(player, {text: "stat [-w <world>] [-d <days>|-h <hours=12>]", color: "gold"}, {text: " aggregated data", color: "reset"})
-          tellm(player, {text: "announce [<target>|false]", color: "gold"}, {text: " announce lag via chat", color: "reset"})
+          tellm(player, {text: "log [-w <world>] [-m <max_entries=42>]", color: "gold"}, {text: " give you an incident logbook"})
+          tellm(player, {text: "stat [-w <world>] [-d <days>|-h <hours=12>]", color: "gold"}, {text: " aggregated data"})
+          tellm(player, {text: "announce [<target>|false]", color: "gold"}, {text: " announce lag via chat"})
         else
           com_stat(player, %w[-h 1])
         end

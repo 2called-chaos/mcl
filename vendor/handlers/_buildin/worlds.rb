@@ -115,16 +115,16 @@ module Mcl
 
     def com_help player, args
       tellm_cworld(player)
-      tellm(player, l("list", :gold), l(" list known worlds", :reset))
-      tellm(player, l("<name>", :gold), l(" switch to given world", :reset))
-      tellm(player, l("scan", :gold), l(" scan filesystem for unknown worlds", :reset))
-      tellm(player, l("new <name> [sprop=value]…", :gold), l(" create new world", :reset))
-      tellm(player, l("info [name]", :gold), l(" show world info", :reset))
-      tellm(player, l("backup [name]", :gold), l(" create world backup", :reset))
-      tellm(player, l("backups [name] [page]", :gold), l(" list backups", :reset))
-      tellm(player, l("backups [name] --delete <tarfile>", :gold), l(" delete backup", :reset))
-      tellm(player, l("restore <name> <tarfile> [backup_current=true]", :gold), l(" restore world backup", :reset))
-      tellm(player, l("delete <name> [purge_backups=false]", :gold), l(" delete a world", color: :reset))
+      tellm(player, l("list", :gold), l(" list known worlds"))
+      tellm(player, l("<name>", :gold), l(" switch to given world"))
+      tellm(player, l("scan", :gold), l(" scan filesystem for unknown worlds"))
+      tellm(player, l("new <name> [sprop=value]…", :gold), l(" create new world"))
+      tellm(player, l("info [name]", :gold), l(" show world info"))
+      tellm(player, l("backup [name]", :gold), l(" create world backup"))
+      tellm(player, l("backups [name] [page]", :gold), l(" list backups"))
+      tellm(player, l("backups [name] --delete <tarfile>", :gold), l(" delete backup"))
+      tellm(player, l("restore <name> <tarfile> [backup_current=true]", :gold), l(" restore world backup"))
+      tellm(player, l("delete <name> [purge_backups=false]", :gold), l(" delete a world"))
     end
 
     def com_new player, args
