@@ -62,8 +62,8 @@ module Mcl
         }]
         app.devlog "[SETUP]   Registering command `#{cmd}'", scope: "command_register"
         [
-          /\A<([^>]+)> \!(.+)\z/i,
-          /\A\[([^\]]+)\] \!(.+)\z/i,
+          /\A(?:\[Not Secure\] )?<([^>]+)> \!(.+)\z/i,
+          /\A(?:\[Not Secure\] )?\[([^\]]+)\] \!(.+)\z/i,
           /(.+) issued server command: \/\!(.+)/i,
         ].each do |pat|
           register(pat) do |res, r|
