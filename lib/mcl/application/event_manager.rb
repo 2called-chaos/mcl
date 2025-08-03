@@ -86,7 +86,10 @@ module Mcl
               Timeout::timeout(10) {
                 @collector.join
               } rescue false
-              app.eman.tick!(false) until @spool.empty?
+              until @spool.empty?
+                app.log.debug "[IPC] ticking #{@spool.length} entries..."
+                app.eman.tick!(false)
+              end
             end
 
             raise Application::Reboot, "server connection lost after tick ##{@tick - 1}"
