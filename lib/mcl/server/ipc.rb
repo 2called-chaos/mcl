@@ -106,15 +106,12 @@ module Mcl
           vpath = "#{root}/#{app.config["mcv_infix"]}#{vdata[:jar_name]}"
 
           # download
-          unless File.exist?(vpath)
-            open(vdata.dig(:downloads, :server, :url), "rb") do |page|
-              File.open(vpath, "wb") do |file|
-                while chunk = page.read(1024)
-                  file.write(chunk)
-                end
-              end
+          File.open(vpath, "wb") do |f|
+            HTTParty.get(vdata.dig(:downloads, :server, :url)) do |fragment|
+              next if [301, 302].include?(fragment.code)
+              f.write(fragment)
             end
-          end
+          end unless File.exist?(vpath)
 
           # writing properties
           if sprops.any?
