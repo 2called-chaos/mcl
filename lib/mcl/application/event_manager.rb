@@ -39,7 +39,7 @@ module Mcl
             begin
               app.server.ipc_read do |line|
                 Thread.current.kill if line.nil? && app.server.died?
-                @spool << line
+                @spool << line if line
               end
             rescue Exception => e
               app.devlog "[Collector] #{e.class}: #{e.message}"
