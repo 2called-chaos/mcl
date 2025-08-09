@@ -266,8 +266,10 @@ module Mcl
         ]
       end
 
-      def coord_distance p1, p2
-        dv = direction_vector(p1, p2)
+      def coord_distance p1, p2, v: true, h: true
+        fp1 = [h ? p1[0] : 0, v ? p1[1] : 0, h ? p1[2] : 0]
+        fp2 = [h ? p2[0] : 0, v ? p2[1] : 0, h ? p2[2] : 0]
+        dv = direction_vector(fp1, fp2)
         Math.sqrt (dv[0] ** 2) + (dv[1] ** 2) + (dv[2] ** 2)
       end
 
@@ -283,10 +285,10 @@ module Mcl
       end
 
       # direction from p1 to reach p2
-      def coord_direction p1, p2, filter = true
-        xd = p2[0] - p1[0]
-        yd = p2[1] - p1[1]
-        zd = p2[2] - p1[2]
+      def coord_direction p1, p2, filter = true, h: true, v: true
+        xd = h ? p2[0] - p1[0] : 0
+        yd = v ? p2[1] - p1[1] : 0
+        zd = h ? p2[2] - p1[2] : 0
         north = zd < 0
         south = zd > 0
         east = xd > 0
