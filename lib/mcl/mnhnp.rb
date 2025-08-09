@@ -23,6 +23,7 @@ module Mcl
     def parse_value
       trim_space
       parse_object  or
+      parse_uuid    or
       parse_array   or
       parse_string  or
       parse_number  or
@@ -44,6 +45,22 @@ module Mcl
         error("Missing object pair") if more_pairs
         @input.scan(/\s*\}/) or error("Unclosed object")
         AST.new(object)
+      else
+        false
+      end
+    end
+
+    def parse_uuid
+      if @input.scan(/\[I;\s*/)
+        array       = Array.new
+        more_values = false
+        while contents = parse_value rescue nil
+          array << contents.value
+          more_values = @input.scan(/\s*,\s*/) or break
+        end
+        error("Missing value") if more_values
+        @input.scan(/\s*\]/) or error("Unclosed array")
+        AST.new(array)
       else
         false
       end
@@ -74,7 +91,7 @@ module Mcl
         end
         @input.scan(/#{quote_type}/) or error("Unclosed string")
         AST.new(string)
-      elsif x = @input.scan(/[a-z]+/i)
+      elsif x = @input.scan(/[a-z_]+/i)
         AST.new(x)
       else
         false
