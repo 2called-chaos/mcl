@@ -86,7 +86,7 @@ module Mcl
             app.log.info "[MCLiverse] pausing automatic backups (server empty)"
             while Player.online.count.zero?
               break if thr[:stop]
-              thr.wait(10)
+              thr.wait(60)
             end
             app.log.info "[MCLiverse] resuming automatic backups (every #{interval} minutes)" unless thr[:stop]
           end
