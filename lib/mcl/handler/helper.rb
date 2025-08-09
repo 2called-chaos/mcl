@@ -26,14 +26,16 @@ module Mcl
         server.invoke %{/data get entity #{p}}
       end
 
-      def indicate_coord p, coord, type = nil
+      def indicate_coord p, coord, type = nil, *args
         coord = coord.join(" ") if coord.respond_to?(:each)
         parts = coord.split(" ").map(&:to_f)
         case type.to_s.strip
           when "p", "particle" then $mcl.server.invoke "/particle reddust #{coord} 0 0 0 1 100 force"
+          when "block" then $mcl.server.invoke %{/particle block_marker{block_state:{Name:#{args[0]}}} #{parts[0].to_i} #{parts[1] + 0.5} #{parts[2].to_i} 0 0 0 1 1 force}
           when "b", "barrier"
             $mcl.server.invoke do |v|
               v.default %{/particle barrier #{coord} 0 0 0 1 1 force}
+              v.since "1.19", %{/particle block_marker{block_state:{Name:barrier}} #{parts[0].to_i} #{parts[1] + 0.5} #{parts[2].to_i} 0 0 0 1 1 force}
               v.since "1.14", "18w43a", %{/particle barrier #{parts[0].to_i} #{parts[1] + 0.5} #{parts[2].to_i} 0 0 0 1 1 force}
             end
           when "crystal" then $mcl.server.invoke "/summon ender_crystal #{parts[0] - 0.5} #{parts[1] - 0.5} #{parts[2] + 0.5}"
