@@ -39,6 +39,13 @@ module Mcl
         }.each_pair { |e, s| return "#{(bytes.to_f / (s / 1024)).round(2)} #{e}" if bytes < s }
       end
 
+      def format_number(number, precision: nil)
+        precision ||= number.is_a?(Integer) ? 0 : 2
+        int_part, decimal_part = sprintf("%.#{precision}f", number).split('.')
+        int_with_commas = int_part.reverse.scan(/\d{1,3}/).join(',').reverse
+        decimal_part ? "#{int_with_commas}.#{decimal_part}" : int_with_commas
+      end
+
       def uniqid prefix = ''
         t = Time.now.to_f
         sprintf("%s%8x%05x", prefix, t.floor, (t - t.floor) * 1000000)
