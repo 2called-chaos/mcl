@@ -1,7 +1,7 @@
 module Mcl
   class Server
     attr_reader :app, :status, :players
-    attr_accessor :version, :boottime, :world, :datapacks
+    attr_accessor :version, :boottime, :world, :datapacks, :time
     include Helper
     include Getters
     include IPC

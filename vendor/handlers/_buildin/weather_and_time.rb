@@ -24,6 +24,7 @@ module Mcl
 
       # time
       register_time(:member)
+      register_gtime(:member)
       register_morning(:member)
       register_day(:member)
       register_evening(:member)
@@ -54,6 +55,18 @@ module Mcl
     def register_weather acl_level
       register_command :weather, desc: "Enable or disable weather cycle", acl: acl_level do |player, args|
         $mcl.server.invoke %{/gamerule doWeatherCycle #{!!strbool(args[0])}} if args.any?
+      end
+    end
+
+    def register_gtime acl_level
+      register_command :gtime, desc: "game time", acl: acl_level do |player, args|
+        if args[0] == "sync"
+          $mcl.server.time.sync!
+        else
+          trawt(player, "Time", l("Synced: ", :gold), l("#{$mcl.server.time.fields[:pit]}", :aqua))
+          trawt(player, "Time", l("Gametime: ", :gold), l("#{$mcl.server.time.human(:game)}", :aqua), l(" (#{format_number $mcl.server.time.game.round} ticks)", :gray))
+          trawt(player, "Time", l("Worldtime: ", :gold), l("#{$mcl.server.time.human(:world)}", :aqua), l(" (#{format_number $mcl.server.time.world.round} ticks)", :gray))
+        end
       end
     end
 
