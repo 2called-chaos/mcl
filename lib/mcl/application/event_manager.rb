@@ -140,6 +140,7 @@ module Mcl
             rescue Exception
               app.handle_exception($!) do |ex|
                 app.log.error "PromiseTickError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                ex.backtrace.each{|l| app.log.debug "  #{l}" }
               end
             end
           end
@@ -153,6 +154,7 @@ module Mcl
             rescue Exception
               app.handle_exception($!) do |ex|
                 app.log.error "ShortTickPerformError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                ex.backtrace.each{|l| app.log.debug "  #{l}" }
               end
             end
           end
@@ -166,6 +168,7 @@ module Mcl
             rescue Exception
               app.handle_exception($!) do |ex|
                 app.log.error "DelayedPerformError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                ex.backtrace.each{|l| app.log.debug "  #{l}" }
               end
             end
           end
@@ -186,6 +189,7 @@ module Mcl
             rescue Exception
               app.handle_exception($!) do |ex|
                 app.log.error "EventParseError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+                ex.backtrace.each{|l| app.log.debug "  #{l}" }
               end
             end
           end
@@ -198,6 +202,7 @@ module Mcl
           rescue Exception
             app.handle_exception($!) do |ex|
               app.log.error "SchedulerPerformError on tick #{@tick}: (#{ex.class.name}) #{ex.message}"
+              ex.backtrace.each{|l| app.log.debug "  #{l}" }
             end
           end
         end
