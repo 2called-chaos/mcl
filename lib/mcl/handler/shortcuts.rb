@@ -67,24 +67,32 @@ module Mcl
         $mcl.sync(&block)
       end
 
-      def gm *a
-        $mcl.server.gm(*a)
+      def gm *a, **kw, &b
+        $mcl.server.gm(*a, **kw, &b)
       end
 
-      def traw *a
-        $mcl.server.traw(*a)
+      def traw *a, **kw, &b
+        $mcl.server.traw(*a, **kw, &b)
       end
 
-      def trawm *a
-        $mcl.server.trawm(*a)
+      def trawm *a, **kw, &b
+        $mcl.server.trawm(*a, **kw, &b)
       end
 
-      def trawt *a
-        $mcl.server.trawt(*a)
+      def trawt *a, **kw, &b
+        $mcl.server.trawt(*a, **kw, &b)
       end
 
-      def schedule *a
-        $mcl.scheduler.schedule(*a)
+      def format_number *a, **kw, &b
+        $mcl.server.format_number(*a, **kw, &b)
+      end
+
+      def human_bytes *a, **kw, &b
+        $mcl.server.human_bytes(*a, **kw, &b)
+      end
+
+      def schedule *a, **kw, &b
+        $mcl.scheduler.schedule(*a, **kw, &b)
       end
     end
   end
