@@ -18,6 +18,13 @@ if ARGV[0] == "console" || ARGV[0] == "c"
     client.use "Transport"
     client.use "ConsoleServer::Colorize"
   end
+elsif ARGV[0] == "devconsole" || ARGV[0] == "devc"
+  ["mcl", "mcl/core"].each{|l| require "#{File.expand_path("..", __FILE__)}/#{l}" }
+  instance = ENV["MCL_INSTANCE"].presence || ENV["MCLI"].presence || "default"
+  $mcl = app = Thread.main[:app] = Mcl::Application.new(instance)
+  module Mcl
+    binding.pry
+  end
 elsif ARGV[0] == "details"
   ["mcl", "mcl/core"].each{|l| require "#{PROJECT_ROOT}/lib/#{l}" }
   puts "     GIT_VERSION: #{`git --version`}"
