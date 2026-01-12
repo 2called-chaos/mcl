@@ -123,6 +123,47 @@ module Mcl
         opt.parse!(argp)
         argp.map {|arg| arg.is_a?(String) && arg.match(/\A#%#[0-9]+\z/) ? arg.gsub("#%#", "-") : arg }
       end
+
+      def tellm p, *msg
+        @prefix ? trawt(p, @prefix, *msg) : trawt(p, *msg)
+      end
+
+      def ll input
+        case input
+          when Hash then input
+          when Array then input.map{|i| l(i) }
+          when String then l(input)
+          else raise(ArgumentError, "unknown input type #{input.class}")
+        end
+      end
+
+      def l str, color_or_opts = nil, opts = {}
+        if color_or_opts.is_a?(Hash)
+          opts = color_or_opts
+        else
+          opts[:color] = color_or_opts
+        end
+        {}.tap do |r|
+          r[:text] = str
+          r[:color] = opts[:color] if opts[:color]
+          r[:obfuscated] = !!opts[:obfuscated] if opts.key?(:obfuscated)
+          if hover = opts.delete(:hover)
+            r[:hover_event] = { action: "show_text", value: ll(hover) }
+          end
+          if cmd = opts.delete(:command)
+            r[:click_event] = { action: "run_command", command: cmd }
+          end
+          if clip = opts.delete(:clip)
+            r[:click_event] = { action: "copy_to_clipboard", value: clip }
+          end
+          if cmd = opts.delete(:scommand)
+            r[:click_event] = { action: "suggest_command", command: cmd }
+          end
+          if url = opts.delete(:url)
+            r[:click_event] = { action: "open_url", url: url }
+          end
+        end
+      end
     end
   end
 end

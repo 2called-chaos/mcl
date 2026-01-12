@@ -13,6 +13,7 @@ module Mcl
 
     def initialize app
       @app = app
+      @prefix = self.class.name
       setup
     end
 
