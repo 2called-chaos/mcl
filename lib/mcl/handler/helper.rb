@@ -98,7 +98,7 @@ module Mcl
             end
           end
         end
-        "[#{res.map(&:to_json).join(",")}]"
+        %{["", #{res.map(&:to_json).join(",")}]}
       end
 
       def json_etext *txt
