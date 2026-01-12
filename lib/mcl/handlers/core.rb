@@ -234,6 +234,10 @@ module Mcl
         $mcl.eman.setup_parser
         begin
           $mcl.setup_handlers(!retried)
+          $mcl.handlers.each do |handler|
+            app.devlog "[SETUP] Signaling SRVRDY to handler `#{handler.class.name}'", scope: "plugin_load"
+            handler.srvrdy
+          end
           traw(player, "[MCL] Handlers reloaded (#{$mcl.command_names.count} commands registered)!", color: "green", underlined: true)
         rescue Exception
           if retried
